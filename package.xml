@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>cslibs_gridmaps</name>
+  <version>0.0.0</version>
+  <description>The cslibs_gridmaps package</description>
+
+  <maintainer email="richard.hanten@uni-tuebingen.de">Richard Hanten</maintainer>
+  <author email="richard.hanten@uni-tuebingen.de">Richard Hanten</author>
+
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>cslibs_indexed_storage</build_depend>
+  <build_depend>cslibs_math_2d</build_depend>
+  <build_export_depend>cslibs_indexed_storage</build_export_depend>
+  <build_export_depend>cslibs_math_2d</build_export_depend>
+  <exec_depend>cslibs_indexed_storage</exec_depend>
+  <exec_depend>cslibs_math_2d</exec_depend>
+
+  <export>
+  </export>
+</package>
