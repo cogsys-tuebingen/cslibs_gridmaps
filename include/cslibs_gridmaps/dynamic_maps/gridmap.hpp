@@ -4,6 +4,7 @@
 #include <array>
 #include <vector>
 #include <cmath>
+#include <memory>
 
 #include <cslibs_math_2d/types/pose.hpp>
 #include <cslibs_math_2d/types/point.hpp>

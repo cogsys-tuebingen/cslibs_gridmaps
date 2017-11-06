@@ -8,7 +8,7 @@ include(cmake/cslibs_gridmaps_extras.cmake)
 include(cmake/cslibs_gridmaps_show_headers.cmake)
 
 if(NOT ${PROJECT_NAME}_BUILD_EXAMPLES)
-    set(${PROJECT_NAME}_BUILD_EXAMPLES False)
+    set(${PROJECT_NAME}_BUILD_EXAMPLES True)
 endif()
 
 find_package(catkin REQUIRED COMPONENTS

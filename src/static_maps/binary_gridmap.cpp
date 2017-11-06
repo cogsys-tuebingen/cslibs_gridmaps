@@ -1,9 +1,8 @@
 #include <cslibs_gridmaps/static_maps/binary_gridmap.h>
 
-using namespace cslibs_gridmaps;
-using namespace static_maps;
-
-BinaryGridMap::BinaryGridMap(const pose_t &origin,
+namespace cslibs_gridmaps {
+namespace static_maps {
+BinaryGridmap::BinaryGridmap(const pose_t &origin,
                              const double resolution,
                              const std::size_t height,
                              const std::size_t width,
@@ -16,7 +15,7 @@ BinaryGridMap::BinaryGridMap(const pose_t &origin,
 {
 }
 
-double BinaryGridMap::getRange(const cslibs_math_2d::Point2d &from,
+double BinaryGridmap::getRange(const cslibs_math_2d::Point2d &from,
                                cslibs_math_2d::Point2d &to) const
 {
     const_line_iterator_t it = getConstLineIterator(from, to);
@@ -27,11 +26,11 @@ double BinaryGridMap::getRange(const cslibs_math_2d::Point2d &from,
     if(it.invalid())
         return -1.0;
 
-    fromIndex({it.x(), it.y()}, to);
+    fromIndex({{it.x(), it.y()}}, to);
     return  to.distance(from);
 }
 
-double BinaryGridMap::getRange2(const cslibs_math_2d::Point2d &from,
+double BinaryGridmap::getRange2(const cslibs_math_2d::Point2d &from,
                                 cslibs_math_2d::Point2d &to) const
 {
     const_line_iterator_t it = getConstLineIterator(from, to);
@@ -42,15 +41,16 @@ double BinaryGridMap::getRange2(const cslibs_math_2d::Point2d &from,
     if(it.invalid())
         return -1.0;
 
-    fromIndex({it.x(), it.y()}, to);
+    fromIndex({{it.x(), it.y()}}, to);
     return  to.distance2(from);
 }
 
-
-bool BinaryGridMap::validate(const cslibs_math_2d::Pose2d &p) const
+bool BinaryGridmap::validate(const cslibs_math_2d::Pose2d &p) const
 {
     index_t index;
     if(toIndex(p.translation(), index))
-        return at(index[0], index[1]) == 0;
+        return at(static_cast<std::size_t>(index[0]), static_cast<std::size_t>(index[1])) == 0;
     return false;
+}
+}
 }

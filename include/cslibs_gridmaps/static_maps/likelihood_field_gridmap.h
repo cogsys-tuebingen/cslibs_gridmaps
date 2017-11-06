@@ -8,6 +8,8 @@ namespace static_maps {
 class LikelihoodFieldGridmap : public Gridmap<double>
 {
 public:
+    using Ptr = std::shared_ptr<LikelihoodFieldGridmap>;
+
     LikelihoodFieldGridmap(const pose_t &origin,
                            const double resolution,
                            const std::size_t height,

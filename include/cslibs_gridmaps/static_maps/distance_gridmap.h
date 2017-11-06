@@ -8,6 +8,8 @@ namespace static_maps {
 class DistanceGridmap : public Gridmap<double>
 {
 public:
+    using Ptr = std::shared_ptr<DistanceGridmap>;
+
     DistanceGridmap(const pose_t &origin,
                     const double resolution,
                     const double maximum_distance,

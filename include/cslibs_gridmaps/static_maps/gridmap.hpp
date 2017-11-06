@@ -32,7 +32,7 @@ public:
         resolution_inv_(1.0 / resolution),
         height_(height),
         width_(width),
-        max_index_({(int)(width)-1,(int)(height)-1}),
+        max_index_({{static_cast<int>(width)-1,static_cast<int>(height)-1}}),
         w_T_m_(origin),
         m_T_w_(w_T_m_.inverse()),
         data_(height * width, default_value),
@@ -46,13 +46,12 @@ public:
             const double resolution,
             const std::size_t height,
             const std::size_t width,
-            const T &default_value,
-            const std::string &frame_id) :
+            const T &default_value) :
         resolution_(resolution),
         resolution_inv_(1.0 / resolution),
         height_(height),
         width_(width),
-        max_index_({(int)(width)-1,(int)(height)-1}),
+        max_index_({{static_cast<int>(width)-1,static_cast<int>(height)-1}}),
         w_T_m_(origin_x, origin_y, origin_phi),
         m_T_w_(w_T_m_.inverse()),
         data_(height * width, default_value),
@@ -101,7 +100,7 @@ public:
     virtual inline cslibs_math_2d::Point2d getMax() const
     {
         cslibs_math_2d::Point2d p;
-        fromIndex({(int)width_-1,(int)height_-1},p);
+        fromIndex({static_cast<int>(width_)-1, static_cast<int>(height_)-1},p);
         return p;
     }
 

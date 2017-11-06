@@ -20,7 +20,7 @@ void mapOnly()
     grid.data.resize(2500 * 2500, 0);
     grid.info.origin.orientation = tf::createQuaternionMsgFromYaw(0.0);
 
-    cslibs_gridmaps::static_maps::BinaryGridMap::Ptr binary;
+    cslibs_gridmaps::static_maps::BinaryGridmap::Ptr binary;
     cslibs_gridmaps::static_maps::conversion::from(grid, binary);
 
     cslibs_math_2d::Point2d start(62.5, 62.5);

@@ -10,7 +10,7 @@ namespace cslibs_gridmaps {
 namespace static_maps {
 namespace conversion {
 inline void from(const nav_msgs::OccupancyGrid &src,
-                 BinaryGridMap::Ptr            &dst,
+                 BinaryGridmap::Ptr            &dst,
                  const double threshold = 1.0)
 {
     assert(threshold <= 1.0);
@@ -20,7 +20,7 @@ inline void from(const nav_msgs::OccupancyGrid &src,
                                   src.info.origin.position.y,
                                   tf::getYaw(src.info.origin.orientation));
 
-    dst.reset(new BinaryGridMap(origin,
+    dst.reset(new BinaryGridmap(origin,
                                 src.info.resolution,
                                 src.info.height,
                                 src.info.width));
@@ -29,11 +29,11 @@ inline void from(const nav_msgs::OccupancyGrid &src,
     std::transform(src.data.begin(), src.data.end(),
                   dst->getData().begin(),
                   [t](const int8_t p){int8_t occ = p == -1 ? 50 : p;
-                                      return occ >= t ? BinaryGridMap::OCCUPIED : BinaryGridMap::FREE;});
+                                      return occ >= t ? BinaryGridmap::OCCUPIED : BinaryGridmap::FREE;});
 }
 
 inline void from(const nav_msgs::OccupancyGrid::ConstPtr &src,
-                 BinaryGridMap::Ptr                      &dst,
+                 BinaryGridmap::Ptr                      &dst,
                  const double threshold = 1.0)
 {
     from(*src, dst, threshold);

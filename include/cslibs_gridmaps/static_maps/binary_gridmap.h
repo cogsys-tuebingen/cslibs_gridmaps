@@ -5,21 +5,21 @@
 
 namespace cslibs_gridmaps {
 namespace static_maps {
-class BinaryGridMap : public Gridmap<int>
+class BinaryGridmap : public Gridmap<int>
 {
 public:
-    using Ptr = std::shared_ptr<BinaryGridMap>;
+    using Ptr = std::shared_ptr<BinaryGridmap>;
 
     enum state_t {FREE = 0, OCCUPIED = 1};
 
 
-    BinaryGridMap(const pose_t &origin,
+    BinaryGridmap(const pose_t &origin,
                   const double resolution,
                   const std::size_t height,
                   const std::size_t width,
                   const state_t default_value = FREE);
 
-    BinaryGridMap(const BinaryGridMap &other) = default;
+    BinaryGridmap(const BinaryGridmap &other) = default;
 
     double getRange(const cslibs_math_2d::Point2d &from,
                     cslibs_math_2d::Point2d &to) const;

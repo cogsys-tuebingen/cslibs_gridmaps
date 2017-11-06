@@ -8,6 +8,9 @@ namespace dynamic_maps {
 class ProbabilityGridmap : public Gridmap<double>
 {
 public:
+    using Ptr = std::shared_ptr<ProbabilityGridmap>;
+
+
     ProbabilityGridmap(const pose_t &origin,
                        const double resolution,
                        const double chunk_resolution,
