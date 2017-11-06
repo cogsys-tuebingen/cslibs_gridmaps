@@ -8,14 +8,12 @@ DistanceGridmap::DistanceGridmap(const pose_t &origin,
                                  const double maximum_distance,
                                  const std::size_t height,
                                  const std::size_t width,
-                                 const std::string &frame_id,
                                  const double default_value) :
     Gridmap<double>(origin,
                     resolution,
                     height,
                     width,
-                    default_value,
-                    frame_id),
+                    default_value),
     maximum_distance_(maximum_distance)
 {
 }

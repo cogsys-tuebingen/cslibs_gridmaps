@@ -9,14 +9,12 @@ LikelihoodFieldGridmap::LikelihoodFieldGridmap(const pose_t &origin,
                                                const std::size_t width,
                                                const double maximum_distance,
                                                const double sigma_hit,
-                                               const std::string &frame_id,
                                                const double default_value) :
     Gridmap<double>(origin,
                     resolution,
                     height,
                     width,
-                    default_value,
-                    frame_id),
+                    default_value),
     sigma_hit_(sigma_hit),
     maximum_distance_(maximum_distance)
 {

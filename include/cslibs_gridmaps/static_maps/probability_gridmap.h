@@ -14,7 +14,6 @@ public:
                        const double resolution,
                        const std::size_t height,
                        const std::size_t width,
-                       const std::string &frame_id,
                        const double default_value = 0.5);
 
     ProbabilityGridmap(const ProbabilityGridmap &other) = default;

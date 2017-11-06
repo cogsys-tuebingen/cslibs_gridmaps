@@ -27,7 +27,6 @@ inline void from(const nav_msgs::OccupancyGrid &src,
                                   maximum_distance,
                                   src.info.height,
                                   src.info.width,
-                                  src.header.frame_id,
                                   maximum_distance));
 
     std::vector<int8_t> occ(src.data.size());

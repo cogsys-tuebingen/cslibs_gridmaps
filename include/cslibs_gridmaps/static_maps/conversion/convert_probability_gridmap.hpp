@@ -21,8 +21,7 @@ inline void from(const nav_msgs::OccupancyGrid &src,
     dst.reset(new ProbabilityGridmap(origin,
                                      src.info.resolution,
                                      src.info.height,
-                                     src.info.width,
-                                     src.header.frame_id));
+                                     src.info.width));
     std::transform(src.data.begin(), src.data.end(),
                    dst->getData().begin(),
                    [](const int8_t p){return p != -1 ? 0.01 * p : 0.5;});
@@ -39,8 +38,6 @@ inline void from(const ProbabilityGridmap::Ptr &src,
                  nav_msgs::OccupancyGrid::Ptr &dst)
 {
     dst.reset(new nav_msgs::OccupancyGrid);
-    dst->header.stamp            = ros::Time(src->getStamp().seconds());
-    dst->header.frame_id         = src->getFrame();
     dst->info.resolution         = src->getResolution();
     dst->info.height             = src->getHeight();
     dst->info.width              = src->getWidth();

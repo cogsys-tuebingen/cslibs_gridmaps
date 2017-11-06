@@ -27,9 +27,7 @@ public:
             const double resolution,
             const std::size_t height,
             const std::size_t width,
-            const T &default_value,
-            const std::string &frame_id) :
-        frame_id_(frame_id),
+            const T &default_value) :
         resolution_(resolution),
         resolution_inv_(1.0 / resolution),
         height_(height),
@@ -50,7 +48,6 @@ public:
             const std::size_t width,
             const T &default_value,
             const std::string &frame_id) :
-        frame_id_(frame_id),
         resolution_(resolution),
         resolution_inv_(1.0 / resolution),
         height_(height),
@@ -64,7 +61,6 @@ public:
     }
 
     Gridmap(const Gridmap &other) :
-        frame_id_(other.frame_id_),
         resolution_(other.resolution_),
         resolution_inv_(other.resolution_inv_),
         height_(other.height_),
@@ -78,7 +74,6 @@ public:
     }
 
     Gridmap(Gridmap &&other) :
-        frame_id_(other.frame_id_),
         resolution_(other.resolution_),
         resolution_inv_(other.resolution_inv_),
         height_(other.height_),
@@ -211,7 +206,6 @@ public:
 
 
 protected:
-    const std::string                       frame_id_;
     const double                            resolution_;
     const double                            resolution_inv_;
     const std::size_t                       height_;

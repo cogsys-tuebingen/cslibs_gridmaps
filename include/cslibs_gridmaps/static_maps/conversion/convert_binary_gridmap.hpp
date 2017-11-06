@@ -17,14 +17,13 @@ inline void from(const nav_msgs::OccupancyGrid &src,
     assert(threshold >= 0.0);
 
     cslibs_math_2d::Pose2d origin(src.info.origin.position.x,
-                                     src.info.origin.position.y,
-                                     tf::getYaw(src.info.origin.orientation));
+                                  src.info.origin.position.y,
+                                  tf::getYaw(src.info.origin.orientation));
 
     dst.reset(new BinaryGridMap(origin,
                                 src.info.resolution,
                                 src.info.height,
-                                src.info.width,
-                                src.header.frame_id));
+                                src.info.width));
 
     const int8_t  t = threshold * 100;
     std::transform(src.data.begin(), src.data.end(),

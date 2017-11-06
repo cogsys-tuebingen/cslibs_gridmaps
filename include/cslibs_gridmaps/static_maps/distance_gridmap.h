@@ -13,7 +13,6 @@ public:
                     const double maximum_distance,
                     const std::size_t height,
                     const std::size_t width,
-                    const std::string &frame_id,
                     const double default_value = 2.0);
 
     DistanceGridmap(const DistanceGridmap &other) = default;

@@ -18,7 +18,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 catkin_package(
     INCLUDE_DIRS    include
-    CATKIN_DEPENDS  cslibs_math_2d
+    CATKIN_DEPENDS  cslibs_math_2d cslibs_indexed_storage
     CFG_EXTRAS      cslibs_gridmaps_enable_c++11.cmake
                     cslibs_gridmaps_extras.cmake
                     cslibs_gridmaps_show_headers.cmake

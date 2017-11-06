@@ -41,9 +41,7 @@ public:
     Gridmap(const pose_t        &origin,
             const double         resolution,
             const double         chunk_resolution,
-            const std::string   &frame_id,
             const T             &default_value) :
-        frame_id_(frame_id),
         resolution_(resolution),
         resolution_inv_(1.0 / resolution_),
         chunk_size_(static_cast<int>(chunk_resolution * resolution_inv_)),
@@ -64,9 +62,7 @@ public:
             const double origin_phi,
             const double resolution,
             const double chunk_resolution,
-            const T &default_value,
-            const std::string &frame_id) :
-        frame_id_(frame_id),
+            const T &default_value) :
         resolution_(resolution),
         resolution_inv_(1.0 / resolution_),
         chunk_size_(static_cast<int>(chunk_resolution * resolution_inv_)),
@@ -260,7 +256,6 @@ public:
 
 
 protected:
-    const std::string                 frame_id_;
     const double                      resolution_;
     const double                      resolution_inv_;
     const int                         chunk_size_;

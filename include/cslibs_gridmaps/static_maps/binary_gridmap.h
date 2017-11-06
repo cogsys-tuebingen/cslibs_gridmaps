@@ -3,13 +3,13 @@
 
 #include <cslibs_gridmaps/static_maps/gridmap.hpp>
 
-
 namespace cslibs_gridmaps {
 namespace static_maps {
 class BinaryGridMap : public Gridmap<int>
 {
 public:
     using Ptr = std::shared_ptr<BinaryGridMap>;
+
     enum state_t {FREE = 0, OCCUPIED = 1};
 
 
@@ -17,7 +17,6 @@ public:
                   const double resolution,
                   const std::size_t height,
                   const std::size_t width,
-                  const std::string &frame_id,
                   const state_t default_value = FREE);
 
     BinaryGridMap(const BinaryGridMap &other) = default;
