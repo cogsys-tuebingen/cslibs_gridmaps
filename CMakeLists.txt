@@ -8,7 +8,7 @@ include(cmake/cslibs_gridmaps_extras.cmake)
 include(cmake/cslibs_gridmaps_show_headers.cmake)
 
 if(NOT ${PROJECT_NAME}_BUILD_EXAMPLES)
-    set(${PROJECT_NAME}_BUILD_EXAMPLES True)
+    set(${PROJECT_NAME}_BUILD_EXAMPLES False)
 endif()
 
 find_package(catkin REQUIRED COMPONENTS
@@ -51,10 +51,10 @@ target_link_libraries(${PROJECT_NAME}_dynamic_maps
 )
 
 if(${PROJECT_NAME}_BUILD_EXAMPLES)
-    find_package(OpenCV REQUIRED)
+    find_package(OpenCV      REQUIRED)
     find_package(cslibs_time REQUIRED)
-    find_package(tf REQUIRED)
-    find_package(nav_msgs REQUIRED)
+    find_package(tf          REQUIRED)
+    find_package(nav_msgs    REQUIRED)
 
     include_directories(
         ${OpenCV_INCLUDE_DIRS}
