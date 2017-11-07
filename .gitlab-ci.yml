@@ -28,6 +28,7 @@ before_script:
   - git clone gitlab@gitlab.cs.uni-tuebingen.de:hanten/cslibs_math.git cslibs_math
   - for d in cslibs* ; do cd $d; checkout devel; cd .. ; done
   - cd /build/ws/
+  - cat ~/.ssh/id_rsa.pub
 
 stages:
   - build
