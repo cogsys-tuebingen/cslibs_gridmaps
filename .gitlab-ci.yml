@@ -39,7 +39,6 @@ indigo:
     - source /opt/ros/$(ls /opt/ros/ | sort -r | head -n 1)/setup.bash
     - rosdep install -y -r -i --from-paths src
     - catkin_make
-    - catkin_make tests
     
 jade:
   stage: build
@@ -48,7 +47,6 @@ jade:
     - source /opt/ros/$(ls /opt/ros/ | sort -r | head -n 1)/setup.bash
     - rosdep install -y -r -i --from-paths src
     - catkin_make
-    - catkin_make tests
 
 kinetic:
   stage: build
@@ -57,4 +55,3 @@ kinetic:
     - source /opt/ros/$(ls /opt/ros/ | sort -r | head -n 1)/setup.bash
     - rosdep install -y -r -i --from-paths src
     - catkin_make
-    - catkin_make tests
