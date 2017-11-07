@@ -26,6 +26,7 @@ before_script:
   - cd src
   - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_indexed_storage.git cslibs_indexed_storage
   - git clone gitlab@gitlab.cs.uni-tuebingen.de:hanten/cslibs_math.git cslibs_math
+  - git clone gitlab@gitlab.cs.uni-tuebingen.de:hanten/cslibs_time.git cslibs_time
   - for d in cslibs* ; do cd $d; git checkout devel; cd .. ; done
   - cd /build/ws/
 
