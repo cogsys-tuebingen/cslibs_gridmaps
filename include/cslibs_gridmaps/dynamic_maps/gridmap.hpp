@@ -298,8 +298,8 @@ protected:
     {
         /// offset and rounding correction!
         const cslibs_math_2d::Point2d p_m = m_T_w_ * p_w;
-        return {{static_cast<int>(p_m.x() * resolution_inv_),
-                 static_cast<int>(p_m.y() * resolution_inv_)}};
+        return {{static_cast<int>(p_m(0) * resolution_inv_),
+                 static_cast<int>(p_m(1) * resolution_inv_)}};
     }
 
     inline cslibs_math_2d::Point2d fromIndex(const index_t &i) const
