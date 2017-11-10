@@ -6,8 +6,8 @@
 #include <cmath>
 #include <memory>
 
-#include <cslibs_math_2d/types/pose.hpp>
-#include <cslibs_math_2d/types/point.hpp>
+#include <cslibs_math_2d/linear/pose.hpp>
+#include <cslibs_math_2d/linear/point.hpp>
 
 #include <cslibs_gridmaps/dynamic_maps/algorithms/bresenham.hpp>
 #include <cslibs_gridmaps/dynamic_maps/chunk.hpp>
