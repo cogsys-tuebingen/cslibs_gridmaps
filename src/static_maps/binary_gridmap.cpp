@@ -27,7 +27,7 @@ double BinaryGridmap::getRange(const cslibs_math_2d::Point2d &from,
         return -1.0;
 
     fromIndex({{it.x(), it.y()}}, to);
-    return  to.distance(from);
+    return  distance(from, to);
 }
 
 double BinaryGridmap::getRange2(const cslibs_math_2d::Point2d &from,
@@ -42,7 +42,7 @@ double BinaryGridmap::getRange2(const cslibs_math_2d::Point2d &from,
         return -1.0;
 
     fromIndex({{it.x(), it.y()}}, to);
-    return  to.distance2(from);
+    return  distance2(from, to);
 }
 
 bool BinaryGridmap::validate(const cslibs_math_2d::Pose2d &p) const
