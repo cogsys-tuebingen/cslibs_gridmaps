@@ -46,6 +46,14 @@ public:
         return *this;
     }
 
+    Chunk& operator = (Chunk &&other)
+    {
+        size_  =          (other.size_);
+        data_  = std::move(other.data_);
+        data_ptr_ =       (data_.data());
+        return *this;
+    }
+
     inline T const & at(const index_t &i) const
     {
         return data_ptr_[i[1] * size_ + i[0]];
@@ -66,7 +74,7 @@ public:
         return data_ptr_[idy * size_ + idx];
     }
 
-    inline void merge(const Chunk &other)
+    inline void merge(const Chunk &)
     {
     }
 
