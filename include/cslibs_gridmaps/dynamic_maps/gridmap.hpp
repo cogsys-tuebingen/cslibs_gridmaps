@@ -81,19 +81,23 @@ public:
 
     inline cslibs_math_2d::Point2d getMin() const
     {
+        lock_t l(storage_mutex_);
         return fromIndex({0,0});
     }
 
     inline cslibs_math_2d::Point2d getMax() const
     {
-        return fromIndex({static_cast<int>(width_ - 1),
-                          static_cast<int>(height_ - 1)});
+        lock_t l(storage_mutex_);
+        return fromIndex({static_cast<int>(width_),
+                          static_cast<int>(height_)});
     }
 
     inline cslibs_math_2d::Pose2d getOrigin() const
     {
+        lock_t l(storage_mutex_);
         cslibs_math_2d::Transform2d origin = w_T_m_;
-        origin.translation() = fromIndex({{0,0}});
+        origin.tx() = min_index_[0] * resolution_;
+        origin.ty() = min_index_[1] * resolution_;
         return origin;
     }
 
@@ -102,22 +106,9 @@ public:
         return w_T_m_;
     }
 
-    /// build a handle
-    inline T& at(const std::size_t idx, const std::size_t idy)
-    {
-        if(idx >= width_ || idy >= height_) {
-            throw std::runtime_error("[GridMap] : Invalid Index!");
-        }
-
-        const index_t index             = {idx + min_index_[0], idy + min_index_[1]};
-        const index_t chunk_index       = toChunkIndex(index);
-        const index_t local_chunk_index = toLocalChunkIndex(index);
-
-        return getAllocateChunk(chunk_index)->at(local_chunk_index);
-    }
-
     inline T at(const std::size_t idx, const std::size_t idy) const
     {
+        lock_t l(storage_mutex_);
         if(idx >= width_ || idy >= height_) {
             throw std::runtime_error("[GridMap] : Invalid Index!");
         }
@@ -127,26 +118,25 @@ public:
         const index_t chunk_index       = toChunkIndex(index);
         const index_t local_chunk_index = toLocalChunkIndex(index);
 
-        const chunk_t *chunk = lookupChunk(chunk_index);
+        const chunk_t *chunk = getChunk(chunk_index);
         return chunk != nullptr ? chunk->at(local_chunk_index) : default_value_;
-    }
-
-    inline T& at(const cslibs_math_2d::Point2d &point)
-    {
-        const index_t index             = toIndex(point);
-        const index_t chunk_index       = toChunkIndex(index);
-        const index_t local_chunk_index = toLocalChunkIndex(index);
-
-        return getAllocateChunk(chunk_index)->at(local_chunk_index);
     }
 
     inline T at(const cslibs_math_2d::Point2d &point) const
     {
+        lock_t l(storage_mutex_);
         const index_t index             = toIndex(point);
         const index_t chunk_index       = toChunkIndex(index);
         const index_t local_chunk_index = toLocalChunkIndex(index);
-        const chunk_t *chunk = lookupChunk(chunk_index);
-        return chunk != nullptr ? chunk->at(local_chunk_index) : default_value_;
+        const chunk_t *chunk = getChunk(chunk_index);
+        auto  get = [chunk, &local_chunk_index](){
+            chunk->lock();
+            double v = chunk->at(local_chunk_index);
+            chunk->unlock();
+            return v;
+        };
+
+        return chunk != nullptr ? get() : default_value_;
     }
 
     inline line_iterator_t getLineIterator(const index_t &start_index,
@@ -165,7 +155,6 @@ public:
 
         const index_t start_index = toIndex(start);
         const index_t end_index   = toIndex(end);
-
         return  line_iterator_t(start_index, end_index,
                                 chunk_size_,
                                 default_value_,
@@ -197,25 +186,26 @@ public:
 
     inline index_t getMinChunkIndex() const
     {
+        lock_t l(storage_mutex_);
         return min_chunk_index_;
     }
 
     inline index_t getMaxChunkIndex() const
     {
+        lock_t l(storage_mutex_);
         return max_chunk_index_;
     }
 
-    inline chunk_t const * lookupChunk(const index_t &chunk_index) const
+    inline chunk_t const * getChunk(const index_t &chunk_index) const
     {
         lock_t l(storage_mutex_);
         return storage_->get(chunk_index);
     }
 
-    inline chunk_t* getChunk(const index_t &chunk_index) const
+    inline chunk_t* getChunk(const index_t &chunk_index)
     {
         lock_t l(storage_mutex_);
-        chunk_t *chunk = storage_->get(chunk_index);
-        return chunk;
+        return storage_->get(chunk_index);
     }
 
     inline chunk_t* getAllocateChunk(const index_t &chunk_index) const
@@ -241,16 +231,19 @@ public:
 
     inline std::size_t getHeight() const
     {
+        lock_t l(storage_mutex_);
         return height_;
     }
 
     inline std::size_t getWidth() const
     {
+        lock_t l(storage_mutex_);
         return width_;
     }
 
     inline index_t getMaxIndex() const
     {
+        lock_t l(storage_mutex_);
         return {(max_chunk_index_[0] - min_chunk_index_[0] + 1) * chunk_size_ - 1,
                 (max_chunk_index_[1] - min_chunk_index_[1] + 1) * chunk_size_ - 1};
     }

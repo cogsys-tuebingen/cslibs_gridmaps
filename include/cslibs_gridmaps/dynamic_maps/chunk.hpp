@@ -12,6 +12,7 @@ class Chunk {
 public:
     using index_t   = std::array<int, 2>;
     using mutex_t   = std::mutex;
+    using lock_t    = std::unique_lock<mutex_t>;
 
     Chunk() = default;
     virtual ~Chunk() = default;
