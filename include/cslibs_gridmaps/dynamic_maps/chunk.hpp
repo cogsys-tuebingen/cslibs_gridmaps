@@ -4,6 +4,7 @@
 #include <vector>
 #include <array>
 #include <mutex>
+#include <atomic>
 
 namespace cslibs_gridmaps {
 namespace dynamic_maps {
@@ -14,10 +15,16 @@ public:
     using mutex_t   = std::mutex;
     using lock_t    = std::unique_lock<mutex_t>;
 
-    Chunk() = default;
+    enum Action {NONE, ALLOCATED, TOUCHED};
+
+    inline Chunk() :
+        action_(ALLOCATED)
+    {
+    }
+
     virtual ~Chunk() = default;
 
-    Chunk(const int size,
+    inline Chunk(const int size,
           const T default_value) :
         size_(size),
         data_(size * size, default_value),
@@ -25,21 +32,21 @@ public:
     {
     }
 
-    Chunk(const Chunk &other) :
+    inline Chunk(const Chunk &other) :
         size_(other.size_),
         data_(other.data_),
         data_ptr_(data_.data())
     {
     }
 
-    Chunk(Chunk &&other) :
+    inline Chunk(Chunk &&other) :
         size_(other.size_),
         data_(std::move(other.data_)),
         data_ptr_(data_.data())
     {
     }
 
-    Chunk& operator = (const Chunk &other)
+    inline Chunk& operator = (const Chunk &other)
     {
         size_  = (other.size_);
         data_  = (other.data_);
@@ -47,12 +54,28 @@ public:
         return *this;
     }
 
-    Chunk& operator = (Chunk &&other)
+    inline Chunk& operator = (Chunk &&other)
     {
         size_  =          (other.size_);
         data_  = std::move(other.data_);
         data_ptr_ =       (data_.data());
         return *this;
+    }
+
+    inline void setTouched()
+    {
+        if(action_ != ALLOCATED)
+            action_ = TOUCHED;
+    }
+
+    inline void setNone()
+    {
+        action_ = NONE;
+    }
+
+    inline Action getAction() const
+    {
+        return action_;
     }
 
     inline T const & at(const index_t &i) const
@@ -90,6 +113,7 @@ public:
     }
 
 private:
+    Action              action_;
     int                 size_;
     std::vector<T>      data_;
     T                  *data_ptr_;

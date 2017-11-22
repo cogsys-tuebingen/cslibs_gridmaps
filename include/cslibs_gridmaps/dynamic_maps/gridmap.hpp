@@ -196,6 +196,7 @@ public:
         return max_chunk_index_;
     }
 
+
     inline chunk_t const * getChunk(const index_t &chunk_index) const
     {
         lock_t l(storage_mutex_);

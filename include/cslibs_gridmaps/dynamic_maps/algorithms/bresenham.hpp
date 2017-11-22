@@ -139,6 +139,7 @@ private:
         local_index_[1] = cslibs_math::common::mod(index_[1], chunk_size_);
 
         active_chunk_ = get_chunk_(chunk_index_);
+        active_chunk_->setTouched();
         active_chunk_->lock();
     }
 
