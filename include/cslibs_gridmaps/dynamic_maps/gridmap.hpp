@@ -106,7 +106,7 @@ public:
         return w_T_m_;
     }
 
-    inline T at(const std::size_t idx, const std::size_t idy) const
+    inline T get(const std::size_t idx, const std::size_t idy) const
     {
         lock_t l(storage_mutex_);
         if(idx >= width_ || idy >= height_) {
@@ -122,7 +122,20 @@ public:
         return chunk != nullptr ? chunk->at(local_chunk_index) : default_value_;
     }
 
-    inline T at(const cslibs_math_2d::Point2d &point) const
+    inline void set(const cslibs_math_2d::Point2d &point,
+                    const T &v)
+    {
+        lock_t l(storage_mutex_);
+        const index_t index             = toIndex(point);
+        const index_t chunk_index       = toChunkIndex(index);
+        const index_t local_chunk_index = toLocalChunkIndex(index);
+        chunk_t *chunk = getAllocateChunk(chunk_index);
+        chunk->lock();
+        chunk->at(local_chunk_index) = v;
+        chunk->unlock();
+    }
+
+    inline T get(const cslibs_math_2d::Point2d &point) const
     {
         lock_t l(storage_mutex_);
         const index_t index             = toIndex(point);
