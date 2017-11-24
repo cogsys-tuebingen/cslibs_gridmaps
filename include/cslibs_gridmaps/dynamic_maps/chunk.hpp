@@ -14,8 +14,72 @@ public:
     using index_t   = std::array<int, 2>;
     using mutex_t   = std::mutex;
     using lock_t    = std::unique_lock<mutex_t>;
-
     enum Action {NONE, ALLOCATED, TOUCHED};
+
+    class Handle {
+    public:
+        inline Handle() :
+            chunk_(nullptr)
+        {
+        }
+
+        inline Handle(Chunk *chunk) :
+            chunk_(chunk)
+        {
+            if(chunk_ != nullptr)
+                chunk_->data_mutex_.lock();
+        }
+
+        virtual inline ~Handle()
+        {
+            if(chunk_ != nullptr)
+               chunk_->data_mutex_.unlock();
+        }
+
+//        inline Handle& operator = (const Handle &other)
+//        {
+//            chunk_ = other.chunk_;
+//            return *this;
+//        }
+
+//        inline Handle& operator = (Handle &&other)
+//        {
+//            chunk_ = other.chunk_;
+//            return *this;
+//        }
+
+        inline bool empty() const
+        {
+            return chunk_ == nullptr;
+        }
+
+        inline Chunk * operator -> ()
+        {
+            return chunk_;
+        }
+
+        inline Chunk const * operator -> () const
+        {
+            return chunk_;
+        }
+
+        inline operator Chunk* ()
+        {
+            return chunk_;
+        }
+
+        inline operator Chunk const *() const
+        {
+            return chunk_;
+        }
+
+    private:
+        Chunk   *chunk_;
+    };
+
+    using handle_t  = Handle;
+    friend class Handle;
+
 
     inline Chunk() :
         action_(ALLOCATED)
@@ -100,16 +164,6 @@ public:
 
     inline void merge(const Chunk &)
     {
-    }
-
-    inline void lock() const
-    {
-        data_mutex_.lock();
-    }
-
-    inline void unlock() const
-    {
-        data_mutex_.unlock();
     }
 
 private:

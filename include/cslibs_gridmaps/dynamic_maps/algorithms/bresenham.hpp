@@ -22,7 +22,7 @@ public:
     using Ptr           = std::shared_ptr<Bresenham>;
     using index_t       = std::array<int, 2>;
     using chunk_t       = dynamic_maps::Chunk<T>;
-    using get_chunk_t   = delegate<chunk_t*(const index_t&)>;
+    using get_chunk_t   = delegate<typename chunk_t::handle_t(const index_t&)>;
 
     inline explicit Bresenham(const index_t     &start,
                               const index_t     &end,
@@ -31,7 +31,6 @@ public:
                               const get_chunk_t &get_chunk) :
         done_(false),
         get_chunk_(get_chunk),
-        active_chunk_(nullptr),
         chunk_size_(chunk_size),
         start_(start),
         end_(end),
@@ -57,9 +56,6 @@ public:
 
     inline virtual ~Bresenham()
     {
-        if(active_chunk_) {
-            active_chunk_->unlock();
-        }
     }
 
     inline int x() const
@@ -85,10 +81,7 @@ public:
     inline Bresenham& operator++()
     {
         if(done()) {
-            if(active_chunk_) {
-                active_chunk_->unlock();
-                active_chunk_ = nullptr;
-            }
+            active_chunk_ = typename chunk_t::handle_t();
             return *this;
         }
 
@@ -120,19 +113,21 @@ public:
         return sq(index_[0] - end_[0]) + sq(index_[1] - end_[1]);
     }
 
-    inline T& operator *() const
+    inline T & operator *()
     {
-        assert(active_chunk_);
+        assert(!active_chunk_->empty());
+        return active_chunk_->at(lx(), ly());
+    }
+
+    inline T const & operator *() const
+    {
+        assert(!active_chunk_->empty());
         return active_chunk_->at(lx(), ly());
     }
 
 private:
     inline void update()
     {
-        if(active_chunk_) {
-            active_chunk_->unlock();
-        }
-
         chunk_index_[0] = cslibs_math::common::div(x(), chunk_size_);
         chunk_index_[1] = cslibs_math::common::div(y(), chunk_size_);
         local_index_[0] = cslibs_math::common::mod(index_[0], chunk_size_);
@@ -140,7 +135,6 @@ private:
 
         active_chunk_ = get_chunk_(chunk_index_);
         active_chunk_->setTouched();
-        active_chunk_->lock();
     }
 
     inline bool localIndexInvalid()
@@ -151,7 +145,7 @@ private:
 
     bool                        done_;
     get_chunk_t                 get_chunk_;
-    chunk_t                    *active_chunk_;
+    typename chunk_t::handle_t  active_chunk_;
     int                         chunk_size_;
 
     index_t      start_;

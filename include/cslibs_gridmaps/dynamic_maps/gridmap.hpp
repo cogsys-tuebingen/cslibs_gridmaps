@@ -37,7 +37,7 @@ public:
     using storage_t             = cis::Storage<chunk_t, index_t, cis::backend::kdtree::KDTree>;
     using line_iterator_t       = algorithms::Bresenham<T>;
     using const_line_iterator_t = algorithms::Bresenham<T const>;
-    using get_chunk_t           = delegate<chunk_t*(const index_t &)>;
+    using get_chunk_t           = delegate<typename chunk_t::handle_t(const index_t &)>;
 
     Gridmap(const pose_t        &origin,
             const double         resolution,
@@ -168,7 +168,8 @@ public:
 
         const index_t start_index = toIndex(start);
         const index_t end_index   = toIndex(end);
-        return  line_iterator_t(start_index, end_index,
+        return  line_iterator_t(start_index,
+                                end_index,
                                 chunk_size_,
                                 default_value_,
                                 get_chunk_t::template from<gridmap_t, &gridmap_t::getAllocateChunk>(this));
@@ -210,19 +211,19 @@ public:
     }
 
 
-    inline chunk_t const * getChunk(const index_t &chunk_index) const
+    inline typename chunk_t::handle_t const getChunk(const index_t &chunk_index) const
     {
         lock_t l(storage_mutex_);
-        return storage_->get(chunk_index);
+        return typename chunk_t::handle_t(storage_->get(chunk_index));
     }
 
-    inline chunk_t* getChunk(const index_t &chunk_index)
+    inline typename chunk_t::handle_t getChunk(const index_t &chunk_index)
     {
         lock_t l(storage_mutex_);
-        return storage_->get(chunk_index);
+        return typename chunk_t::handle_t(storage_->get(chunk_index));
     }
 
-    inline chunk_t* getAllocateChunk(const index_t &chunk_index) const
+    inline typename chunk_t::handle_t getAllocateChunk(const index_t &chunk_index) const
     {
         lock_t l(storage_mutex_);
         chunk_t *chunk = storage_->get(chunk_index);
@@ -230,7 +231,7 @@ public:
             chunk = &(storage_->insert(chunk_index, chunk_t(chunk_size_, default_value_)));
         }
         updateChunkIndices(chunk_index);
-        return chunk;
+        return typename chunk_t::handle_t(chunk);
     }
 
     inline double getResolution() const
@@ -259,7 +260,7 @@ public:
     {
         lock_t l(storage_mutex_);
         return {(max_chunk_index_[0] - min_chunk_index_[0] + 1) * chunk_size_ - 1,
-                (max_chunk_index_[1] - min_chunk_index_[1] + 1) * chunk_size_ - 1};
+                    (max_chunk_index_[1] - min_chunk_index_[1] + 1) * chunk_size_ - 1};
     }
 
 
@@ -305,14 +306,14 @@ protected:
     {
         /// offset and rounding correction!
         const cslibs_math_2d::Point2d p_m = m_T_w_ * p_w;
-        return {{static_cast<int>(p_m(0) * resolution_inv_),
-                 static_cast<int>(p_m(1) * resolution_inv_)}};
+        return {{static_cast<int>(std::floor(p_m(0) * resolution_inv_)),
+                 static_cast<int>(std::floor(p_m(1) * resolution_inv_))}};
     }
 
     inline cslibs_math_2d::Point2d fromIndex(const index_t &i) const
     {
         return w_T_m_ * cslibs_math_2d::Point2d((i[0] + min_index_[0])  * resolution_,
-                                                (i[1] + min_index_[0])  * resolution_);
+                (i[1] + min_index_[0])  * resolution_);
     }
 
 };
