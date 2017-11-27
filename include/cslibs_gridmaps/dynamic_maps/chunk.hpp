@@ -36,18 +36,6 @@ public:
                chunk_->data_mutex_.unlock();
         }
 
-//        inline Handle& operator = (const Handle &other)
-//        {
-//            chunk_ = other.chunk_;
-//            return *this;
-//        }
-
-//        inline Handle& operator = (Handle &&other)
-//        {
-//            chunk_ = other.chunk_;
-//            return *this;
-//        }
-
         inline bool empty() const
         {
             return chunk_ == nullptr;

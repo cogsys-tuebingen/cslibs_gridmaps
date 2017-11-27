@@ -118,8 +118,8 @@ public:
         const index_t chunk_index       = toChunkIndex(index);
         const index_t local_chunk_index = toLocalChunkIndex(index);
 
-        const chunk_t *chunk = getChunk(chunk_index);
-        return chunk != nullptr ? chunk->at(local_chunk_index) : default_value_;
+        const typename chunk_t::handle_t chunk = getChunk(chunk_index);
+        return chunk.empty() ? default_value_ : chunk->at(local_chunk_index);
     }
 
     inline void set(const cslibs_math_2d::Point2d &point,
@@ -129,27 +129,23 @@ public:
         const index_t index             = toIndex(point);
         const index_t chunk_index       = toChunkIndex(index);
         const index_t local_chunk_index = toLocalChunkIndex(index);
-        chunk_t *chunk = getAllocateChunk(chunk_index);
-        chunk->lock();
+        const typename chunk_t::handle_t chunk = getAllocateChunk(chunk_index);
         chunk->at(local_chunk_index) = v;
-        chunk->unlock();
     }
 
     inline T get(const cslibs_math_2d::Point2d &point) const
     {
         lock_t l(storage_mutex_);
-        const index_t index             = toIndex(point);
-        const index_t chunk_index       = toChunkIndex(index);
-        const index_t local_chunk_index = toLocalChunkIndex(index);
-        const chunk_t *chunk = getChunk(chunk_index);
+        const index_t index                    = toIndex(point);
+        const index_t chunk_index              = toChunkIndex(index);
+        const index_t local_chunk_index        = toLocalChunkIndex(index);
+        const typename chunk_t::handle_t chunk = getChunk(chunk_index);
         auto  get = [chunk, &local_chunk_index](){
-            chunk->lock();
             double v = chunk->at(local_chunk_index);
-            chunk->unlock();
             return v;
         };
 
-        return chunk != nullptr ? get() : default_value_;
+        return chunk.empty() ? default_value_ : get();
     }
 
     inline line_iterator_t getLineIterator(const index_t &start_index,
@@ -293,13 +289,13 @@ protected:
     inline index_t toChunkIndex(const index_t &index) const
     {
         return {{cslibs_math::common::div(index[0], chunk_size_),
-                 cslibs_math::common::div(index[1], chunk_size_)}};
+                        cslibs_math::common::div(index[1], chunk_size_)}};
     }
 
     inline index_t toLocalChunkIndex(const index_t &index) const
     {
         return {{cslibs_math::common::mod(index[0], chunk_size_),
-                 cslibs_math::common::mod(index[1], chunk_size_)}};
+                        cslibs_math::common::mod(index[1], chunk_size_)}};
     }
 
     inline index_t toIndex(const cslibs_math_2d::Point2d &p_w) const
