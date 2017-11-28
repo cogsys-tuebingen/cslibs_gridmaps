@@ -14,11 +14,12 @@ endif()
 find_package(catkin REQUIRED COMPONENTS
   cslibs_indexed_storage
   cslibs_math_2d
+  cslibs_utility
 )
 
 catkin_package(
     INCLUDE_DIRS    include
-    CATKIN_DEPENDS  cslibs_math_2d cslibs_indexed_storage
+    CATKIN_DEPENDS  cslibs_math_2d cslibs_indexed_storage cslibs_utility
     CFG_EXTRAS      cslibs_gridmaps_enable_c++11.cmake
                     cslibs_gridmaps_extras.cmake
                     cslibs_gridmaps_show_headers.cmake

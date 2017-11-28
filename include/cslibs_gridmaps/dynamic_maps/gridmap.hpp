@@ -207,16 +207,18 @@ public:
     }
 
 
-    inline typename chunk_t::handle_t const getChunk(const index_t &chunk_index) const
+    inline typename chunk_t::const_handle_t const getChunk(const index_t &chunk_index) const
     {
         lock_t l(storage_mutex_);
-        return typename chunk_t::handle_t(storage_->get(chunk_index));
+        const chunk_t *c = storage_->get(chunk_index);
+        return c ? c->getHandle() : typename chunk_t::const_handle_t();
     }
 
     inline typename chunk_t::handle_t getChunk(const index_t &chunk_index)
     {
         lock_t l(storage_mutex_);
-        return typename chunk_t::handle_t(storage_->get(chunk_index));
+        chunk_t *c = storage_->get(chunk_index);
+        return c ? c->getHandle() : typename chunk_t::handle_t();
     }
 
     inline typename chunk_t::handle_t getAllocateChunk(const index_t &chunk_index) const
@@ -227,7 +229,7 @@ public:
             chunk = &(storage_->insert(chunk_index, chunk_t(chunk_size_, default_value_)));
         }
         updateChunkIndices(chunk_index);
-        return typename chunk_t::handle_t(chunk);
+        return chunk->getHandle();
     }
 
     inline double getResolution() const
