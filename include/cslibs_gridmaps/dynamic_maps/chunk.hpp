@@ -17,13 +17,11 @@ public:
     using mutex_t   = std::mutex;
     using lock_t    = std::unique_lock<mutex_t>;
     using chunk_t   = Chunk<T>;
-    enum Action {NONE, ALLOCATED, TOUCHED};
 
-    using handle_t = cslibs_utility::synchronized::WrapAround<chunk_t>;
+    using handle_t       = cslibs_utility::synchronized::WrapAround<chunk_t>;
     using const_handle_t = cslibs_utility::synchronized::WrapAround<const chunk_t>;
 
-    inline Chunk() :
-        action_(ALLOCATED)
+    inline Chunk()
     {
     }
 
@@ -67,22 +65,6 @@ public:
         return *this;
     }
 
-    inline void setTouched()
-    {
-        if(action_ != ALLOCATED)
-            action_ = TOUCHED;
-    }
-
-    inline void setNone()
-    {
-        action_ = NONE;
-    }
-
-    inline Action getAction() const
-    {
-        return action_;
-    }
-
     inline T const & at(const index_t &i) const
     {
         return data_ptr_[i[1] * size_ + i[0]];
@@ -118,7 +100,6 @@ public:
     }
 
 private:
-    Action              action_;
     int                 size_;
     std::vector<T>      data_;
     T                  *data_ptr_;
