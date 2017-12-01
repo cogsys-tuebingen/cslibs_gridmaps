@@ -281,8 +281,8 @@ protected:
 
     inline void updateChunkIndices(const index_t &chunk_index) const
     {
-        min_chunk_index_    = cslibs_math::common::min(min_chunk_index_, chunk_index);
-        max_chunk_index_    = cslibs_math::common::max(max_chunk_index_, chunk_index);
+        min_chunk_index_    = std::min(min_chunk_index_, chunk_index);
+        max_chunk_index_    = std::max(max_chunk_index_, chunk_index);
         min_index_          = min_chunk_index_ * chunk_size_;
         width_  = (max_chunk_index_[0] - min_chunk_index_[0] + 1) * chunk_size_;
         height_ = (max_chunk_index_[1] - min_chunk_index_[1] + 1) * chunk_size_;
