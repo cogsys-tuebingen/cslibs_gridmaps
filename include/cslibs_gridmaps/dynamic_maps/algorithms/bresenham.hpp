@@ -84,9 +84,14 @@ public:
         return global_bresenham_.done();
     }
 
-    inline int length2() const
+    inline int distance2() const
     {
-        return global_bresenham_.length2();
+        return global_bresenham_.distance2();
+    }
+
+    inline int traversed2() const
+    {
+        return global_bresenham_.traversed2();
     }
 
     inline T & operator *()
@@ -102,6 +107,21 @@ public:
     }
 
 private:
+    get_chunk_t                 get_chunk_;
+    typename chunk_t::handle_t  active_chunk_;
+    int                         chunk_size_;
+    index_t                     diff_;
+
+    cslibs_math_2d::algrotihms::Bresenham global_bresenham_;
+    cslibs_math_2d::algrotihms::Bresenham local_bresenham_;
+
+    index_t      index_;
+    index_t      local_index_start_;
+    index_t      local_index_end_;
+
+    index_t      chunk_index_;
+    T            default_value_;
+
     inline void update()
     {
         chunk_index_[0]  = cslibs_math::common::div(global_bresenham_.x(), chunk_size_);
@@ -123,20 +143,7 @@ private:
                local_bresenham_.y() <= -1 || local_bresenham_.y() >= chunk_size_;
     }
 
-    get_chunk_t                 get_chunk_;
-    typename chunk_t::handle_t  active_chunk_;
-    int                         chunk_size_;
-    index_t                     diff_;
 
-    cslibs_math_2d::algrotihms::Bresenham global_bresenham_;
-    cslibs_math_2d::algrotihms::Bresenham local_bresenham_;
-
-    index_t      index_;
-    index_t      local_index_start_;
-    index_t      local_index_end_;
-
-    index_t      chunk_index_;
-    T            default_value_;
 };
 }
 }
