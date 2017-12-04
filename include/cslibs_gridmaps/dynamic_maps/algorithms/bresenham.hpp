@@ -96,13 +96,13 @@ public:
 
     inline T & operator *()
     {
-        assert(!active_chunk_->empty());
+        assert(!active_chunk_.empty());
         return active_chunk_->at(lx(), ly());
     }
 
     inline T const & operator *() const
     {
-        assert(!active_chunk_->empty());
+        assert(!active_chunk_.empty());
         return active_chunk_->at(lx(), ly());
     }
 
