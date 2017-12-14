@@ -15,6 +15,7 @@
 #include <cslibs_math/common/array.hpp>
 #include <cslibs_math/common/mod.hpp>
 #include <cslibs_math/common/div.hpp>
+#include <cslibs_math/common/floor.hpp>
 
 #include <cslibs_indexed_storage/storage.hpp>
 #include <cslibs_indexed_storage/backend/kdtree/kdtree.hpp>
@@ -304,8 +305,8 @@ protected:
     {
         /// offset and rounding correction!
         const cslibs_math_2d::Point2d p_m = m_T_w_ * p_w;
-        return {{static_cast<int>(std::floor(p_m(0) * resolution_inv_)),
-                 static_cast<int>(std::floor(p_m(1) * resolution_inv_))}};
+        return {{static_cast<int>(cslibs_math::common::floor(p_m(0) * resolution_inv_)),
+                 static_cast<int>(cslibs_math::common::floor(p_m(1) * resolution_inv_))}};
     }
 
     inline cslibs_math_2d::Point2d fromIndex(const index_t &i) const

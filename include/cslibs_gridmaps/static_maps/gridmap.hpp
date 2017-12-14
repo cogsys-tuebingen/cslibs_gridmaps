@@ -6,6 +6,8 @@
 #include <cmath>
 #include <memory>
 
+#include <cslibs_math/common/floor.hpp>
+
 #include <cslibs_math_2d/linear/pose.hpp>
 #include <cslibs_math_2d/linear/point.hpp>
 
@@ -229,8 +231,8 @@ protected:
     {
         const cslibs_math_2d::Point2d p_m = m_T_w_ * p_w;
 
-        i[0] = static_cast<int>(p_m(0) * resolution_inv_ + 0.5);
-        i[1] = static_cast<int>(p_m(1) * resolution_inv_ + 0.5);
+        i[0] = static_cast<int>(cslibs_math::common::floor(p_m(0) * resolution_inv_));
+        i[1] = static_cast<int>(cslibs_math::common::floor(p_m(1) * resolution_inv_));
 
         return (i[0] >= 0 && i[0] <= max_index_[0]) ||
                (i[1] >= 0 && i[1] <= max_index_[1]);
