@@ -23,6 +23,7 @@ public:
     double at(const cslibs_math_2d::Point2d &point) const override;
 
     double getSigmaHit() const;
+    double getMaximumDistance() const;
 
 private:
     const double sigma_hit_;

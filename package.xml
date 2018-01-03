@@ -13,6 +13,7 @@
   <depend>cslibs_indexed_storage</depend>
   <depend>cslibs_math_2d</depend>
   <depend>cslibs_utility</depend>
+  <depend>yaml-cpp</depend>
 
   <export>
   </export>

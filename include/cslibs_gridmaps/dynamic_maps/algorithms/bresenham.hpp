@@ -112,8 +112,8 @@ private:
     int                         chunk_size_;
     index_t                     diff_;
 
-    cslibs_math_2d::algrotihms::Bresenham global_bresenham_;
-    cslibs_math_2d::algrotihms::Bresenham local_bresenham_;
+    cslibs_math_2d::algorithms::Bresenham global_bresenham_;
+    cslibs_math_2d::algorithms::Bresenham local_bresenham_;
 
     index_t      index_;
     index_t      local_index_start_;
@@ -131,7 +131,7 @@ private:
                                cslibs_math::common::mod(global_bresenham_.y(), chunk_size_)}};
         local_index_end_   = local_index_start_ + diff_;
 
-        local_bresenham_ = cslibs_math_2d::algrotihms::Bresenham(local_index_start_,
+        local_bresenham_ = cslibs_math_2d::algorithms::Bresenham(local_index_start_,
                                                                  local_index_end_);
 
         active_chunk_ = get_chunk_(chunk_index_);

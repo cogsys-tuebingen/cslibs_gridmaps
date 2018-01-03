@@ -99,6 +99,16 @@ public:
         return const_handle_t(this, &data_mutex_);
     }
 
+    inline int size() const
+    {
+        return size_;
+    }
+
+    std::vector<T> const & getData() const
+    {
+        return data_;
+    }
+
 private:
     int                 size_;
     std::vector<T>      data_;

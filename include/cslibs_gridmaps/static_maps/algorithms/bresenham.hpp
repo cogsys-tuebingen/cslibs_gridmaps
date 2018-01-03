@@ -70,7 +70,7 @@ public:
     }
 
 private:
-    cslibs_math_2d::algrotihms::Bresenham bresenham_;
+    cslibs_math_2d::algorithms::Bresenham bresenham_;
     T                                    *data_;
     size_t                                size_;
 };

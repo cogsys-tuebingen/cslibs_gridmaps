@@ -33,5 +33,10 @@ double LikelihoodFieldGridmap::getSigmaHit() const
 {
     return sigma_hit_;
 }
+
+double LikelihoodFieldGridmap::getMaximumDistance() const
+{
+    return maximum_distance_;
+}
 }
 }
