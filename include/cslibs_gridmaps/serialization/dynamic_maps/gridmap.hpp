@@ -3,33 +3,10 @@
 
 #include <cslibs_gridmaps/serialization/dynamic_maps/chunk.hpp>
 #include <cslibs_gridmaps/dynamic_maps/gridmap.hpp>
+#include <cslibs_math_2d/serialization/transform.hpp>
 #include <yaml-cpp/yaml.h>
 
 namespace YAML {
-template <>
-struct convert<cslibs_math_2d::Transform2d>
-{
-    static Node encode(const cslibs_math_2d::Transform2d &rhs)
-    {
-        Node n;
-
-        n.push_back(rhs.tx());
-        n.push_back(rhs.ty());
-        n.push_back(rhs.yaw());
-
-        return n;
-    }
-
-    static bool decode(const Node& n, cslibs_math_2d::Transform2d &rhs)
-    {
-        if (!n.IsSequence() || n.size() != 3)
-            return false;
-
-        rhs.setFrom(n[0].as<double>(), n[1].as<double>(), n[2].as<double>());
-        return true;
-    }
-};
-
 template <typename T>
 struct convert<std::shared_ptr<cslibs_gridmaps::dynamic_maps::Gridmap<T>>>
 {
