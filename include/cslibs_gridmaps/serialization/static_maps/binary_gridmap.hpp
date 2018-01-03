@@ -7,31 +7,29 @@
 
 namespace YAML {
 template <>
-struct convert<cslibs_gridmaps::static_maps::BinaryGridmap>
+struct convert<std::shared_ptr<cslibs_gridmaps::static_maps::BinaryGridmap>>
 {
-    static Node encode(const cslibs_gridmaps::static_maps::BinaryGridmap &rhs)
+    static Node encode(const typename cslibs_gridmaps::static_maps::BinaryGridmap::Ptr &rhs)
     {
-        return convert<cslibs_gridmaps::static_maps::Gridmap<int>>::encode(
-                    static_cast<cslibs_gridmaps::static_maps::Gridmap<int>>(rhs));
+        return convert<cslibs_gridmaps::static_maps::Gridmap<int>::Ptr>::encode(rhs);
     }
 
-    static bool decode(const Node& n, cslibs_gridmaps::static_maps::BinaryGridmap &rhs)
+    static bool decode(const Node& n, typename cslibs_gridmaps::static_maps::BinaryGridmap::Ptr &rhs)
     {
         if (!n.IsSequence() || n.size() != 5)
             return false;
 
         const std::size_t height = n[2].as<std::size_t>();
         const std::size_t width  = n[3].as<std::size_t>();
-        rhs = cslibs_gridmaps::static_maps::BinaryGridmap(
-                    n[0].as<cslibs_math_2d::Pose2d>(), n[1].as<double>(), height, width);
+        rhs.reset(new cslibs_gridmaps::static_maps::BinaryGridmap(
+                    n[0].as<cslibs_math_2d::Pose2d>(), n[1].as<double>(), height, width));
 
-        std::vector<T> data = n[4].as<std::vector<T>>();
+        std::vector<int> data = n[4].as<std::vector<int>>();
         if (data.size() != height * width)
             return false;
 
-        for (std::size_t idx = 0 ; idx < width ; ++ idx)
-            for (std::size_t idy = 0 ; idy < height ; ++ idy)
-                rhs.at(idx, idy) = data[width * idy + idx];
+        for (std::size_t p = 0 ; p < (width * height); ++ p)
+            rhs->at(p) = data[p];
 
         return true;
     }

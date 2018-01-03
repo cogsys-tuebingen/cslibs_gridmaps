@@ -2,13 +2,13 @@
 
 #include <cslibs_gridmaps/serialization/dynamic_maps/gridmap.hpp>
 #include <cslibs_gridmaps/serialization/dynamic_maps/probability_gridmap.hpp>
-/*
+
 #include <cslibs_gridmaps/serialization/static_maps/binary_gridmap.hpp>
 #include <cslibs_gridmaps/serialization/static_maps/distance_gridmap.hpp>
 #include <cslibs_gridmaps/serialization/static_maps/gridmap.hpp>
 #include <cslibs_gridmaps/serialization/static_maps/likelihood_field_gridmap.hpp>
 #include <cslibs_gridmaps/serialization/static_maps/probability_gridmap.hpp>
-*/
+
 #include <cslibs_math/random/random.hpp>
 
 const std::size_t MIN_NUM_SAMPLES = 100;
@@ -142,27 +142,217 @@ TEST(Test_cslibs_gridmaps, testDynamicProbabilityGridmapSerialization)
 
 TEST(Test_cslibs_gridmaps, testStaticGridmapSerialization)
 {
+    using map_t = cslibs_gridmaps::static_maps::Gridmap<float>;
+    rng_t<1> rng_prob(0.0, 1.0);
+    rng_t<1> rng_coord(-100.0, 100.0);
+    rng_t<1> rng_size(200, 500);
 
+    // fill map
+    cslibs_math_2d::Transform2d origin(rng_coord.get(), rng_coord.get(), rng_t<1>(-M_PI, M_PI).get());
+    const std::size_t height = static_cast<std::size_t>(rng_size.get());
+    const std::size_t width  = static_cast<std::size_t>(rng_size.get());
+    typename map_t::Ptr map(new map_t(origin, rng_t<1>(0.05, 1.0).get(), height, width, -1.0));
+    for (std::size_t i = 0 ; i < width ; ++ i)
+        for (std::size_t j = 0 ; j < height ; ++ j)
+            map->at(i, j) = rng_prob.get();
+
+    // serialization
+    YAML::Node n(map);
+
+    // de-serialization
+    const typename map_t::Ptr & map_converted = n.as<typename map_t::Ptr>();
+
+    // tests
+    EXPECT_EQ(map->getHeight(), map_converted->getHeight());
+    EXPECT_EQ(map->getWidth(),  map_converted->getWidth());
+    EXPECT_EQ(map->getHeight(), height);
+    EXPECT_EQ(map->getWidth(),  width);
+
+    EXPECT_NEAR(map->getMin()(0),       map_converted->getMin()(0),       1e-9);
+    EXPECT_NEAR(map->getMin()(1),       map_converted->getMin()(1),       1e-9);
+    EXPECT_NEAR(map->getMax()(0),       map_converted->getMax()(0),       1e-9);
+    EXPECT_NEAR(map->getMax()(1),       map_converted->getMax()(1),       1e-9);
+    EXPECT_NEAR(map->getResolution(),   map_converted->getResolution(),   1e-9);
+    EXPECT_NEAR(map->getOrigin().tx(),  map_converted->getOrigin().tx(),  1e-9);
+    EXPECT_NEAR(map->getOrigin().ty(),  map_converted->getOrigin().ty(),  1e-9);
+    EXPECT_NEAR(map->getOrigin().yaw(), map_converted->getOrigin().yaw(), 1e-9);
+
+    for (std::size_t i = 0 ; i < width ; ++ i)
+        for (std::size_t j = 0 ; j < height ; ++ j)
+            EXPECT_NEAR(map->at(i, j), map_converted->at(i, j), 1e-3);
 }
 
 TEST(Test_cslibs_gridmaps, testStaticBinaryGridmapSerialization)
 {
+    using map_t = cslibs_gridmaps::static_maps::BinaryGridmap;
+    rng_t<1> rng_prob(0.0, 1.0);
+    rng_t<1> rng_coord(-100.0, 100.0);
+    rng_t<1> rng_size(200, 500);
 
+    // fill map
+    cslibs_math_2d::Transform2d origin(rng_coord.get(), rng_coord.get(), rng_t<1>(-M_PI, M_PI).get());
+    const std::size_t height = static_cast<std::size_t>(rng_size.get());
+    const std::size_t width  = static_cast<std::size_t>(rng_size.get());
+    typename map_t::Ptr map(new map_t(origin, rng_t<1>(0.05, 1.0).get(), height, width));
+    for (std::size_t i = 0 ; i < width ; ++ i)
+        for (std::size_t j = 0 ; j < height ; ++ j)
+            map->at(i, j) = static_cast<int>(std::round(rng_prob.get()));
+
+    // serialization
+    YAML::Node n(map);
+
+    // de-serialization
+    const typename map_t::Ptr & map_converted = n.as<typename map_t::Ptr>();
+
+    // tests
+    EXPECT_EQ(map->getHeight(), map_converted->getHeight());
+    EXPECT_EQ(map->getWidth(),  map_converted->getWidth());
+    EXPECT_EQ(map->getHeight(), height);
+    EXPECT_EQ(map->getWidth(),  width);
+
+    EXPECT_NEAR(map->getMin()(0),       map_converted->getMin()(0),       1e-9);
+    EXPECT_NEAR(map->getMin()(1),       map_converted->getMin()(1),       1e-9);
+    EXPECT_NEAR(map->getMax()(0),       map_converted->getMax()(0),       1e-9);
+    EXPECT_NEAR(map->getMax()(1),       map_converted->getMax()(1),       1e-9);
+    EXPECT_NEAR(map->getResolution(),   map_converted->getResolution(),   1e-9);
+    EXPECT_NEAR(map->getOrigin().tx(),  map_converted->getOrigin().tx(),  1e-9);
+    EXPECT_NEAR(map->getOrigin().ty(),  map_converted->getOrigin().ty(),  1e-9);
+    EXPECT_NEAR(map->getOrigin().yaw(), map_converted->getOrigin().yaw(), 1e-9);
+
+    for (std::size_t i = 0 ; i < width ; ++ i) {
+        for (std::size_t j = 0 ; j < height ; ++ j) {
+            EXPECT_EQ(map->at(i, j), map_converted->at(i, j));
+            EXPECT_TRUE(map->at(i, j) == map_t::FREE || map->at(i, j) == map_t::OCCUPIED);
+        }
+    }
 }
 
 TEST(Test_cslibs_gridmaps, testStaticDistanceGridmapSerialization)
-{
+{    
+    using map_t = cslibs_gridmaps::static_maps::DistanceGridmap;
+    rng_t<1> rng_dist(0.0, 100.0);
+    rng_t<1> rng_coord(-100.0, 100.0);
+    rng_t<1> rng_size(200, 500);
 
+    // fill map
+    cslibs_math_2d::Transform2d origin(rng_coord.get(), rng_coord.get(), rng_t<1>(-M_PI, M_PI).get());
+    const std::size_t height  = static_cast<std::size_t>(rng_size.get());
+    const std::size_t width   = static_cast<std::size_t>(rng_size.get());
+    const double max_distance = rng_t<1>(10.0, 30.0).get();
+    typename map_t::Ptr map(new map_t(origin, rng_t<1>(0.05, 1.0).get(), max_distance, height, width));
+    for (std::size_t i = 0 ; i < width ; ++ i)
+        for (std::size_t j = 0 ; j < height ; ++ j)
+            map->at(i, j) = rng_dist.get();
+
+    // serialization
+    YAML::Node n(map);
+
+    // de-serialization
+    const typename map_t::Ptr & map_converted = n.as<typename map_t::Ptr>();
+
+    // tests
+    EXPECT_EQ(map->getHeight(), map_converted->getHeight());
+    EXPECT_EQ(map->getWidth(),  map_converted->getWidth());
+    EXPECT_EQ(map->getHeight(), height);
+    EXPECT_EQ(map->getWidth(),  width);
+
+    EXPECT_NEAR(map->getMin()(0),       map_converted->getMin()(0),       1e-9);
+    EXPECT_NEAR(map->getMin()(1),       map_converted->getMin()(1),       1e-9);
+    EXPECT_NEAR(map->getMax()(0),       map_converted->getMax()(0),       1e-9);
+    EXPECT_NEAR(map->getMax()(1),       map_converted->getMax()(1),       1e-9);
+    EXPECT_NEAR(map->getResolution(),   map_converted->getResolution(),   1e-9);
+    EXPECT_NEAR(map->getOrigin().tx(),  map_converted->getOrigin().tx(),  1e-9);
+    EXPECT_NEAR(map->getOrigin().ty(),  map_converted->getOrigin().ty(),  1e-9);
+    EXPECT_NEAR(map->getOrigin().yaw(), map_converted->getOrigin().yaw(), 1e-9);
+
+    for (std::size_t i = 0 ; i < width ; ++ i)
+        for (std::size_t j = 0 ; j < height ; ++ j)
+            EXPECT_NEAR(map->at(i, j), map_converted->at(i, j), 1e-3);
 }
 
 TEST(Test_cslibs_gridmaps, testStaticLikelihoodFieldGridmapSerialization)
-{
+{    
+    using map_t = cslibs_gridmaps::static_maps::LikelihoodFieldGridmap;
+    rng_t<1> rng_prob(0.0, 1.0);
+    rng_t<1> rng_coord(-100.0, 100.0);
+    rng_t<1> rng_size(200, 500);
 
+    // fill map
+    cslibs_math_2d::Transform2d origin(rng_coord.get(), rng_coord.get(), rng_t<1>(-M_PI, M_PI).get());
+    const std::size_t height  = static_cast<std::size_t>(rng_size.get());
+    const std::size_t width   = static_cast<std::size_t>(rng_size.get());
+    const double max_distance = rng_t<1>(10.0, 30.0).get();
+    typename map_t::Ptr map(new map_t(origin, rng_t<1>(0.05, 1.0).get(), height, width, max_distance, rng_prob.get()));
+    for (std::size_t i = 0 ; i < width ; ++ i)
+        for (std::size_t j = 0 ; j < height ; ++ j)
+            map->at(i, j) = rng_prob.get();
+
+    // serialization
+    YAML::Node n(map);
+
+    // de-serialization
+    const typename map_t::Ptr & map_converted = n.as<typename map_t::Ptr>();
+
+    // tests
+    EXPECT_EQ(map->getHeight(), map_converted->getHeight());
+    EXPECT_EQ(map->getWidth(),  map_converted->getWidth());
+    EXPECT_EQ(map->getHeight(), height);
+    EXPECT_EQ(map->getWidth(),  width);
+
+    EXPECT_NEAR(map->getMin()(0),       map_converted->getMin()(0),       1e-9);
+    EXPECT_NEAR(map->getMin()(1),       map_converted->getMin()(1),       1e-9);
+    EXPECT_NEAR(map->getMax()(0),       map_converted->getMax()(0),       1e-9);
+    EXPECT_NEAR(map->getMax()(1),       map_converted->getMax()(1),       1e-9);
+    EXPECT_NEAR(map->getResolution(),   map_converted->getResolution(),   1e-9);
+    EXPECT_NEAR(map->getOrigin().tx(),  map_converted->getOrigin().tx(),  1e-9);
+    EXPECT_NEAR(map->getOrigin().ty(),  map_converted->getOrigin().ty(),  1e-9);
+    EXPECT_NEAR(map->getOrigin().yaw(), map_converted->getOrigin().yaw(), 1e-9);
+
+    for (std::size_t i = 0 ; i < width ; ++ i)
+        for (std::size_t j = 0 ; j < height ; ++ j)
+            EXPECT_NEAR(map->at(i, j), map_converted->at(i, j), 1e-3);
 }
 
 TEST(Test_cslibs_gridmaps, testStaticProbabilityGridmapSerialization)
 {
+    using map_t = cslibs_gridmaps::static_maps::ProbabilityGridmap;
+    rng_t<1> rng_prob(0.0, 1.0);
+    rng_t<1> rng_coord(-100.0, 100.0);
+    rng_t<1> rng_size(200, 500);
 
+    // fill map
+    cslibs_math_2d::Transform2d origin(rng_coord.get(), rng_coord.get(), rng_t<1>(-M_PI, M_PI).get());
+    const std::size_t height  = static_cast<std::size_t>(rng_size.get());
+    const std::size_t width   = static_cast<std::size_t>(rng_size.get());
+    typename map_t::Ptr map(new map_t(origin, rng_t<1>(0.05, 1.0).get(), height, width));
+    for (std::size_t i = 0 ; i < width ; ++ i)
+        for (std::size_t j = 0 ; j < height ; ++ j)
+            map->at(i, j) = rng_prob.get();
+
+    // serialization
+    YAML::Node n(map);
+
+    // de-serialization
+    const typename map_t::Ptr & map_converted = n.as<typename map_t::Ptr>();
+
+    // tests
+    EXPECT_EQ(map->getHeight(), map_converted->getHeight());
+    EXPECT_EQ(map->getWidth(),  map_converted->getWidth());
+    EXPECT_EQ(map->getHeight(), height);
+    EXPECT_EQ(map->getWidth(),  width);
+
+    EXPECT_NEAR(map->getMin()(0),       map_converted->getMin()(0),       1e-9);
+    EXPECT_NEAR(map->getMin()(1),       map_converted->getMin()(1),       1e-9);
+    EXPECT_NEAR(map->getMax()(0),       map_converted->getMax()(0),       1e-9);
+    EXPECT_NEAR(map->getMax()(1),       map_converted->getMax()(1),       1e-9);
+    EXPECT_NEAR(map->getResolution(),   map_converted->getResolution(),   1e-9);
+    EXPECT_NEAR(map->getOrigin().tx(),  map_converted->getOrigin().tx(),  1e-9);
+    EXPECT_NEAR(map->getOrigin().ty(),  map_converted->getOrigin().ty(),  1e-9);
+    EXPECT_NEAR(map->getOrigin().yaw(), map_converted->getOrigin().yaw(), 1e-9);
+
+    for (std::size_t i = 0 ; i < width ; ++ i)
+        for (std::size_t j = 0 ; j < height ; ++ j)
+            EXPECT_NEAR(map->at(i, j), map_converted->at(i, j), 1e-3);
 }
 
 int main(int argc, char *argv[])

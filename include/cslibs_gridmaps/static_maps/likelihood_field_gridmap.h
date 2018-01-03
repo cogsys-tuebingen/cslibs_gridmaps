@@ -20,6 +20,7 @@ public:
 
     LikelihoodFieldGridmap(const LikelihoodFieldGridmap &other) = default;
 
+    using Gridmap<double>::at;
     double at(const cslibs_math_2d::Point2d &point) const override;
 
     double getSigmaHit() const;

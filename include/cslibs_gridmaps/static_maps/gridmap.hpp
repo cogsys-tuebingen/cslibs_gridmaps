@@ -248,9 +248,7 @@ protected:
         p_w = w_T_m_ * cslibs_math_2d::Point2d(it.x() * resolution_,
                                                it.y() * resolution_);
     }
-
-    };
-
+};
 }
 }
 #endif /* CSLIBS_GRIDMAPS_STATIC_GRIDMAP_HPP */

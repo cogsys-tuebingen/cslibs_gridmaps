@@ -19,6 +19,7 @@ public:
 
     DistanceGridmap(const DistanceGridmap &other) = default;
 
+    using Gridmap<double>::at;
     double at(const cslibs_math_2d::Point2d &point) const override;
     double getMaximumDistance() const;
 

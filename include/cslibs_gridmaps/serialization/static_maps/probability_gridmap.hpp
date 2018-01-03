@@ -7,38 +7,29 @@
 
 namespace YAML {
 template <>
-struct convert<cslibs_gridmaps::static_maps::ProbabilityGridmap>
+struct convert<std::shared_ptr<cslibs_gridmaps::static_maps::ProbabilityGridmap>>
 {
-    static Node encode(const cslibs_gridmaps::static_maps::ProbabilityGridmap &rhs)
+    static Node encode(const typename cslibs_gridmaps::static_maps::ProbabilityGridmap::Ptr &rhs)
     {
-        Node n;
-
-        n.push_back(rhs.getOrigin());
-        n.push_back(rhs.getResolution());
-        n.push_back(rhs.getHeight());
-        n.push_back(rhs.getWidth());
-        n.push_back(rhs.getData());
-
-        return n;
+        return convert<cslibs_gridmaps::static_maps::Gridmap<double>::Ptr>::encode(rhs);
     }
 
-    static bool decode(const Node& n, cslibs_gridmaps::static_maps::ProbabilityGridmap &rhs)
+    static bool decode(const Node& n, typename cslibs_gridmaps::static_maps::ProbabilityGridmap::Ptr &rhs)
     {
         if (!n.IsSequence() || n.size() != 5)
             return false;
 
         const std::size_t height = n[2].as<std::size_t>();
         const std::size_t width  = n[3].as<std::size_t>();
-        rhs = cslibs_gridmaps::static_maps::ProbabilityGridmap(
-                    n[0].as<cslibs_math_2d::Pose2d>(), n[1].as<double>(), height, width);
+        rhs.reset(new cslibs_gridmaps::static_maps::ProbabilityGridmap(
+                    n[0].as<cslibs_math_2d::Pose2d>(), n[1].as<double>(), height, width));
 
-        std::vector<T> data = n[4].as<std::vector<T>>();
+        std::vector<double> data = n[4].as<std::vector<double>>();
         if (data.size() != height * width)
             return false;
 
-        for (std::size_t idx = 0 ; idx < width ; ++ idx)
-            for (std::size_t idy = 0 ; idy < height ; ++ idy)
-                rhs.at(idx, idy) = data[width * idy + idx];
+        for (std::size_t p = 0 ; p < (width * height); ++ p)
+            rhs->at(p) = data[p];
 
         return true;
     }
