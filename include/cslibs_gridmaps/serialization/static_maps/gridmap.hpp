@@ -11,6 +11,8 @@ struct convert<std::shared_ptr<cslibs_gridmaps::static_maps::Gridmap<T>>>
     static Node encode(const typename cslibs_gridmaps::static_maps::Gridmap<T>::Ptr &rhs)
     {
         Node n;
+        if (!rhs)
+            return n;
 
         n.push_back(rhs->getOrigin());
         n.push_back(rhs->getResolution());
