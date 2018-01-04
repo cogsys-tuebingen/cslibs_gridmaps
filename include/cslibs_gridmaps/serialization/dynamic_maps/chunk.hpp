@@ -41,7 +41,7 @@ struct convert<cslibs_gridmaps::dynamic_maps::Chunk<T>>
 
     static bool decode(const Node& n, cslibs_gridmaps::dynamic_maps::Chunk<T> &rhs)
     {
-        if (!n.IsSequence()|| n.size() != 2)
+        if (!n.IsSequence() || n.size() != 2)
             return false;
 
         const int size = n[0].as<int>();

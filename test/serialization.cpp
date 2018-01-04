@@ -21,7 +21,7 @@ TEST(Test_cslibs_gridmaps, testDynamicGridmapSerialization)
 {
     using map_t = cslibs_gridmaps::dynamic_maps::Gridmap<float>;
     rng_t<1> rng_prob(0.0, 1.0);
-    rng_t<1> rng_coord(-100.0, 100.0);
+    rng_t<1> rng_coord(-10.0, 10.0);
 
     // fill map
     cslibs_math_2d::Transform2d origin(rng_coord.get(), rng_coord.get(), rng_t<1>(-M_PI, M_PI).get());
@@ -29,7 +29,7 @@ TEST(Test_cslibs_gridmaps, testDynamicGridmapSerialization)
     const double chunk_resolution = rng_t<1>(5.0, 10.0).get();
     typename map_t::Ptr map(new map_t(origin, resolution, chunk_resolution, rng_t<1>(0.2, 0.8).get()));
     const int num_samples = static_cast<int>(rng_t<1>(MIN_NUM_SAMPLES, MAX_NUM_SAMPLES).get());
-        for (int i = 0 ; i < num_samples ; ++ i) {
+    for (int i = 0 ; i < num_samples ; ++ i) {
         const cslibs_math_2d::Point2d p(rng_coord.get(), rng_coord.get());
         map->set(p, rng_prob.get());
     }
@@ -84,7 +84,7 @@ TEST(Test_cslibs_gridmaps, testDynamicProbabilityGridmapSerialization)
 {
     using map_t = cslibs_gridmaps::dynamic_maps::ProbabilityGridmap;
     rng_t<1> rng_prob(0.0, 1.0);
-    rng_t<1> rng_coord(-100.0, 100.0);
+    rng_t<1> rng_coord(-10.0, 10.0);
 
     // fill map
     cslibs_math_2d::Transform2d origin(rng_coord.get(), rng_coord.get(), rng_t<1>(-M_PI, M_PI).get());
@@ -144,7 +144,7 @@ TEST(Test_cslibs_gridmaps, testStaticGridmapSerialization)
 {
     using map_t = cslibs_gridmaps::static_maps::Gridmap<float>;
     rng_t<1> rng_prob(0.0, 1.0);
-    rng_t<1> rng_coord(-100.0, 100.0);
+    rng_t<1> rng_coord(-10.0, 10.0);
     rng_t<1> rng_size(200, 500);
 
     // fill map
@@ -186,7 +186,7 @@ TEST(Test_cslibs_gridmaps, testStaticBinaryGridmapSerialization)
 {
     using map_t = cslibs_gridmaps::static_maps::BinaryGridmap;
     rng_t<1> rng_prob(0.0, 1.0);
-    rng_t<1> rng_coord(-100.0, 100.0);
+    rng_t<1> rng_coord(-10.0, 10.0);
     rng_t<1> rng_size(200, 500);
 
     // fill map
@@ -231,7 +231,7 @@ TEST(Test_cslibs_gridmaps, testStaticDistanceGridmapSerialization)
 {    
     using map_t = cslibs_gridmaps::static_maps::DistanceGridmap;
     rng_t<1> rng_dist(0.0, 100.0);
-    rng_t<1> rng_coord(-100.0, 100.0);
+    rng_t<1> rng_coord(-10.0, 10.0);
     rng_t<1> rng_size(200, 500);
 
     // fill map
@@ -274,7 +274,7 @@ TEST(Test_cslibs_gridmaps, testStaticLikelihoodFieldGridmapSerialization)
 {    
     using map_t = cslibs_gridmaps::static_maps::LikelihoodFieldGridmap;
     rng_t<1> rng_prob(0.0, 1.0);
-    rng_t<1> rng_coord(-100.0, 100.0);
+    rng_t<1> rng_coord(-10.0, 10.0);
     rng_t<1> rng_size(200, 500);
 
     // fill map
@@ -317,7 +317,7 @@ TEST(Test_cslibs_gridmaps, testStaticProbabilityGridmapSerialization)
 {
     using map_t = cslibs_gridmaps::static_maps::ProbabilityGridmap;
     rng_t<1> rng_prob(0.0, 1.0);
-    rng_t<1> rng_coord(-100.0, 100.0);
+    rng_t<1> rng_coord(-10.0, 10.0);
     rng_t<1> rng_size(200, 500);
 
     // fill map
