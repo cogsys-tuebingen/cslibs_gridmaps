@@ -77,7 +77,7 @@ inline void from(const LikelihoodFieldGridmap::Ptr &src,
     dst->data.resize(src->getData().size());
     std::transform(src->getData().begin(), src->getData().end(),
                    dst->data.begin(),
-                   [](const double p){return p;});
+                   [](const double p){return 100.0 * p;});
 }
 }
 }
