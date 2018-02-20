@@ -23,6 +23,7 @@ public:
     double at(const cslibs_math_2d::Point2d &point) const override;
     double getMaximumDistance() const;
 
+
 private:
     double maximum_distance_;
 
