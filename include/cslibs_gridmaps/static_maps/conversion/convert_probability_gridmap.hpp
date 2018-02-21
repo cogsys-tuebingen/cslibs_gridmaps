@@ -26,8 +26,8 @@ inline void from(const nav_msgs::OccupancyGrid &src,
                  ProbabilityGridmap::Ptr &dst)
 {
     cslibs_math_2d::Pose2d origin(src.info.origin.position.x,
-                                     src.info.origin.position.y,
-                                     tf::getYaw(src.info.origin.orientation));
+                                  src.info.origin.position.y,
+                                  tf::getYaw(src.info.origin.orientation));
 
     dst.reset(new ProbabilityGridmap(origin,
                                      static_cast<double>(src.info.resolution),

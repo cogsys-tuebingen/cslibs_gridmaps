@@ -10,13 +10,13 @@ class LikelihoodFieldGridmap : public Gridmap<double>
 public:
     using Ptr = std::shared_ptr<LikelihoodFieldGridmap>;
 
-    LikelihoodFieldGridmap(const pose_t &origin,
-                           const double resolution,
-                           const std::size_t height,
-                           const std::size_t width,
-                           const double maximum_distance,
-                           const double sigma_hit,
-                           const double default_value = 0.0);
+    explicit LikelihoodFieldGridmap(const pose_t &origin,
+                                    const double resolution,
+                                    const std::size_t height,
+                                    const std::size_t width,
+                                    const double maximum_distance,
+                                    const double sigma_hit,
+                                    const double default_value = 0.0);
 
     LikelihoodFieldGridmap(const LikelihoodFieldGridmap &other) = default;
 

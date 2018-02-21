@@ -10,12 +10,12 @@ class DistanceGridmap : public Gridmap<double>
 public:
     using Ptr = std::shared_ptr<DistanceGridmap>;
 
-    DistanceGridmap(const pose_t &origin,
-                    const double resolution,
-                    const double maximum_distance,
-                    const std::size_t height,
-                    const std::size_t width,
-                    const double default_value = 2.0);
+    explicit DistanceGridmap(const pose_t &origin,
+                             const double resolution,
+                             const double maximum_distance,
+                             const std::size_t height,
+                             const std::size_t width,
+                             const double default_value = 2.0);
 
     DistanceGridmap(const DistanceGridmap &other) = default;
 
