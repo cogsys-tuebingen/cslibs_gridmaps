@@ -140,8 +140,8 @@ public:
 
         queue_ = std::priority_queue<cell_data_t, std::deque<cell_data_t>, cell_data_t::Greater>();
         marked_.resize(src.size(), 0);
+        dst.resize(src.size());
         std::fill(dst.begin(), dst.end(), maximum_distance_);
-        dst.resize(src.size(), maximum_distance_);
 
         /// prepare the distance map
         for(std::size_t y = 0ul ; y < src_height_ ; ++y) {

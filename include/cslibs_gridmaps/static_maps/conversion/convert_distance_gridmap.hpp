@@ -29,19 +29,16 @@ inline void from(const nav_msgs::OccupancyGrid &src,
                                   src.info.width,
                                   maximum_distance));
 
-    std::vector<int8_t> occ(src.data.size());
-    std::transform(src.data.begin(),
-                   src.data.end(),
-                   occ.begin(),
-                   [](const int8_t p){return p != -1 ? p : 50;});
-
-
     algorithms::DistanceTransform<int8_t> distance_transform(src.info.resolution,
                                                              maximum_distance,
                                                              static_cast<int8_t>(threshold * 100));
-    distance_transform.apply(occ,
+    distance_transform.apply(src.data,
                              dst->getWidth(),
                              dst->getData());
+
+//    for(std::size_t i = 0 ; i < src.data.size() ; ++i) {
+//      dst->at(i) = src.data.at(i) == -1 ? maximum_distance : dst->at(i);
+//    }
 }
 
 inline void from(const DistanceGridmap::Ptr &src,
