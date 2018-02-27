@@ -10,7 +10,7 @@
 #include <cslibs_math/common/mod.hpp>
 #include <cslibs_math/common/array.hpp>
 
-#include <iostream>
+#include <cslibs_math_2d/algorithms/bresenham.hpp>
 
 namespace cslibs_gridmaps {
 namespace dynamic_maps {
@@ -22,85 +22,55 @@ public:
     using Ptr           = std::shared_ptr<Bresenham>;
     using index_t       = std::array<int, 2>;
     using chunk_t       = dynamic_maps::Chunk<T>;
-    using get_chunk_t   = delegate<chunk_t*(const index_t&)>;
+    using get_chunk_t   = delegate<typename chunk_t::handle_t(const index_t&)>;
 
     inline explicit Bresenham(const index_t     &start,
                               const index_t     &end,
                               const int          chunk_size,
                               const T           &default_value,
                               const get_chunk_t &get_chunk) :
-        done_(false),
         get_chunk_(get_chunk),
-        active_chunk_(nullptr),
         chunk_size_(chunk_size),
-        start_(start),
-        end_(end),
-        default_value_(default_value),
-        steep_(std::abs(end[1] - start[1]) > std::abs(end[0] - start[0])),
-        error_(0)
+        diff_{{(end[0] - start[0]), (end[1] - start[1])}},
+        global_bresenham_(start, end),
+        default_value_(default_value)
     {
-        if(steep_) {
-            std::swap(start_[0], start_[1]);
-            std::swap(end_[0],   end_[1]);
-        }
-
-        delta_x_     = std::abs(end_[0] - start_[0]);
-        delta_y_     = std::abs(end_[1] - start_[1]);
-        delta_error_ = delta_y_;
-        index_       = start_;
-
-        step_x_      = start_[0] < end_[0] ? 1 : -1;
-        step_y_      = start_[1] < end_[1] ? 1 : -1;
-
         update();
     }
 
     inline virtual ~Bresenham()
     {
-        if(active_chunk_) {
-            active_chunk_->unlock();
-        }
     }
 
     inline int x() const
     {
-        return (steep_ ? index_[1] : index_[0]);
+        return global_bresenham_.x();
     }
 
     inline int y() const
     {
-        return (steep_ ? index_[0] : index_[1]);
+        return global_bresenham_.y();
     }
 
     inline int lx() const
     {
-        return (steep_ ? local_index_[1] : local_index_[0]);
+        return local_bresenham_.x();
     }
 
     inline int ly() const
     {
-        return (steep_ ? local_index_[0] : local_index_[1]);
+        return local_bresenham_.y();
     }
 
     inline Bresenham& operator++()
     {
-        if(done()) {
-            if(active_chunk_) {
-                active_chunk_->unlock();
-                active_chunk_ = nullptr;
-            }
+        if(global_bresenham_.done()) {
+            active_chunk_ = typename chunk_t::handle_t();
             return *this;
         }
 
-        index_[0]       += step_x_;
-        local_index_[0] += step_x_;
-
-        error_ += delta_error_;
-        if(2 * error_ >= delta_x_) {
-            index_[1]       += step_y_;
-            local_index_[1] += step_y_;
-            error_          -= delta_x_;
-        }
+        ++global_bresenham_;
+        ++local_bresenham_;
 
         if(localIndexInvalid()) {
             update();
@@ -111,64 +81,69 @@ public:
 
     inline bool done() const
     {
-        return index_[0] == end_[0] && index_[1] == end_[1];
+        return global_bresenham_.done();
     }
 
-    inline int length2() const
+    inline int distance2() const
     {
-        auto sq = [](const int d) { return d*d;};
-        return sq(index_[0] - end_[0]) + sq(index_[1] - end_[1]);
+        return global_bresenham_.distance2();
     }
 
-    inline T& operator *() const
+    inline int traversed2() const
     {
-        assert(active_chunk_);
+        return global_bresenham_.traversed2();
+    }
+
+    inline T & operator *()
+    {
+        assert(!active_chunk_.empty());
+        return active_chunk_->at(lx(), ly());
+    }
+
+    inline T const & operator *() const
+    {
+        assert(!active_chunk_.empty());
         return active_chunk_->at(lx(), ly());
     }
 
 private:
+    get_chunk_t                 get_chunk_;
+    typename chunk_t::handle_t  active_chunk_;
+    int                         chunk_size_;
+    index_t                     diff_;
+
+    cslibs_math_2d::algorithms::Bresenham global_bresenham_;
+    cslibs_math_2d::algorithms::Bresenham local_bresenham_;
+
+    index_t      index_;
+    index_t      local_index_start_;
+    index_t      local_index_end_;
+
+    index_t      chunk_index_;
+    T            default_value_;
+
     inline void update()
     {
-        if(active_chunk_) {
-            active_chunk_->unlock();
-        }
+        chunk_index_[0]  = cslibs_math::common::div(global_bresenham_.x(), chunk_size_);
+        chunk_index_[1]  = cslibs_math::common::div(global_bresenham_.y(), chunk_size_);
 
-        chunk_index_[0] = cslibs_math::common::div(x(), chunk_size_);
-        chunk_index_[1] = cslibs_math::common::div(y(), chunk_size_);
-        local_index_[0] = cslibs_math::common::mod(index_[0], chunk_size_);
-        local_index_[1] = cslibs_math::common::mod(index_[1], chunk_size_);
+        local_index_start_ = {{cslibs_math::common::mod(global_bresenham_.x(), chunk_size_),
+                               cslibs_math::common::mod(global_bresenham_.y(), chunk_size_)}};
+        local_index_end_   = local_index_start_ + diff_;
+
+        local_bresenham_ = cslibs_math_2d::algorithms::Bresenham(local_index_start_,
+                                                                 local_index_end_);
 
         active_chunk_ = get_chunk_(chunk_index_);
-        active_chunk_->setTouched();
-        active_chunk_->lock();
     }
 
     inline bool localIndexInvalid()
     {
-        return local_index_[0] < 0 || local_index_[0] >= chunk_size_ ||
-               local_index_[1] < 0 || local_index_[1] >= chunk_size_;
+        return local_bresenham_.x() <= -1 || local_bresenham_.x() >= chunk_size_ ||
+               local_bresenham_.y() <= -1 || local_bresenham_.y() >= chunk_size_;
     }
 
-    bool                        done_;
-    get_chunk_t                 get_chunk_;
-    chunk_t                    *active_chunk_;
-    int                         chunk_size_;
 
-    index_t      start_;
-    index_t      end_;
-    index_t      index_;
-
-    index_t      chunk_index_;
-    index_t      local_index_;
-    T            default_value_;
-
-    bool         steep_;
-    int          error_;
-    int          delta_x_;
-    int          delta_y_;
-    int          delta_error_;
-    int          step_x_;
-    int          step_y_;
 };
 }
 }

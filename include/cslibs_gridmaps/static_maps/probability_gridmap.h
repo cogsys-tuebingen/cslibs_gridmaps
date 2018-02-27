@@ -10,11 +10,11 @@ class ProbabilityGridmap : public Gridmap<double>
 public:
     using Ptr = std::shared_ptr<ProbabilityGridmap>;
 
-    ProbabilityGridmap(const pose_t &origin,
-                       const double resolution,
-                       const std::size_t height,
-                       const std::size_t width,
-                       const double default_value = 0.5);
+    explicit ProbabilityGridmap(const pose_t &origin,
+                                const double resolution,
+                                const std::size_t height,
+                                const std::size_t width,
+                                const double default_value = 0.5);
 
     ProbabilityGridmap(const ProbabilityGridmap &other) = default;
 };

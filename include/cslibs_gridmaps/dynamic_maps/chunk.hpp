@@ -6,6 +6,8 @@
 #include <mutex>
 #include <atomic>
 
+#include <cslibs_utility/synchronized/wrap_around.hpp>
+
 namespace cslibs_gridmaps {
 namespace dynamic_maps {
 template<typename T>
@@ -14,11 +16,12 @@ public:
     using index_t   = std::array<int, 2>;
     using mutex_t   = std::mutex;
     using lock_t    = std::unique_lock<mutex_t>;
+    using chunk_t   = Chunk<T>;
 
-    enum Action {NONE, ALLOCATED, TOUCHED};
+    using handle_t       = cslibs_utility::synchronized::WrapAround<chunk_t>;
+    using const_handle_t = cslibs_utility::synchronized::WrapAround<const chunk_t>;
 
-    inline Chunk() :
-        action_(ALLOCATED)
+    inline Chunk()
     {
     }
 
@@ -62,22 +65,6 @@ public:
         return *this;
     }
 
-    inline void setTouched()
-    {
-        if(action_ != ALLOCATED)
-            action_ = TOUCHED;
-    }
-
-    inline void setNone()
-    {
-        action_ = NONE;
-    }
-
-    inline Action getAction() const
-    {
-        return action_;
-    }
-
     inline T const & at(const index_t &i) const
     {
         return data_ptr_[i[1] * size_ + i[0]];
@@ -102,18 +89,27 @@ public:
     {
     }
 
-    inline void lock() const
+    inline handle_t getHandle()
     {
-        data_mutex_.lock();
+        return handle_t(this, &data_mutex_);
     }
 
-    inline void unlock() const
+    inline const_handle_t getHandle() const
     {
-        data_mutex_.unlock();
+        return const_handle_t(this, &data_mutex_);
+    }
+
+    inline int size() const
+    {
+        return size_;
+    }
+
+    std::vector<T> const & getData() const
+    {
+        return data_;
     }
 
 private:
-    Action              action_;
     int                 size_;
     std::vector<T>      data_;
     T                  *data_ptr_;

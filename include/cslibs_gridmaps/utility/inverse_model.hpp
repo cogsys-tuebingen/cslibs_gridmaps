@@ -51,12 +51,12 @@ public:
         return l_occupied_;
     }
 
-    inline double updateFree(const double l_rec)
+    inline double updateFree(const double l_rec) const
     {
         return l_free_ + l_rec - l_prior_;
     }
 
-    inline double updateOccupied(const double l_rec)
+    inline double updateOccupied(const double l_rec) const
     {
         return l_occupied_ + l_rec - l_prior_;
     }

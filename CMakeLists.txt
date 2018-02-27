@@ -14,14 +14,16 @@ endif()
 find_package(catkin REQUIRED COMPONENTS
   cslibs_indexed_storage
   cslibs_math_2d
+  cslibs_utility
 )
 
 catkin_package(
     INCLUDE_DIRS    include
-    CATKIN_DEPENDS  cslibs_math_2d cslibs_indexed_storage
+    CATKIN_DEPENDS  cslibs_math_2d cslibs_indexed_storage cslibs_utility
     CFG_EXTRAS      cslibs_gridmaps_enable_c++11.cmake
                     cslibs_gridmaps_extras.cmake
                     cslibs_gridmaps_show_headers.cmake
+                    cslibs_gridmaps_add_unit_test_gtest.cmake
     LIBRARIES       ${PROJECT_NAME}_static_maps
                     ${PROJECT_NAME}_dynamic_maps
 )
@@ -94,6 +96,19 @@ if(${PROJECT_NAME}_BUILD_EXAMPLES)
         ${OpenCV_LIBRARIES}
     )
 endif()
+
+cslibs_gridmaps_add_unit_test_gtest(serialization
+    SRCS
+    src/dynamic_maps/probability_gridmap.cpp
+    src/static_maps/binary_gridmap.cpp
+    src/static_maps/distance_gridmap.cpp
+    src/static_maps/likelihood_field_gridmap.cpp
+    src/static_maps/probability_gridmap.cpp
+    test/serialization.cpp
+)
+target_link_libraries(serialization
+    yaml-cpp
+)
 
 install(DIRECTORY include/${PROJECT_NAME}/
         DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})

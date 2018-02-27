@@ -18,11 +18,6 @@ DistanceGridmap::DistanceGridmap(const pose_t &origin,
 {
 }
 
-double DistanceGridmap::getMaximumDistance() const
-{
-    return maximum_distance_;
-}
-
 double DistanceGridmap::at(const cslibs_math_2d::Point2d &point) const
 {
     index_t i;
@@ -30,6 +25,11 @@ double DistanceGridmap::at(const cslibs_math_2d::Point2d &point) const
     if(invalid(i))
         return maximum_distance_;
     return Gridmap<double>::at(i[0], i[1]);
+}
+
+double DistanceGridmap::getMaximumDistance() const
+{
+    return maximum_distance_;
 }
 }
 }

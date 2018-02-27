@@ -85,7 +85,6 @@ public:
     {
     }
 
-
     virtual ~Gridmap()
     {
     }
@@ -203,6 +202,17 @@ public:
         return data_;
     }
 
+    inline bool toIndex(const cslibs_math_2d::Point2d &p_w,
+                        index_t &i) const
+    {
+        const cslibs_math_2d::Point2d p_m = m_T_w_ * p_w;
+
+        i[0] = static_cast<int>(std::floor(p_m(0) * resolution_inv_));
+        i[1] = static_cast<int>(std::floor(p_m(1) * resolution_inv_));
+
+        return (i[0] >= 0 && i[0] <= max_index_[0]) &&
+               (i[1] >= 0 && i[1] <= max_index_[1]);
+    }
 
 protected:
     const double                            resolution_;
@@ -224,18 +234,6 @@ protected:
                _i[1] > max_index_[1];
     }
 
-    inline bool toIndex(const cslibs_math_2d::Point2d &p_w,
-                        index_t &i) const
-    {
-        const cslibs_math_2d::Point2d p_m = m_T_w_ * p_w;
-
-        i[0] = static_cast<int>(p_m(0) * resolution_inv_ + 0.5);
-        i[1] = static_cast<int>(p_m(1) * resolution_inv_ + 0.5);
-
-        return (i[0] >= 0 && i[0] <= max_index_[0]) ||
-               (i[1] >= 0 && i[1] <= max_index_[1]);
-    }
-
     inline void fromIndex(const index_t &i,
                           cslibs_math_2d::Point2d &p_w) const
     {
@@ -249,9 +247,7 @@ protected:
         p_w = w_T_m_ * cslibs_math_2d::Point2d(it.x() * resolution_,
                                                it.y() * resolution_);
     }
-
-    };
-
+};
 }
 }
 #endif /* CSLIBS_GRIDMAPS_STATIC_GRIDMAP_HPP */

@@ -13,11 +13,11 @@ public:
     enum state_t {FREE = 0, OCCUPIED = 1};
 
 
-    BinaryGridmap(const pose_t &origin,
-                  const double resolution,
-                  const std::size_t height,
-                  const std::size_t width,
-                  const state_t default_value = FREE);
+    explicit BinaryGridmap(const pose_t &origin,
+                           const double resolution,
+                           const std::size_t height,
+                           const std::size_t width,
+                           const state_t default_value = FREE);
 
     BinaryGridmap(const BinaryGridmap &other) = default;
 
