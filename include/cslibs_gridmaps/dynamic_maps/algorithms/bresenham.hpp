@@ -3,7 +3,8 @@
 
 #include <array>
 
-#include <cslibs_gridmaps/utility/delegate.hpp>
+//#include <cslibs_gridmaps/utility/delegate.hpp>
+#include <cslibs_utility/common/delegate.hpp>
 #include <cslibs_gridmaps/dynamic_maps/chunk.hpp>
 
 #include <cslibs_math/common/div.hpp>
@@ -22,7 +23,7 @@ public:
     using Ptr           = std::shared_ptr<Bresenham>;
     using index_t       = std::array<int, 2>;
     using chunk_t       = dynamic_maps::Chunk<T>;
-    using get_chunk_t   = delegate<typename chunk_t::handle_t(const index_t&)>;
+    using get_chunk_t   = cslibs_utility::common::delegate<typename chunk_t::handle_t(const index_t&)>;
 
     inline explicit Bresenham(const index_t     &start,
                               const index_t     &end,
