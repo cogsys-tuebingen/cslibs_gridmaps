@@ -3,7 +3,6 @@
 
 #include <array>
 
-//#include <cslibs_gridmaps/utility/delegate.hpp>
 #include <cslibs_utility/common/delegate.hpp>
 #include <cslibs_gridmaps/dynamic_maps/chunk.hpp>
 
