@@ -19,6 +19,8 @@
 #include <cslibs_indexed_storage/storage.hpp>
 #include <cslibs_indexed_storage/backend/kdtree/kdtree.hpp>
 
+#include <cslibs_utility/common/delegate.hpp>
+
 namespace cis = cslibs_indexed_storage;
 
 namespace cslibs_gridmaps {
@@ -37,7 +39,7 @@ public:
     using storage_t             = cis::Storage<chunk_t, index_t, cis::backend::kdtree::KDTree>;
     using line_iterator_t       = algorithms::Bresenham<T>;
     using const_line_iterator_t = algorithms::Bresenham<T const>;
-    using get_chunk_t           = delegate<typename chunk_t::handle_t(const index_t &)>;
+    using get_chunk_t           = cslibs_utility::common::delegate<typename chunk_t::handle_t(const index_t &)>;
 
     Gridmap(const pose_t        &origin,
             const double         resolution,
