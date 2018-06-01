@@ -120,7 +120,7 @@ public:
         const index_t chunk_index       = toChunkIndex(index);
         const index_t local_chunk_index = toLocalChunkIndex(index);
 
-        const typename chunk_t::handle_t chunk = getChunk(chunk_index);
+        const typename chunk_t::const_handle_t chunk = getChunk(chunk_index);
         return chunk.empty() ? default_value_ : chunk->at(local_chunk_index);
     }
 
@@ -137,16 +137,12 @@ public:
     inline T get(const cslibs_math_2d::Point2d &point) const
     {
         lock_t l(storage_mutex_);
-        const index_t index                    = toIndex(point);
-        const index_t chunk_index              = toChunkIndex(index);
-        const index_t local_chunk_index        = toLocalChunkIndex(index);
-        const typename chunk_t::handle_t chunk = getChunk(chunk_index);
-        auto  get = [chunk, &local_chunk_index](){
-            double v = chunk->at(local_chunk_index);
-            return v;
-        };
+        const index_t index             = toIndex(point);
+        const index_t chunk_index       = toChunkIndex(index);
+        const index_t local_chunk_index = toLocalChunkIndex(index);
 
-        return chunk.empty() ? default_value_ : get();
+        const typename chunk_t::const_handle_t chunk = getChunk(chunk_index);
+        return chunk.empty() ? default_value_ : chunk->at(local_chunk_index);
     }
 
     inline line_iterator_t getLineIterator(const index_t &start_index,
