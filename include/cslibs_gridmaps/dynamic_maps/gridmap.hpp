@@ -81,28 +81,45 @@ public:
     {
     }
 
+    /**
+     * @brief Get minimum in map coordinates.
+     * @return the minimum
+     */
     inline cslibs_math_2d::Point2d getMin() const
     {
         lock_t l(storage_mutex_);
-        return fromIndex({0,0});
+        return cslibs_math_2d::Point2d(min_chunk_index_[0] * chunk_size_ * resolution_,
+                                       min_chunk_index_[1] * chunk_size_ * resolution_);
+
     }
 
+    /**
+     * @brief Get maximum in map coordinates.
+     * @return the maximum
+     */
     inline cslibs_math_2d::Point2d getMax() const
     {
         lock_t l(storage_mutex_);
-        return fromIndex({static_cast<int>(width_),
-                          static_cast<int>(height_)});
+        return cslibs_math_2d::Point2d((max_chunk_index_[0] + 1) * chunk_size_ * resolution_,
+                                       (max_chunk_index_[1] + 1) * chunk_size_ * resolution_);
     }
 
+    /**
+     * @brief Get the current origin of the map.
+     * @return the origin
+     */
     inline cslibs_math_2d::Pose2d getOrigin() const
     {
         lock_t l(storage_mutex_);
         cslibs_math_2d::Transform2d origin = w_T_m_;
-        origin.tx() = min_index_[0] * resolution_;
-        origin.ty() = min_index_[1] * resolution_;
+        origin.translation() = getMin();
         return origin;
     }
 
+    /**
+     * @brief Get the initial origin of the map.
+     * @return  the intial origin
+     */
     inline cslibs_math_2d::Pose2d getInitialOrigin() const
     {
         return w_T_m_;
@@ -263,6 +280,13 @@ public:
         return default_value_;
     }
 
+    inline virtual bool validate(const cslibs_math_2d::Pose2d &p_w) const
+    {
+      index_t i = toChunkIndex(toIndex(p_w.translation()));
+      return i[0] >= min_chunk_index_[0] && i[0] <= max_chunk_index_[0] &&
+             i[1] >= min_chunk_index_[1] && i[1] <= max_chunk_index_[1];
+    }
+
 
 protected:
     const double                      resolution_;
@@ -309,13 +333,6 @@ protected:
         return {{static_cast<int>(std::floor(p_m(0) * resolution_inv_)),
                  static_cast<int>(std::floor(p_m(1) * resolution_inv_))}};
     }
-
-    inline cslibs_math_2d::Point2d fromIndex(const index_t &i) const
-    {
-        return w_T_m_ * cslibs_math_2d::Point2d((i[0] + min_index_[0])  * resolution_,
-                                                (i[1] + min_index_[0])  * resolution_);
-    }
-
 };
 }
 }

@@ -89,20 +89,28 @@ public:
     {
     }
 
+    /**
+     * @brief Get the minimum in map coordinates.
+     * @return the minimum
+     */
     virtual inline cslibs_math_2d::Point2d getMin() const
     {
-        cslibs_math_2d::Point2d p;
-        fromIndex({0,0},p);
-        return p;
+        return cslibs_math_2d::Point2d();
     }
 
+    /**
+     * @brief Get the maximum in map coordinates.
+     * @return the maximum
+     */
     virtual inline cslibs_math_2d::Point2d getMax() const
     {
-        cslibs_math_2d::Point2d p;
-        fromIndex({static_cast<int>(width_)-1, static_cast<int>(height_)-1},p);
-        return p;
+        return cslibs_math_2d::Point2d(width_ *resolution_, height_ * resolution_);
     }
 
+    /**
+     * @brief Get the origin
+     * @return the origin
+     */
     virtual inline cslibs_math_2d::Pose2d getOrigin() const
     {
         return w_T_m_;
@@ -212,6 +220,16 @@ public:
 
         return (i[0] >= 0 && i[0] <= max_index_[0]) &&
                (i[1] >= 0 && i[1] <= max_index_[1]);
+    }
+
+    inline virtual bool validate(const cslibs_math_2d::Pose2d &p_w) const
+    {
+      const cslibs_math_2d::Point2d p_m = m_T_w_ * p_w.translation();
+      index_t i = {{static_cast<int>(std::floor(p_m(0) * resolution_inv_)),
+                    static_cast<int>(std::floor(p_m(1) * resolution_inv_))}};
+
+      return (i[0] >= 0 && i[0] <= max_index_[0]) &&
+             (i[1] >= 0 && i[1] <= max_index_[1]);
     }
 
 protected:
