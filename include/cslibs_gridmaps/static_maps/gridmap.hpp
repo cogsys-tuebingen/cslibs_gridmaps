@@ -18,6 +18,10 @@ template<typename T>
 class Gridmap
 {
 public:
+
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    using allocator_t = Eigen::aligned_allocator<Gridmap>;
+
     using Ptr                    = std::shared_ptr<Gridmap<T>>;
     using const_line_iterator_t  = algorithms::Bresenham<T const>;
     using index_t                = std::array<int, 2>;

@@ -8,6 +8,8 @@ namespace static_maps {
 class DistanceGridmap : public Gridmap<double>
 {
 public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    using allocator_t = Eigen::aligned_allocator<DistanceGridmap>;
     using Ptr = std::shared_ptr<DistanceGridmap>;
 
     explicit DistanceGridmap(const pose_t &origin,
