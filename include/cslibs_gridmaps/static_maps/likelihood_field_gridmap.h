@@ -8,6 +8,8 @@ namespace static_maps {
 class LikelihoodFieldGridmap : public Gridmap<double>
 {
 public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    using allocator_t = Eigen::aligned_allocator<LikelihoodFieldGridmap>;
     using Ptr = std::shared_ptr<LikelihoodFieldGridmap>;
 
     explicit LikelihoodFieldGridmap(const pose_t &origin,

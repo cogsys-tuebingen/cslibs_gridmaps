@@ -8,6 +8,9 @@ namespace static_maps {
 class BinaryGridmap : public Gridmap<int>
 {
 public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    using allocator_t = Eigen::aligned_allocator<BinaryGridmap>;
+
     using Ptr = std::shared_ptr<BinaryGridmap>;
 
     enum state_t {FREE = 0, OCCUPIED = 1};

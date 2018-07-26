@@ -29,6 +29,9 @@ template<typename T>
 class Gridmap
 {
 public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    using allocator_t = Eigen::aligned_allocator<Gridmap>;
+
     using Ptr                   = std::shared_ptr<Gridmap<T>>;
     using gridmap_t             = Gridmap<T>;
     using pose_t                = cslibs_math_2d::Pose2d;
