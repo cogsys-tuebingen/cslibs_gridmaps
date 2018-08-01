@@ -19,30 +19,27 @@ double BinaryGridmap::getRange(const cslibs_math_2d::Point2d &from,
                                cslibs_math_2d::Point2d &to) const
 {
     const_line_iterator_t it = getConstLineIterator(from, to);
-    while(it.iterate()) {
-        if(*it)
-            break;
+    while (it.iterate()) {
+        if (*it)
+            return std::sqrt(static_cast<double>(it.traversed2())) * resolution_;
     }
-    if(it.invalid())
-        return -1.0;
 
-    fromIndex({{it.x(), it.y()}}, to);
-    return distance(from, to);
+    if (*it || it.invalid())
+        return std::sqrt(static_cast<double>(it.traversed2())) * resolution_;
+    return std::numeric_limits<double>::max();
 }
 
 double BinaryGridmap::getRange2(const cslibs_math_2d::Point2d &from,
                                 cslibs_math_2d::Point2d &to) const
 {
     const_line_iterator_t it = getConstLineIterator(from, to);
-    while(it.iterate()) {
-        if(*it)
-            break;
+    while (it.iterate()) {
+        if (*it)
+            return static_cast<double>(it.traversed2()) * resolution_ * resolution_;
     }
-    if(it.invalid())
-        return -1.0;
-
-    fromIndex({{it.x(), it.y()}}, to);
-    return  distance2(from, to);
+    if (it.invalid())
+        return static_cast<double>(it.traversed2()) * resolution_ * resolution_;
+    return std::numeric_limits<double>::max();
 }
 
 bool BinaryGridmap::validate(const cslibs_math_2d::Pose2d &p) const

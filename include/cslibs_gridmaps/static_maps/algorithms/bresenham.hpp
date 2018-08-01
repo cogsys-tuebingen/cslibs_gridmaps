@@ -37,7 +37,6 @@ public:
     {
         ++bresenham_;
         return *this;
-
     }
 
     inline bool iterate()
@@ -57,6 +56,16 @@ public:
                 bresenham_.y() <= -1 ||
                 bresenham_.x() >= size_[0] ||
                 bresenham_.y() >= size_[1];
+    }
+
+    inline int distance2() const
+    {
+        return bresenham_.distance2();
+    }
+
+    inline int traversed2() const
+    {
+        return bresenham_.traversed2();
     }
 
     inline T operator *() const
