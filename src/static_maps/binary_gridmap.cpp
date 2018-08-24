@@ -26,7 +26,7 @@ double BinaryGridmap::getRange(const cslibs_math_2d::Point2d &from,
         }
     }
 
-    if (*it || it.invalid()) {
+    if (it.invalid() || *it) {
         fromIndex({{it.x(), it.y()}}, to);
         return distance(from, to);
     }
@@ -44,7 +44,7 @@ double BinaryGridmap::getRange2(const cslibs_math_2d::Point2d &from,
         }
     }
 
-    if (*it || it.invalid()) {
+    if (it.invalid() || *it) {
         fromIndex({{it.x(), it.y()}}, to);
         return distance2(from, to);
     }
@@ -54,7 +54,7 @@ double BinaryGridmap::getRange2(const cslibs_math_2d::Point2d &from,
 bool BinaryGridmap::validate(const cslibs_math_2d::Pose2d &p) const
 {
     index_t index;
-    if(toIndex(p.translation(), index))
+    if (toIndex(p.translation(), index))
         return at(static_cast<std::size_t>(index[0]), static_cast<std::size_t>(index[1])) == 0;
     return false;
 }
