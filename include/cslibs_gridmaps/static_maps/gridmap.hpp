@@ -219,8 +219,8 @@ public:
     {
         const cslibs_math_2d::Point2d p_m = m_T_w_ * p_w;
 
-        i[0] = static_cast<int>(std::floor(p_m(0) * resolution_inv_ + 0.5));
-        i[1] = static_cast<int>(std::floor(p_m(1) * resolution_inv_ + 0.5));
+        i[0] = static_cast<int>(std::floor(p_m(0) * resolution_inv_));
+        i[1] = static_cast<int>(std::floor(p_m(1) * resolution_inv_));
 
         return (i[0] >= 0 && i[0] <= max_index_[0]) &&
                (i[1] >= 0 && i[1] <= max_index_[1]);
@@ -237,8 +237,8 @@ public:
     }
 
 protected:
-    const double                            resolution_;
-    const double                            resolution_inv_;
+    const double                            resolution_;        /// m / cell
+    const double                            resolution_inv_;    /// cell / m
     const std::size_t                       height_;
     const std::size_t                       width_;
     const index_t                           max_index_;
