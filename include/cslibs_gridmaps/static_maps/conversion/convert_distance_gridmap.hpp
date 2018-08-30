@@ -18,6 +18,11 @@ inline void from(const nav_msgs::OccupancyGrid &src,
     assert(threshold <= 1.0);
     assert(threshold >= 0.0);
 
+    std::vector<int8_t> data = src.data;
+//    for(int8_t &i : data) {
+//        i = i == -1 ? 100 : i;
+//    }
+
     cslibs_math_2d::Pose2d origin(src.info.origin.position.x,
                                      src.info.origin.position.y,
                                      tf::getYaw(src.info.origin.orientation));
@@ -32,13 +37,9 @@ inline void from(const nav_msgs::OccupancyGrid &src,
     algorithms::DistanceTransform<int8_t> distance_transform(src.info.resolution,
                                                              maximum_distance,
                                                              static_cast<int8_t>(threshold * 100));
-    distance_transform.apply(src.data,
+    distance_transform.apply(data,
                              dst->getWidth(),
                              dst->getData());
-
-//    for(std::size_t i = 0 ; i < src.data.size() ; ++i) {
-//      dst->at(i) = src.data.at(i) == -1 ? maximum_distance : dst->at(i);
-//    }
 }
 
 inline void from(const DistanceGridmap::Ptr &src,
