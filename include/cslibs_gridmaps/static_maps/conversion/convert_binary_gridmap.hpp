@@ -27,8 +27,8 @@ inline void from(const nav_msgs::OccupancyGrid &src,
 
     const int8_t  t = threshold * 100;
     std::transform(src.data.begin(), src.data.end(),
-                  dst->getData().begin(),
-                  [t](const int8_t p){return p >= t || p == -1 ? BinaryGridmap::OCCUPIED : BinaryGridmap::FREE;});
+                   dst->getData().begin(),
+                   [t](const int8_t p){return p >= t || p == -1 ? BinaryGridmap::OCCUPIED : BinaryGridmap::FREE;});
 }
 
 inline void from(const nav_msgs::OccupancyGrid::ConstPtr &src,

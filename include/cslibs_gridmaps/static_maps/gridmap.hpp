@@ -259,15 +259,15 @@ protected:
     inline void fromIndex(const index_t &i,
                           cslibs_math_2d::Point2d &p_w) const
     {
-        p_w = w_T_m_ * cslibs_math_2d::Point2d(i[0] * resolution_,
-                                               i[1] * resolution_);
+        p_w = w_T_m_ * cslibs_math_2d::Point2d(static_cast<double>(i[0]) * resolution_,
+                                               static_cast<double>(i[1]) * resolution_);
     }
 
     inline void fromIndex(const const_line_iterator_t &it,
                           cslibs_math_2d::Point2d &p_w) const
     {
-        p_w = w_T_m_ * cslibs_math_2d::Point2d(it.x() * resolution_,
-                                               it.y() * resolution_);
+        p_w = w_T_m_ * cslibs_math_2d::Point2d(static_cast<double>(it.x()) * resolution_,
+                                               static_cast<double>(it.y()) * resolution_);
     }
 };
 }
