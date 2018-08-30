@@ -147,7 +147,7 @@ public:
         for(std::size_t y = 0ul ; y < src_height_ ; ++y) {
             for(std::size_t x = 0ul ; x < src_width_ ; ++x) {
                 const std::size_t pos = y * src_width_ + x;
-                if(src[pos] >= occupancy_threshold_ || src[pos] == -1) {
+                if(src[pos] >= occupancy_threshold_/* || src[pos] == -1*/) {
                     queue_.emplace(cell_data_t(x,y,dst.data() + pos));
                     dst[pos] = 0.0;
                     marked_[pos] = 1;
