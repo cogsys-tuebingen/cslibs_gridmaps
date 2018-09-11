@@ -5,10 +5,12 @@
 
 namespace cslibs_gridmaps {
 namespace static_maps {
-class ProbabilityGridmap : public Gridmap<double>
+class EIGEN_ALIGN16 ProbabilityGridmap : public Gridmap<double>
 {
 public:
+
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
     using allocator_t = Eigen::aligned_allocator<ProbabilityGridmap>;
 
     using Ptr = std::shared_ptr<ProbabilityGridmap>;

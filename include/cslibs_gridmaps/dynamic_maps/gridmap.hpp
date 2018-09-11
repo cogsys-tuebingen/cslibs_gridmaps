@@ -26,7 +26,7 @@ namespace cis = cslibs_indexed_storage;
 namespace cslibs_gridmaps {
 namespace dynamic_maps {
 template<typename T>
-class Gridmap
+class EIGEN_ALIGN16 Gridmap
 {
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW

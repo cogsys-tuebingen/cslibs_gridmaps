@@ -15,7 +15,7 @@
 namespace cslibs_gridmaps {
 namespace static_maps {
 template<typename T>
-class Gridmap
+class EIGEN_ALIGN16 Gridmap
 {
 public:
 

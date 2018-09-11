@@ -5,7 +5,7 @@
 
 namespace cslibs_gridmaps {
 namespace static_maps {
-class BinaryGridmap : public Gridmap<int>
+class EIGEN_ALIGN16 BinaryGridmap : public Gridmap<int>
 {
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW

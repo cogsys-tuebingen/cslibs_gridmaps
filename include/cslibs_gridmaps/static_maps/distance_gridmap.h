@@ -5,10 +5,12 @@
 
 namespace cslibs_gridmaps {
 namespace static_maps {
-class DistanceGridmap : public Gridmap<double>
+class EIGEN_ALIGN16 DistanceGridmap : public Gridmap<double>
 {
 public:
+
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
     using allocator_t = Eigen::aligned_allocator<DistanceGridmap>;
     using Ptr = std::shared_ptr<DistanceGridmap>;
 
