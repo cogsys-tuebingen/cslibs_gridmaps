@@ -21,7 +21,9 @@ public:
                              const std::size_t width,
                              const double default_value = 2.0);
 
-    DistanceGridmap(const DistanceGridmap &other) = default;
+    DistanceGridmap(const DistanceGridmap &other);
+    DistanceGridmap(DistanceGridmap &&other);
+
 
     using Gridmap<double>::at;
     double at(const cslibs_math_2d::Point2d &point) const override;

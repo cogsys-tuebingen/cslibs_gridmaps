@@ -21,7 +21,8 @@ public:
                                 const std::size_t width,
                                 const double default_value = 0.5);
 
-    ProbabilityGridmap(const ProbabilityGridmap &other) = default;
+    ProbabilityGridmap(const ProbabilityGridmap &other);
+    ProbabilityGridmap(ProbabilityGridmap &&other);
 };
 }
 }
