@@ -113,7 +113,6 @@ public:
      */
     inline cslibs_math_2d::Pose2d getOrigin() const
     {
-        lock_t l(storage_mutex_);
         cslibs_math_2d::Transform2d origin = w_T_m_;
         origin.translation() = getMin();
         return origin;
@@ -130,16 +129,20 @@ public:
 
     inline T get(const std::size_t idx, const std::size_t idy) const
     {
-        lock_t l(storage_mutex_);
-        if(idx >= width_ || idy >= height_) {
-            throw std::runtime_error("[GridMap] : Invalid Index!");
-        }
+        index_t index;
+        {
+            lock_t l(storage_mutex_);
+            if (idx >= width_ || idy >= height_) {
+                throw std::runtime_error("[GridMap] : Invalid Index!");
+            }
 
-        const index_t index             = {static_cast<int>(idx) + min_index_[0],
-                                           static_cast<int>(idy) + min_index_[1]};
+            index = {static_cast<int>(idx) + min_index_[0],
+                     static_cast<int>(idy) + min_index_[1]};
+        }
         const index_t chunk_index       = toChunkIndex(index);
         const index_t local_chunk_index = toLocalChunkIndex(index);
 
+        lock_t l(storage_mutex_);
         const typename chunk_t::const_handle_t chunk = getChunk(chunk_index);
         return chunk.empty() ? default_value_ : chunk->at(local_chunk_index);
     }
@@ -156,11 +159,11 @@ public:
 
     inline T get(const cslibs_math_2d::Point2d &point) const
     {
-        lock_t l(storage_mutex_);
         const index_t index             = toIndex(point);
         const index_t chunk_index       = toChunkIndex(index);
         const index_t local_chunk_index = toLocalChunkIndex(index);
 
+        lock_t l(storage_mutex_);
         const typename chunk_t::const_handle_t chunk = getChunk(chunk_index);
         return chunk.empty() ? default_value_ : chunk->at(local_chunk_index);
     }
@@ -222,7 +225,6 @@ public:
         lock_t l(storage_mutex_);
         return max_chunk_index_;
     }
-
 
     inline typename chunk_t::const_handle_t const getChunk(const index_t &chunk_index) const
     {
