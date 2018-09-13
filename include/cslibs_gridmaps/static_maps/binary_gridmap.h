@@ -22,7 +22,8 @@ public:
                            const std::size_t width,
                            const state_t default_value = FREE);
 
-    BinaryGridmap(const BinaryGridmap &other) = default;
+    BinaryGridmap(const BinaryGridmap &other);
+    BinaryGridmap(BinaryGridmap &&other);
 
     double getRange(const cslibs_math_2d::Point2d &from,
                     cslibs_math_2d::Point2d &to) const;

@@ -15,6 +15,17 @@ BinaryGridmap::BinaryGridmap(const pose_t &origin,
 {
 }
 
+BinaryGridmap::BinaryGridmap(const BinaryGridmap &other) :
+    Gridmap<int>(static_cast<const Gridmap<int>&>(other))
+{
+}
+
+BinaryGridmap::BinaryGridmap(BinaryGridmap &&other) :
+    Gridmap<int>(static_cast<Gridmap<int>&&>(other))
+{
+}
+
+
 double BinaryGridmap::getRange(const cslibs_math_2d::Point2d &from,
                                cslibs_math_2d::Point2d &to) const
 {

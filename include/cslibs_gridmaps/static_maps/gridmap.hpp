@@ -20,6 +20,7 @@ class EIGEN_ALIGN16 Gridmap
 public:
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
     using allocator_t = Eigen::aligned_allocator<Gridmap>;
 
     using Ptr                    = std::shared_ptr<Gridmap<T>>;
@@ -27,7 +28,7 @@ public:
     using index_t                = std::array<int, 2>;
     using pose_t                 = cslibs_math_2d::Pose2d;
 
-    Gridmap(const pose_t &origin,
+    inline Gridmap(const pose_t &origin,
             const double resolution,
             const std::size_t height,
             const std::size_t width,
@@ -44,7 +45,7 @@ public:
     {
     }
 
-    Gridmap(const double origin_x,
+   inline Gridmap(const double origin_x,
             const double origin_y,
             const double origin_phi,
             const double resolution,
@@ -63,7 +64,7 @@ public:
     {
     }
 
-    Gridmap(const Gridmap &other) :
+    inline Gridmap(const Gridmap &other) :
         resolution_(other.resolution_),
         resolution_inv_(other.resolution_inv_),
         height_(other.height_),
@@ -76,7 +77,7 @@ public:
     {
     }
 
-    Gridmap(Gridmap &&other) :
+    inline Gridmap(Gridmap &&other) :
         resolution_(other.resolution_),
         resolution_inv_(other.resolution_inv_),
         height_(other.height_),

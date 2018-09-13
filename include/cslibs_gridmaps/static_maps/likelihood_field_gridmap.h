@@ -22,7 +22,9 @@ public:
                                     const double sigma_hit,
                                     const double default_value = 0.0);
 
-    LikelihoodFieldGridmap(const LikelihoodFieldGridmap &other) = default;
+    LikelihoodFieldGridmap(const LikelihoodFieldGridmap &other);
+    LikelihoodFieldGridmap(LikelihoodFieldGridmap &&other);
+
 
     using Gridmap<double>::at;
     double at(const cslibs_math_2d::Point2d &point) const override;

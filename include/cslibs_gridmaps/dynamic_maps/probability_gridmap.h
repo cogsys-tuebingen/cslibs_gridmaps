@@ -17,6 +17,10 @@ public:
                        const double resolution,
                        const double chunk_resolution,
                        const double default_value = 0.5);
+
+    ProbabilityGridmap(const ProbabilityGridmap &other);
+    ProbabilityGridmap(ProbabilityGridmap &&other);
+
 };
 }
 }

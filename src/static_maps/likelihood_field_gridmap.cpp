@@ -20,6 +20,21 @@ LikelihoodFieldGridmap::LikelihoodFieldGridmap(const pose_t &origin,
 {
 }
 
+LikelihoodFieldGridmap::LikelihoodFieldGridmap(const LikelihoodFieldGridmap &other) :
+    Gridmap<double>(static_cast<const Gridmap<double>&>(other)),
+    sigma_hit_(other.sigma_hit_),
+    maximum_distance_(other.maximum_distance_)
+{
+}
+
+
+LikelihoodFieldGridmap::LikelihoodFieldGridmap(LikelihoodFieldGridmap &&other) :
+    Gridmap<double>(static_cast<Gridmap<double>&&>(other)),
+    sigma_hit_(other.sigma_hit_),
+    maximum_distance_(other.maximum_distance_)
+{
+}
+
 double LikelihoodFieldGridmap::at(const cslibs_math_2d::Point2d &point) const
 {
     index_t i;

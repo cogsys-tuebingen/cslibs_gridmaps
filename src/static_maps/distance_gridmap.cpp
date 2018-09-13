@@ -18,6 +18,18 @@ DistanceGridmap::DistanceGridmap(const pose_t &origin,
 {
 }
 
+DistanceGridmap::DistanceGridmap(const DistanceGridmap &other) :
+    Gridmap<double>(static_cast<const Gridmap<double>&>(other)),
+    maximum_distance_(other.maximum_distance_)
+{
+}
+
+DistanceGridmap::DistanceGridmap(DistanceGridmap &&other) :
+    Gridmap<double>(static_cast<Gridmap<double>&&>(other)),
+    maximum_distance_(other.maximum_distance_)
+{
+}
+
 double DistanceGridmap::at(const cslibs_math_2d::Point2d &point) const
 {
     index_t i;
