@@ -276,7 +276,7 @@ public:
     {
         lock_t l(storage_mutex_);
         chunk_t *chunk = storage_->get(chunk_index);
-        if(chunk == nullptr) {
+        if (chunk == nullptr) {
             chunk = &(storage_->insert(chunk_index, chunk_t(chunk_size_, default_value_)));
         }
         updateChunkIndices(chunk_index);
@@ -312,7 +312,7 @@ public:
                     (max_chunk_index_[1] - min_chunk_index_[1] + 1) * chunk_size_ - 1};
     }
 
-    inline double getDefaultValue() const
+    inline T getDefaultValue() const
     {
         return default_value_;
     }
@@ -321,7 +321,7 @@ public:
     {
         index_t i = toChunkIndex(toIndex(p_w.translation()));
         return i[0] >= min_chunk_index_[0] && i[0] <= max_chunk_index_[0] &&
-                i[1] >= min_chunk_index_[1] && i[1] <= max_chunk_index_[1];
+               i[1] >= min_chunk_index_[1] && i[1] <= max_chunk_index_[1];
     }
 
 

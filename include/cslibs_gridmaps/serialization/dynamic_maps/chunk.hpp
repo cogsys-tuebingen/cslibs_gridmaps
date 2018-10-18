@@ -45,7 +45,7 @@ struct convert<cslibs_gridmaps::dynamic_maps::Chunk<T>>
             return false;
 
         const int size = n[0].as<int>();
-        rhs = cslibs_gridmaps::dynamic_maps::Chunk<T>(size, -1.0);
+        rhs = cslibs_gridmaps::dynamic_maps::Chunk<T>(size, T());
 
         std::vector<T> data = n[1].as<std::vector<T>>();
         if (data.size() != static_cast<std::size_t>(size * size))

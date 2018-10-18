@@ -3,6 +3,7 @@
 
 #include <cslibs_gridmaps/serialization/dynamic_maps/gridmap.hpp>
 #include <cslibs_gridmaps/dynamic_maps/distribution_heightmap.h>
+#include <cslibs_math/serialization/distribution.hpp>
 #include <yaml-cpp/yaml.h>
 
 namespace YAML {
@@ -23,7 +24,7 @@ struct convert<std::shared_ptr<cslibs_gridmaps::dynamic_maps::DistributionHeight
         const double resolution       = n[1].as<double>();
         const double chunk_resolution = resolution * (static_cast<double>(n[2].as<std::size_t>()) + 0.5);
         rhs.reset(new cslibs_gridmaps::dynamic_maps::DistributionHeightmap(
-                    n[0].as<cslibs_math_2d::Pose2d>(), resolution, chunk_resolution, n[3].as<double>()));
+                    n[0].as<cslibs_math_2d::Pose2d>(), resolution, chunk_resolution, n[3].as<distribution_t>()));
 
         for (std::size_t p = 4 ; p < n.size() ; ++ p) {
             cslibs_gridmaps::dynamic_maps::IndexedChunk<distribution_t, 2> ci =
