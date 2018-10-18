@@ -1,15 +1,15 @@
-#ifndef CSLIBS_GRIDMAPS_SERIALIZATION_DYNAMIC_MAPS_MIN_MAX_HEIGHTMAP_HPP
-#define CSLIBS_GRIDMAPS_SERIALIZATION_DYNAMIC_MAPS_MIN_MAX_HEIGHTMAP_HPP
+#ifndef CSLIBS_GRIDMAPS_SERIALIZATION_DYNAMIC_MAPS_MIN_HEIGHTMAP_HPP
+#define CSLIBS_GRIDMAPS_SERIALIZATION_DYNAMIC_MAPS_MIN_HEIGHTMAP_HPP
 
 #include <cslibs_gridmaps/serialization/dynamic_maps/gridmap.hpp>
-#include <cslibs_gridmaps/dynamic_maps/min_max_heightmap.h>
+#include <cslibs_gridmaps/dynamic_maps/min_heightmap.h>
 #include <yaml-cpp/yaml.h>
 
 namespace YAML {
 template <>
-struct convert<std::shared_ptr<cslibs_gridmaps::dynamic_maps::MinMaxHeightmap>>
+struct convert<std::shared_ptr<cslibs_gridmaps::dynamic_maps::MinHeightmap>>
 {
-    static Node encode(const typename cslibs_gridmaps::dynamic_maps::MinMaxHeightmap::Ptr &rhs)
+    static Node encode(const typename cslibs_gridmaps::dynamic_maps::MinHeightmap::Ptr &rhs)
     {
         Node n;
         if (!rhs)
@@ -37,14 +37,14 @@ struct convert<std::shared_ptr<cslibs_gridmaps::dynamic_maps::MinMaxHeightmap>>
         return n;
     }
 
-    static bool decode(const Node& n, typename cslibs_gridmaps::dynamic_maps::MinMaxHeightmap::Ptr &rhs)
+    static bool decode(const Node& n, typename cslibs_gridmaps::dynamic_maps::MinHeightmap::Ptr &rhs)
     {
         if (!n.IsSequence() || n.size() < 4)
             return false;
 
         const double resolution       = n[1].as<double>();
         const double chunk_resolution = resolution * (static_cast<double>(n[2].as<std::size_t>()) + 0.5);
-        rhs.reset(new cslibs_gridmaps::dynamic_maps::MinMaxHeightmap(
+        rhs.reset(new cslibs_gridmaps::dynamic_maps::MinHeightmap(
                     n[0].as<cslibs_math_2d::Pose2d>(), resolution, chunk_resolution, n[3].as<double>(), n[4].as<double>()));
 
         for (std::size_t p = 5 ; p < n.size() ; ++ p) {
@@ -58,4 +58,4 @@ struct convert<std::shared_ptr<cslibs_gridmaps::dynamic_maps::MinMaxHeightmap>>
 };
 }
 
-#endif // CSLIBS_GRIDMAPS_SERIALIZATION_DYNAMIC_MAPS_MIN_MAX_HEIGHTMAP_HPP
+#endif // CSLIBS_GRIDMAPS_SERIALIZATION_DYNAMIC_MAPS_MIN_HEIGHTMAP_HPP
