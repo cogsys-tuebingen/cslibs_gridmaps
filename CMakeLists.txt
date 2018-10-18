@@ -48,6 +48,7 @@ target_link_libraries(${PROJECT_NAME}_static_maps
 add_library(${PROJECT_NAME}_dynamic_maps SHARED
     src/dynamic_maps/probability_gridmap.cpp
     src/dynamic_maps/min_max_heightmap.cpp
+    src/dynamic_maps/distribution_heightmap.cpp
 )
 target_link_libraries(${PROJECT_NAME}_dynamic_maps
     ${catkin_LIBRARIES}

@@ -17,16 +17,20 @@ public:
     MinMaxHeightmap(const pose_t &origin,
                     const double resolution,
                     const double chunk_resolution,
+                    const double max_height,
                     const double default_value = std::numeric_limits<double>::infinity());
 
     MinMaxHeightmap(const MinMaxHeightmap &other);
     MinMaxHeightmap(MinMaxHeightmap &&other);
 
-    inline void insert(const point_t &sensor_xy, const double &sensor_z,
-                       const point_t &point_xy,  const double &point_z);
+    void insert(const point_t &sensor_xy, const double &sensor_z,
+                const point_t &point_xy,  const double &point_z);
+
+    double getMaxHeight();
 
 private:
     double resolution_2_;
+    double max_height_;
 };
 }
 }

@@ -125,7 +125,7 @@ public:
     {
         lock_t l(storage_mutex_);
         return cslibs_math_2d::Point2d(min_chunk_index_[0] * chunk_size_ * resolution_,
-                min_chunk_index_[1] * chunk_size_ * resolution_);
+                                       min_chunk_index_[1] * chunk_size_ * resolution_);
 
     }
 
@@ -137,7 +137,7 @@ public:
     {
         lock_t l(storage_mutex_);
         return cslibs_math_2d::Point2d((max_chunk_index_[0] + 1) * chunk_size_ * resolution_,
-                (max_chunk_index_[1] + 1) * chunk_size_ * resolution_);
+                                       (max_chunk_index_[1] + 1) * chunk_size_ * resolution_);
     }
 
     /**
@@ -175,7 +175,6 @@ public:
         const index_t chunk_index       = toChunkIndex(index);
         const index_t local_chunk_index = toLocalChunkIndex(index);
 
-        lock_t l(storage_mutex_);
         const typename chunk_t::const_handle_t chunk = getChunk(chunk_index);
         return chunk.empty() ? default_value_ : chunk->at(local_chunk_index);
     }
@@ -186,6 +185,7 @@ public:
         const index_t index              = toIndex(point);
         const index_t chunk_index        = toChunkIndex(index);
         const index_t local_chunk_index  = toLocalChunkIndex(index);
+
         typename chunk_t::handle_t chunk = getAllocateChunk(chunk_index);
         chunk->at(local_chunk_index)     = v;
     }
@@ -196,7 +196,6 @@ public:
         const index_t chunk_index       = toChunkIndex(index);
         const index_t local_chunk_index = toLocalChunkIndex(index);
 
-        lock_t l(storage_mutex_);
         const typename chunk_t::const_handle_t chunk = getChunk(chunk_index);
         return chunk.empty() ? default_value_ : chunk->at(local_chunk_index);
     }
@@ -217,11 +216,11 @@ public:
 
         const index_t start_index = toIndex(start);
         const index_t end_index   = toIndex(end);
-        return  line_iterator_t(start_index,
-                                end_index,
-                                chunk_size_,
-                                default_value_,
-                                get_chunk_t::template from<gridmap_t, &gridmap_t::getAllocateChunk>(this));
+        return line_iterator_t(start_index,
+                               end_index,
+                               chunk_size_,
+                               default_value_,
+                               get_chunk_t::template from<gridmap_t, &gridmap_t::getAllocateChunk>(this));
     }
 
     inline line_iterator_t getLineIterator(const index_t &start_index,
@@ -240,12 +239,12 @@ public:
 
         const index_t start_index = toIndex(start);
         const index_t end_index   = toIndex(end);
-        return  line_iterator_t(start_index, end_index,
-                                chunk_size_,
-                                default_value_,
-                                get_chunk_t::template from<gridmap_t, &gridmap_t::getAllocateChunk>(this));
+        return line_iterator_t(start_index,
+                               end_index,
+                               chunk_size_,
+                               default_value_,
+                               get_chunk_t::template from<gridmap_t, &gridmap_t::getAllocateChunk>(this));
     }
-
 
     inline index_t getMinChunkIndex() const
     {
@@ -355,13 +354,13 @@ protected:
     inline index_t toChunkIndex(const index_t &index) const
     {
         return {{cslibs_math::common::div(index[0], chunk_size_),
-                        cslibs_math::common::div(index[1], chunk_size_)}};
+                 cslibs_math::common::div(index[1], chunk_size_)}};
     }
 
     inline index_t toLocalChunkIndex(const index_t &index) const
     {
         return {{cslibs_math::common::mod(index[0], chunk_size_),
-                        cslibs_math::common::mod(index[1], chunk_size_)}};
+                 cslibs_math::common::mod(index[1], chunk_size_)}};
     }
 
     inline index_t toIndex(const cslibs_math_2d::Point2d &p_w) const
@@ -369,7 +368,7 @@ protected:
         /// offset and rounding correction!
         const cslibs_math_2d::Point2d p_m = m_T_w_ * p_w;
         return {{static_cast<int>(std::floor(p_m(0) * resolution_inv_)),
-                        static_cast<int>(std::floor(p_m(1) * resolution_inv_))}};
+                 static_cast<int>(std::floor(p_m(1) * resolution_inv_))}};
     }
 };
 }

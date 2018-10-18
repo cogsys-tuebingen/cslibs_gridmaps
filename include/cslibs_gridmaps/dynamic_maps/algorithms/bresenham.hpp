@@ -142,8 +142,6 @@ private:
         return local_bresenham_.x() <= -1 || local_bresenham_.x() >= chunk_size_ ||
                local_bresenham_.y() <= -1 || local_bresenham_.y() >= chunk_size_;
     }
-
-
 };
 }
 }
