@@ -17,12 +17,16 @@ DistributionHeightmap::DistributionHeightmap(const pose_t &origin,
 }
 
 DistributionHeightmap::DistributionHeightmap(const DistributionHeightmap &other) :
-    Gridmap<distribution_t>(static_cast<const Gridmap<distribution_t>&>(other))
+    Gridmap<distribution_t>(static_cast<const Gridmap<distribution_t>&>(other)),
+    resolution_2_(other.resolution_2_),
+    max_height_(other.max_height_)
 {
 }
 
 DistributionHeightmap::DistributionHeightmap(DistributionHeightmap &&other) :
-    Gridmap<distribution_t>(static_cast<Gridmap<distribution_t>&&>(other))
+    Gridmap<distribution_t>(static_cast<Gridmap<distribution_t>&&>(other)),
+    resolution_2_(other.resolution_2_),
+    max_height_(other.max_height_)
 {
 }
 

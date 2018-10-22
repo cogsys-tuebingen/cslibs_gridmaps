@@ -17,12 +17,16 @@ MinHeightmap::MinHeightmap(const pose_t &origin,
 }
 
 MinHeightmap::MinHeightmap(const MinHeightmap &other) :
-    Gridmap<double>(static_cast<const Gridmap<double>&>(other))
+    Gridmap<double>(static_cast<const Gridmap<double>&>(other)),
+    resolution_2_(other.resolution_2_),
+    max_height_(other.max_height_)
 {
 }
 
 MinHeightmap::MinHeightmap(MinHeightmap &&other) :
-    Gridmap<double>(static_cast<Gridmap<double>&&>(other))
+    Gridmap<double>(static_cast<Gridmap<double>&&>(other)),
+    resolution_2_(other.resolution_2_),
+    max_height_(other.max_height_)
 {
 }
 
