@@ -9,36 +9,39 @@
 namespace cslibs_gridmaps {
 namespace static_maps {
 namespace conversion {
+template <typename Tp>
 inline void from(const nav_msgs::OccupancyGrid &src,
-                 BinaryGridmap::Ptr            &dst,
+                 BinaryGridmap<Tp>::Ptr        &dst,
                  const double threshold = 1.0)
 {
     assert(threshold <= 1.0);
     assert(threshold >= 0.0);
 
-    cslibs_math_2d::Pose2d origin(src.info.origin.position.x,
-                                  src.info.origin.position.y,
-                                  tf::getYaw(src.info.origin.orientation));
+    cslibs_math_2d::Pose2d<Tp> origin(src.info.origin.position.x,
+                                      src.info.origin.position.y,
+                                      tf::getYaw(src.info.origin.orientation));
 
-    dst.reset(new BinaryGridmap(origin,
-                                src.info.resolution,
-                                src.info.height,
-                                src.info.width));
+    dst.reset(new BinaryGridmap<Tp>(origin,
+                                    src.info.resolution,
+                                    src.info.height,
+                                    src.info.width));
 
-    const int8_t  t = threshold * 100;
+    const int8_t t = threshold * 100;
     std::transform(src.data.begin(), src.data.end(),
                    dst->getData().begin(),
                    [t](const int8_t p){return p >= t || p == -1 ? BinaryGridmap::OCCUPIED : BinaryGridmap::FREE;});
 }
 
+template <typename Tp>
 inline void from(const nav_msgs::OccupancyGrid::ConstPtr &src,
-                 BinaryGridmap::Ptr                      &dst,
+                 BinaryGridmap<Tp>::Ptr                  &dst,
                  const double threshold = 1.0)
 {
     from(*src, dst, threshold);
 }
 
-inline void from(const BinaryGridmap::Ptr &src,
+template <typename Tp>
+inline void from(const BinaryGridmap<Tp>::Ptr &src,
                  nav_msgs::OccupancyGrid::Ptr &dst)
 {
     if (!src)
@@ -55,7 +58,7 @@ inline void from(const BinaryGridmap::Ptr &src,
     dst->data.resize(src->getData().size());
     std::transform(src->getData().begin(), src->getData().end(),
                    dst->data.begin(),
-                   [](const double p){return 100.0 * p;});
+                   [](const int p){return 100.0 * p;});
 }
 }
 }

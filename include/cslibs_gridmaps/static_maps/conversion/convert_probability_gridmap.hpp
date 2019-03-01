@@ -11,41 +11,44 @@
 namespace cslibs_gridmaps {
 namespace static_maps {
 namespace conversion {
-inline int8_t from(const double p)
+template <typename T>
+inline int8_t from(const T p)
 {
     return p != 0.5 ? static_cast<int8_t>(p * 100.0) : -1;
 }
 
-inline double from(const int8_t p)
+template <typename T>
+inline T from(const int8_t p)
 {
-    return p != -1 ? static_cast<double>(p) * 0.01 : 0.5;
+    return p != -1 ? static_cast<T>(p) * 0.01 : 0.5;
 }
 
-
+template <typename Tp, typename T>
 inline void from(const nav_msgs::OccupancyGrid &src,
-                 ProbabilityGridmap::Ptr &dst)
+                 ProbabilityGridmap<Tp, T>::Ptr &dst)
 {
-    cslibs_math_2d::Pose2d origin(src.info.origin.position.x,
-                                  src.info.origin.position.y,
-                                  tf::getYaw(src.info.origin.orientation));
+    cslibs_math_2d::Pose2d<Tp> origin(src.info.origin.position.x,
+                                      src.info.origin.position.y,
+                                      tf::getYaw(src.info.origin.orientation));
 
-    dst.reset(new ProbabilityGridmap(origin,
-                                     static_cast<double>(src.info.resolution),
-                                     src.info.height,
-                                     src.info.width));
+    dst.reset(new ProbabilityGridmap<Tp, T>(origin,
+                                            static_cast<double>(src.info.resolution),
+                                            src.info.height,
+                                            src.info.width));
     std::transform(src.data.begin(), src.data.end(),
                    dst->getData().begin(),
-                   [](const int8_t p){return from(p);});
+                   [](const int8_t p){return from<T>(p);});
 }
 
-
+template <typename Tp, typename T>
 inline void from(const nav_msgs::OccupancyGrid::ConstPtr &src,
-                 ProbabilityGridmap::Ptr &dst)
+                 ProbabilityGridmap<Tp, T>::Ptr &dst)
 {
    from(*src, dst);
 }
 
-inline void from(const ProbabilityGridmap::Ptr &src,
+template <typename Tp, typename T>
+inline void from(const ProbabilityGridmap<Tp, T>::Ptr &src,
                  nav_msgs::OccupancyGrid::Ptr &dst)
 {
     dst.reset(new nav_msgs::OccupancyGrid);
@@ -59,30 +62,32 @@ inline void from(const ProbabilityGridmap::Ptr &src,
     dst->data.resize(src->getData().size());
     std::transform(src->getData().begin(), src->getData().end(),
                    dst->data.begin(),
-                   [](const double p){return from(p);});
+                   [](const T p){return from(p);});
 }
 
 struct LogOdds {
-    static inline void to(ProbabilityGridmap::Ptr &src,
-                          ProbabilityGridmap::Ptr &dst)
+    template <typename Tp, typename T>
+    static inline void to(ProbabilityGridmap<Tp, T>::Ptr &src,
+                          ProbabilityGridmap<Tp, T>::Ptr &dst)
     {
         if(src != dst) {
-            dst.reset(new ProbabilityGridmap(*src));
+            dst.reset(new ProbabilityGridmap<Tp, T>(*src));
         }
         std::for_each(dst->getData().begin(),
                       dst->getData().end(),
-                      [](double &p){p =  cslibs_math::common::LogOdds::to(p);});
+                      [](T &p){p = cslibs_math::common::LogOdds<T>::to(p);});
 
     }
-    static inline void from(ProbabilityGridmap::Ptr &src,
-                            ProbabilityGridmap::Ptr &dst)
+    template <typename Tp, typename T>
+    static inline void from(ProbabilityGridmap<Tp, T>::Ptr &src,
+                            ProbabilityGridmap<Tp, T>::Ptr &dst)
     {
         if(src != dst) {
-            dst.reset(new ProbabilityGridmap(*src));
+            dst.reset(new ProbabilityGridmap<Tp, T>(*src));
         }
         std::for_each(dst->getData().begin(),
                       dst->getData().end(),
-                      [](double &l){l = cslibs_math::common::LogOdds::from(l);});
+                      [](T &l){l = cslibs_math::common::LogOdds<T>::from(l);});
 
     }
 };

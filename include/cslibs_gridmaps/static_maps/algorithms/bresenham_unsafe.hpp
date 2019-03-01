@@ -14,9 +14,9 @@ public:
     using size_t  = std::array<int, 2>;
 
     inline explicit BresenhamUsafe(const index_t &start,
-                              const index_t &end,
-                              const size_t   size,
-                              T *            data) :
+                                   const index_t &end,
+                                   const size_t   size,
+                                   T *            data) :
         done_(false),
         data_(data),
         size_(size),

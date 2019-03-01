@@ -5,36 +5,69 @@
 
 namespace cslibs_gridmaps {
 namespace static_maps {
-class EIGEN_ALIGN16 LikelihoodFieldGridmap : public Gridmap<double>
+template <typename Tp = double, typename T = double>
+class EIGEN_ALIGN16 LikelihoodFieldGridmap : public Gridmap<Tp, T>
 {
 public:
-
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    using allocator_t = Eigen::aligned_allocator<LikelihoodFieldGridmap<Tp, T>>;
 
-    using allocator_t = Eigen::aligned_allocator<LikelihoodFieldGridmap>;
-    using Ptr = std::shared_ptr<LikelihoodFieldGridmap>;
+    using Ptr = std::shared_ptr<LikelihoodFieldGridmap<Tp, T>>;
+    using pose_t = typename Gridmap<Tp, T>::pose_t;
+    using point_t = typename Gridmap<Tp, T>::point_t;
 
     explicit LikelihoodFieldGridmap(const pose_t &origin,
-                                    const double resolution,
+                                    const Tp resolution,
                                     const std::size_t height,
                                     const std::size_t width,
-                                    const double maximum_distance,
-                                    const double sigma_hit,
-                                    const double default_value = 0.0);
+                                    const T maximum_distance,
+                                    const T sigma_hit,
+                                    const T default_value = 0.0) :
+        Gridmap<Tp,T>(origin,
+                      resolution,
+                      height,
+                      width,
+                      default_value),
+        sigma_hit_(sigma_hit),
+        maximum_distance_(maximum_distance)
+    {
+    }
 
-    LikelihoodFieldGridmap(const LikelihoodFieldGridmap &other);
-    LikelihoodFieldGridmap(LikelihoodFieldGridmap &&other);
+    LikelihoodFieldGridmap(const LikelihoodFieldGridmap &other) :
+        Gridmap<Tp,T>(static_cast<const Gridmap<Tp,T>&>(other)),
+        sigma_hit_(other.sigma_hit_),
+        maximum_distance_(other.maximum_distance_)
+    {
+    }
+    LikelihoodFieldGridmap(LikelihoodFieldGridmap &&other) :
+        Gridmap<Tp,T>(static_cast<Gridmap<Tp,T>&&>(other)),
+        sigma_hit_(other.sigma_hit_),
+        maximum_distance_(other.maximum_distance_)
+    {
+    }
 
+    using Gridmap<Tp, T>::at;
+    T at(const point_t &point) const override
+    {
+        index_t i;
+        toIndex(point, i);
+        if(invalid(i))
+            return 0.0;
+        return Gridmap<Tp,T>::at(i[0], i[1]);
+    }
 
-    using Gridmap<double>::at;
-    double at(const cslibs_math_2d::Point2d &point) const override;
-
-    double getSigmaHit() const;
-    double getMaximumDistance() const;
+    T getSigmaHit() const
+    {
+        return sigma_hit_;
+    }
+    T getMaximumDistance() const
+    {
+        return maximum_distance_;
+    }
 
 private:
-    const double sigma_hit_;
-    const double maximum_distance_;
+    const T sigma_hit_;
+    const T maximum_distance_;
 };
 }
 }

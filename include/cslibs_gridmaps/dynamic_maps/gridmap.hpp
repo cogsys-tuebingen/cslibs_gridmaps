@@ -25,16 +25,17 @@ namespace cis = cslibs_indexed_storage;
 
 namespace cslibs_gridmaps {
 namespace dynamic_maps {
-template<typename T>
+template<typename Tp = double, typename T> // Tp for accuracy of transforms etc., T for content
 class EIGEN_ALIGN16 Gridmap
 {
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-    using allocator_t = Eigen::aligned_allocator<Gridmap>;
+    using allocator_t = Eigen::aligned_allocator<Gridmap<Tp, T>>;
 
-    using Ptr                   = std::shared_ptr<Gridmap<T>>;
+    using Ptr                   = std::shared_ptr<Gridmap<Tp, T>>;
     using gridmap_t             = Gridmap<T>;
-    using pose_t                = cslibs_math_2d::Pose2d;
+    using point_t               = cslibs_math_2d::Point2d<Tp>;
+    using pose_t                = cslibs_math_2d::Pose2d<Tp>;
     using index_t               = std::array<int, 2>;
     using mutex_t               = std::mutex;
     using lock_t                = std::unique_lock<mutex_t>;
@@ -44,10 +45,10 @@ public:
     using const_line_iterator_t = algorithms::Bresenham<T const>;
     using get_chunk_t           = cslibs_utility::common::delegate<typename chunk_t::handle_t(const index_t &)>;
 
-    inline Gridmap(const pose_t        &origin,
-                   const double         resolution,
-                   const double         chunk_resolution,
-                   const T             &default_value) :
+    inline Gridmap(const pose_t &origin,
+                   const Tp      resolution,
+                   const Tp      chunk_resolution,
+                   const T      &default_value) :
         resolution_(resolution),
         resolution_inv_(1.0 / resolution_),
         chunk_size_(static_cast<int>(chunk_resolution * resolution_inv_)),
@@ -63,11 +64,11 @@ public:
     {
     }
 
-    inline Gridmap(const double origin_x,
-                   const double origin_y,
-                   const double origin_phi,
-                   const double resolution,
-                   const double chunk_resolution,
+    inline Gridmap(const Tp origin_x,
+                   const Tp origin_y,
+                   const Tp origin_phi,
+                   const Tp resolution,
+                   const Tp chunk_resolution,
                    const T &default_value) :
         resolution_(resolution),
         resolution_inv_(1.0 / resolution_),
@@ -121,11 +122,11 @@ public:
      * @brief Get minimum in map coordinates.
      * @return the minimum
      */
-    inline cslibs_math_2d::Point2d getMin() const
+    inline point_t getMin() const
     {
         lock_t l(storage_mutex_);
-        return cslibs_math_2d::Point2d(min_chunk_index_[0] * chunk_size_ * resolution_,
-                                       min_chunk_index_[1] * chunk_size_ * resolution_);
+        return point_t(min_chunk_index_[0] * chunk_size_ * resolution_,
+                       min_chunk_index_[1] * chunk_size_ * resolution_);
 
     }
 
@@ -133,20 +134,20 @@ public:
      * @brief Get maximum in map coordinates.
      * @return the maximum
      */
-    inline cslibs_math_2d::Point2d getMax() const
+    inline point_t getMax() const
     {
         lock_t l(storage_mutex_);
-        return cslibs_math_2d::Point2d((max_chunk_index_[0] + 1) * chunk_size_ * resolution_,
-                                       (max_chunk_index_[1] + 1) * chunk_size_ * resolution_);
+        return point_t((max_chunk_index_[0] + 1) * chunk_size_ * resolution_,
+                       (max_chunk_index_[1] + 1) * chunk_size_ * resolution_);
     }
 
     /**
      * @brief Get the current origin of the map.
      * @return the origin
      */
-    inline cslibs_math_2d::Pose2d getOrigin() const
+    inline pose_t getOrigin() const
     {
-        cslibs_math_2d::Transform2d origin = w_T_m_;
+        pose_t origin = w_T_m_;
         origin.translation() = getMin();
         return origin;
     }
@@ -155,7 +156,7 @@ public:
      * @brief Get the initial origin of the map.
      * @return  the intial origin
      */
-    inline cslibs_math_2d::Pose2d getInitialOrigin() const
+    inline pose_t getInitialOrigin() const
     {
         return w_T_m_;
     }
@@ -179,7 +180,7 @@ public:
         return chunk.empty() ? default_value_ : chunk->at(local_chunk_index);
     }
 
-    inline void set(const cslibs_math_2d::Point2d &point,
+    inline void set(const point_t &point,
                     const T &v)
     {
         const index_t index              = toIndex(point);
@@ -190,7 +191,7 @@ public:
         chunk->at(local_chunk_index)     = v;
     }
 
-    inline T get(const cslibs_math_2d::Point2d &point) const
+    inline T get(const point_t &point) const
     {
         const index_t index             = toIndex(point);
         const index_t chunk_index       = toChunkIndex(index);
@@ -210,8 +211,8 @@ public:
                                get_chunk_t::template from<gridmap_t, &gridmap_t::getAllocateChunk>(this));
     }
 
-    inline line_iterator_t getLineIterator(const cslibs_math_2d::Point2d &start,
-                                           const cslibs_math_2d::Point2d &end)
+    inline line_iterator_t getLineIterator(const point_t &start,
+                                           const point_t &end)
     {
 
         const index_t start_index = toIndex(start);
@@ -233,8 +234,8 @@ public:
                                get_chunk_t::template from<gridmap_t, &gridmap_t::getAllocateChunk>(this));
     }
 
-    inline line_iterator_t getLineIterator(const cslibs_math_2d::Point2d &start,
-                                           const cslibs_math_2d::Point2d &end) const
+    inline line_iterator_t getLineIterator(const point_t &start,
+                                           const point_t &end) const
     {
 
         const index_t start_index = toIndex(start);
@@ -283,7 +284,7 @@ public:
         return chunk->getHandle();
     }
 
-    inline double getResolution() const
+    inline Tp getResolution() const
     {
         return resolution_;
     }
@@ -309,7 +310,7 @@ public:
     {
         lock_t l(storage_mutex_);
         return {(max_chunk_index_[0] - min_chunk_index_[0] + 1) * chunk_size_ - 1,
-                    (max_chunk_index_[1] - min_chunk_index_[1] + 1) * chunk_size_ - 1};
+                (max_chunk_index_[1] - min_chunk_index_[1] + 1) * chunk_size_ - 1};
     }
 
     inline T getDefaultValue() const
@@ -317,22 +318,20 @@ public:
         return default_value_;
     }
 
-    inline virtual bool validate(const cslibs_math_2d::Pose2d &p_w) const
+    inline virtual bool validate(const pose_t &p_w) const
     {
         index_t i = toChunkIndex(toIndex(p_w.translation()));
         return i[0] >= min_chunk_index_[0] && i[0] <= max_chunk_index_[0] &&
                i[1] >= min_chunk_index_[1] && i[1] <= max_chunk_index_[1];
     }
 
-
 protected:
-    const double                      resolution_;
-    const double                      resolution_inv_;
-    const int                         chunk_size_;
-    const T                           default_value_;
-    cslibs_math_2d::Transform2d       w_T_m_;
-    cslibs_math_2d::Transform2d       m_T_w_;
-
+    const Tp                           resolution_;
+    const Tp                           resolution_inv_;
+    const int                          chunk_size_;
+    const T                            default_value_;
+    pose_t                             w_T_m_;
+    pose_t                             m_T_w_;
 
     mutable index_t                    min_chunk_index_;
     mutable index_t                    max_chunk_index_;
@@ -363,17 +362,15 @@ protected:
                  cslibs_math::common::mod(index[1], chunk_size_)}};
     }
 
-    inline index_t toIndex(const cslibs_math_2d::Point2d &p_w) const
+    inline index_t toIndex(const point_t &p_w) const
     {
         /// offset and rounding correction!
-        const cslibs_math_2d::Point2d p_m = m_T_w_ * p_w;
+        const point_t p_m = m_T_w_ * p_w;
         return {{static_cast<int>(std::floor(p_m(0) * resolution_inv_)),
                  static_cast<int>(std::floor(p_m(1) * resolution_inv_))}};
     }
 };
 }
 }
-
-
 
 #endif // CSLIBS_GRIDMAPS_DYNAMIC_GRIDMAP_HPP

@@ -24,8 +24,7 @@ catkin_package(
                     cslibs_gridmaps_extras.cmake
                     cslibs_gridmaps_show_headers.cmake
                     cslibs_gridmaps_add_unit_test_gtest.cmake
-    LIBRARIES       ${PROJECT_NAME}_static_maps
-                    ${PROJECT_NAME}_dynamic_maps
+    LIBRARIES
 )
 
 include_directories(
@@ -34,25 +33,6 @@ include_directories(
 )
 
 cslibs_gridmaps_show_headers()
-
-add_library(${PROJECT_NAME}_static_maps SHARED
-    src/static_maps/binary_gridmap.cpp
-    src/static_maps/distance_gridmap.cpp
-    src/static_maps/probability_gridmap.cpp
-    src/static_maps/likelihood_field_gridmap.cpp
-)
-target_link_libraries(${PROJECT_NAME}_static_maps
-    ${catkin_LIBRARIES}
-)
-
-add_library(${PROJECT_NAME}_dynamic_maps SHARED
-    src/dynamic_maps/probability_gridmap.cpp
-    src/dynamic_maps/min_heightmap.cpp
-    src/dynamic_maps/distribution_heightmap.cpp
-)
-target_link_libraries(${PROJECT_NAME}_dynamic_maps
-    ${catkin_LIBRARIES}
-)
 
 if(${PROJECT_NAME}_BUILD_EXAMPLES)
     find_package(OpenCV      REQUIRED)
@@ -75,7 +55,6 @@ if(${PROJECT_NAME}_BUILD_EXAMPLES)
         ${catkin_LIBRARIES}
         ${tf_LIBRARIES}
         ${nav_msgs_LIBRARIES}
-        ${PROJECT_NAME}_static_maps
         ${OpenCV_LIBRARIES}
     )
     add_executable(${PROJECT_NAME}_example_line_iterator
@@ -84,7 +63,6 @@ if(${PROJECT_NAME}_BUILD_EXAMPLES)
 
     target_link_libraries(${PROJECT_NAME}_example_line_iterator
         ${catkin_LIBRARIES}
-        ${PROJECT_NAME}_static_maps
         ${tf_LIBRARIES}
         ${nav_msgs_LIBRARIES}
         ${OpenCV_LIBRARIES}
@@ -101,11 +79,6 @@ endif()
 
 cslibs_gridmaps_add_unit_test_gtest(serialization
     SRCS
-    src/dynamic_maps/probability_gridmap.cpp
-    src/static_maps/binary_gridmap.cpp
-    src/static_maps/distance_gridmap.cpp
-    src/static_maps/likelihood_field_gridmap.cpp
-    src/static_maps/probability_gridmap.cpp
     test/serialization.cpp
 )
 target_link_libraries(serialization
@@ -114,10 +87,3 @@ target_link_libraries(serialization
 
 install(DIRECTORY include/${PROJECT_NAME}/
         DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
-
-install(TARGETS ${PROJECT_NAME}_static_maps
-                ${PROJECT_NAME}_dynamic_maps
-        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
-

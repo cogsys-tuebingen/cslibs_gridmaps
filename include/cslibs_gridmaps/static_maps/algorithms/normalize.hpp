@@ -6,12 +6,11 @@
 namespace cslibs_gridmaps {
 namespace static_maps {
 namespace algorithms {
-
-template<typename T>
-void normalize(Gridmap<T> &map)
+template<typename Tp, typename T>
+void normalize(Gridmap<Tp, T> &map)
 {
-    double max = std::numeric_limits<T>::lowest();
-    double min = std::numeric_limits<T>::max();
+    T max = std::numeric_limits<T>::lowest();
+    T min = std::numeric_limits<T>::max();
     for (std::size_t i = 0 ; i < map.getHeight() ; ++i) {
         for (std::size_t j = 0 ;  j < map.getWidth() ; ++j) {
             const T p = map.at(j,i);

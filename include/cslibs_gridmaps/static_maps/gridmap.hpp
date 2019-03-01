@@ -14,25 +14,24 @@
 
 namespace cslibs_gridmaps {
 namespace static_maps {
-template<typename T>
+template<typename Tp = double, typename T> // Tp for accuracy of transforms etc., T for content
 class EIGEN_ALIGN16 Gridmap
 {
 public:
-
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    using allocator_t = Eigen::aligned_allocator<Gridmap<Tp, T>>;
 
-    using allocator_t = Eigen::aligned_allocator<Gridmap>;
-
-    using Ptr                    = std::shared_ptr<Gridmap<T>>;
+    using Ptr                    = std::shared_ptr<Gridmap<Tp, T>>;
     using const_line_iterator_t  = algorithms::Bresenham<T const>;
     using index_t                = std::array<int, 2>;
-    using pose_t                 = cslibs_math_2d::Pose2d;
+    using pose_t                 = cslibs_math_2d::Pose2d<Tp>;
+    using point_t                = cslibs_math_2d::Point2d<Tp>;
 
     inline Gridmap(const pose_t &origin,
-            const double resolution,
-            const std::size_t height,
-            const std::size_t width,
-            const T &default_value) :
+                   const Tp resolution,
+                   const std::size_t height,
+                   const std::size_t width,
+                   const T &default_value) :
         resolution_(resolution),
         resolution_inv_(1.0 / resolution),
         height_(height),
@@ -45,13 +44,13 @@ public:
     {
     }
 
-   inline Gridmap(const double origin_x,
-            const double origin_y,
-            const double origin_phi,
-            const double resolution,
-            const std::size_t height,
-            const std::size_t width,
-            const T &default_value) :
+    inline Gridmap(const Tp origin_x,
+                   const Tp origin_y,
+                   const Tp origin_phi,
+                   const Tp resolution,
+                   const std::size_t height,
+                   const std::size_t width,
+                   const T &default_value) :
         resolution_(resolution),
         resolution_inv_(1.0 / resolution),
         height_(height),
@@ -98,25 +97,25 @@ public:
      * @brief Get the minimum in map coordinates.
      * @return the minimum
      */
-    virtual inline cslibs_math_2d::Point2d getMin() const
+    virtual inline point_t getMin() const
     {
-        return cslibs_math_2d::Point2d();
+        return point_t();
     }
 
     /**
      * @brief Get the maximum in map coordinates.
      * @return the maximum
      */
-    virtual inline cslibs_math_2d::Point2d getMax() const
+    virtual inline point_t getMax() const
     {
-        return cslibs_math_2d::Point2d(width_ *resolution_, height_ * resolution_);
+        return point_t(width_ *resolution_, height_ * resolution_);
     }
 
     /**
      * @brief Get the origin
      * @return the origin
      */
-    virtual inline cslibs_math_2d::Pose2d getOrigin() const
+    virtual inline pose_t getOrigin() const
     {
         return w_T_m_;
     }
@@ -141,7 +140,7 @@ public:
         return data_ptr_[i];
     }
 
-    virtual inline T& at(const cslibs_math_2d::Point2d &point)
+    virtual inline T& at(const point_t &point)
     {
         index_t i;
         if(!toIndex(point, i)) {
@@ -150,7 +149,7 @@ public:
         return at(i[0], i[1]);
     }
 
-    virtual inline T at(const cslibs_math_2d::Point2d &point) const
+    virtual inline T at(const point_t &point) const
     {
         index_t i;
         if(!toIndex(point, i)) {
@@ -172,8 +171,8 @@ public:
         return const_line_iterator_t(start, end, width_, data_ptr_);
     }
 
-    inline const_line_iterator_t getConstLineIterator(const cslibs_math_2d::Point2d &start,
-                                                      const cslibs_math_2d::Point2d &end) const
+    inline const_line_iterator_t getConstLineIterator(const point_t &start,
+                                                      const point_t &end) const
     {
         index_t start_index;
         index_t end_index;
@@ -185,7 +184,7 @@ public:
                                      data_ptr_);
     }
 
-    inline double getResolution() const
+    inline Tp getResolution() const
     {
         return resolution_;
     }
@@ -215,10 +214,10 @@ public:
         return data_;
     }
 
-    inline bool toIndex(const cslibs_math_2d::Point2d &p_w,
+    inline bool toIndex(const point_t &p_w,
                         index_t &i) const
     {
-        const cslibs_math_2d::Point2d p_m = m_T_w_ * p_w;
+        const point_t p_m = m_T_w_ * p_w;
 
         i[0] = static_cast<int>(std::floor(p_m(0) * resolution_inv_));
         i[1] = static_cast<int>(std::floor(p_m(1) * resolution_inv_));
@@ -227,9 +226,9 @@ public:
                (i[1] >= 0 && i[1] <= max_index_[1]);
     }
 
-    inline virtual bool validate(const cslibs_math_2d::Pose2d &p_w) const
+    inline virtual bool validate(const pose_t &p_w) const
     {
-      const cslibs_math_2d::Point2d p_m = m_T_w_ * p_w.translation();
+      const point_t p_m = m_T_w_ * p_w.translation();
       index_t i = {{static_cast<int>(std::floor(p_m(0) * resolution_inv_)),
                     static_cast<int>(std::floor(p_m(1) * resolution_inv_))}};
 
@@ -238,16 +237,16 @@ public:
     }
 
 protected:
-    const double                            resolution_;        /// m / cell
-    const double                            resolution_inv_;    /// cell / m
-    const std::size_t                       height_;
-    const std::size_t                       width_;
-    const index_t                           max_index_;
-    const cslibs_math_2d::Transform2d       w_T_m_;
-    const cslibs_math_2d::Transform2d       m_T_w_;
+    const Tp            resolution_;        /// m / cell
+    const Tp            resolution_inv_;    /// cell / m
+    const std::size_t   height_;
+    const std::size_t   width_;
+    const index_t       max_index_;
+    const pose_t        w_T_m_;
+    const pose_t        m_T_w_;
 
-    std::vector<T>                          data_;
-    T*                                      data_ptr_;
+    std::vector<T>      data_;
+    T*                  data_ptr_;
 
     inline bool invalid(const index_t &_i) const
     {
@@ -258,19 +257,20 @@ protected:
     }
 
     inline void fromIndex(const index_t &i,
-                          cslibs_math_2d::Point2d &p_w) const
+                          point_t &p_w) const
     {
-        p_w = w_T_m_ * cslibs_math_2d::Point2d(static_cast<double>(i[0]) * resolution_,
-                                               static_cast<double>(i[1]) * resolution_);
+        p_w = w_T_m_ * point_t(static_cast<Tp>(i[0]) * resolution_,
+                               static_cast<Tp>(i[1]) * resolution_);
     }
 
     inline void fromIndex(const const_line_iterator_t &it,
-                          cslibs_math_2d::Point2d &p_w) const
+                          point_t &p_w) const
     {
-        p_w = w_T_m_ * cslibs_math_2d::Point2d(static_cast<double>(it.x()) * resolution_,
-                                               static_cast<double>(it.y()) * resolution_);
+        p_w = w_T_m_ * point_t(static_cast<Tp>(it.x()) * resolution_,
+                               static_cast<Tp>(it.y()) * resolution_);
     }
 };
 }
 }
-#endif /* CSLIBS_GRIDMAPS_STATIC_GRIDMAP_HPP */
+
+#endif // CSLIBS_GRIDMAPS_STATIC_GRIDMAP_HPP

@@ -5,36 +5,87 @@
 
 namespace cslibs_gridmaps {
 namespace static_maps {
-class EIGEN_ALIGN16 BinaryGridmap : public Gridmap<int>
+template <typename Tp = double>
+class EIGEN_ALIGN16 BinaryGridmap : public Gridmap<Tp, int>
 {
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-    using allocator_t = Eigen::aligned_allocator<BinaryGridmap>;
+    using allocator_t = Eigen::aligned_allocator<BinaryGridmap<Tp>>;
 
-    using Ptr = std::shared_ptr<BinaryGridmap>;
+    using Ptr = std::shared_ptr<BinaryGridmap<Tp>>;
+    using pose_t = typename Gridmap<Tp, int>::pose_t;
+    using point_t = typename Gridmap<Tp, int>::point_t;
 
     enum state_t {FREE = 0, OCCUPIED = 1};
 
 
     explicit BinaryGridmap(const pose_t &origin,
-                           const double resolution,
+                           const Tp resolution,
                            const std::size_t height,
                            const std::size_t width,
-                           const state_t default_value = FREE);
+                           const state_t default_value = FREE) :
+        Gridmap<Tp,int>(origin,
+                        resolution,
+                        height,
+                        width,
+                        default_value)
+    {
+    }
 
-    BinaryGridmap(const BinaryGridmap &other);
-    BinaryGridmap(BinaryGridmap &&other);
+    BinaryGridmap(const BinaryGridmap &other) :
+        Gridmap<Tp,int>(static_cast<const Gridmap<Tp,int>&>(other))
+    {
+    }
+    BinaryGridmap(BinaryGridmap &&other) :
+        Gridmap<Tp,int>(static_cast<Gridmap<Tp,int>&&>(other))
+    {
+    }
 
-    double getRange(const cslibs_math_2d::Point2d &from,
-                    cslibs_math_2d::Point2d &to) const;
+    Tp getRange(const point_t &from,
+                point_t &to) const
+    {
+        const_line_iterator_t it = getConstLineIterator(from, to);
+        while (it.iterate()) {
+            if (*it) {
+                fromIndex({{it.x(), it.y()}}, to);
+                return distance(from, to);
+            }
+        }
 
-    double getRange2(const cslibs_math_2d::Point2d &from,
-                     cslibs_math_2d::Point2d &to) const;
+        if (it.invalid() || *it) {
+            fromIndex({{it.x(), it.y()}}, to);
+            return distance(from, to);
+        }
+        return std::numeric_limits<Tp>::max();
+    }
 
-    virtual bool validate(const cslibs_math_2d::Pose2d &p) const;
+    Tp getRange2(const point_t &from,
+                 point_t &to) const
+    {
+        const_line_iterator_t it = getConstLineIterator(from, to);
+        while (it.iterate()) {
+            if (*it) {
+                fromIndex({{it.x(), it.y()}}, to);
+                return distance2(from, to);
+            }
+        }
 
+        if (it.invalid() || *it) {
+            fromIndex({{it.x(), it.y()}}, to);
+            return distance2(from, to);
+        }
+        return std::numeric_limits<Tp>::max();
+    }
+
+    virtual bool validate(const pose_t &p) const
+    {
+        index_t index;
+        if (toIndex(p.translation(), index))
+            return at(static_cast<std::size_t>(index[0]), static_cast<std::size_t>(index[1])) == 0;
+        return false;
+    }
 };
 }
 }
 
-#endif /* CSLIBS_GRIDMAPS_STATIC_BINARY_GRIDMAP_H */
+#endif // CSLIBS_GRIDMAPS_STATIC_BINARY_GRIDMAP_H

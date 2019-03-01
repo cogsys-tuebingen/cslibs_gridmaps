@@ -147,4 +147,4 @@ private:
 }
 }
 
-#endif /* CSLIBS_GRIDMAPS_BRESENHAM_HPP */
+#endif // CSLIBS_GRIDMAPS_BRESENHAM_HPP

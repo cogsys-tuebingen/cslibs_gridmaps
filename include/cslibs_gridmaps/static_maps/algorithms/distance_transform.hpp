@@ -9,12 +9,13 @@ namespace cslibs_gridmaps {
 namespace static_maps {
 namespace algorithms {
 namespace distance_transform {
+template <typename Tp, typename Td>
 struct DistanceCache {
-    std::vector<double> distances;
-    const std::size_t   size;
+    std::vector<Td>   distances;
+    const std::size_t size;
 
-    DistanceCache(const double resolution,
-                  const double max_distance) :
+    DistanceCache(const Tp resolution,
+                  const Td max_distance) :
         size(max_distance / resolution + 2 /*padding*/)
     {
         distances.resize(size * size, 0.0);
@@ -25,47 +26,48 @@ struct DistanceCache {
         }
     }
 
-    double operator () (const std::size_t x,
-                        const std::size_t y)
+    Td operator () (const std::size_t x,
+                    const std::size_t y)
     {
         return distances[y * size + x];
     }
 
 };
+
+template <typename T>
 struct Data {
     struct Less {
-        bool operator()( const Data& lhs,
-                         const Data& rhs ) const
+        bool operator()(const Data& lhs,
+                        const Data& rhs) const
         {
             return *lhs.data <
-                    *rhs.data;
+                   *rhs.data;
         }
     };
 
     struct Greater {
-        bool operator()( const Data& lhs,
-                         const Data& rhs ) const
+        bool operator()(const Data& lhs,
+                        const Data& rhs) const
         {
             return *lhs.data >
-                    *rhs.data;
+                   *rhs.data;
         }
     };
 
-    inline Data(const std::size_t     x,
-                const std::size_t     y,
-                const double         *data) :
+    inline Data(const std::size_t  x,
+                const std::size_t  y,
+                const T           *data) :
         x(x),y(y),
         src_x(x),src_y(y),
         data(data)
     {
     }
 
-
     inline Data(const std::size_t x,
                 const std::size_t y,
                 const std::size_t src_x,
                 const std::size_t src_y,
-                const double *data) :
+                const T *data) :
         x(x),y(y),
         src_x(src_x),src_y(src_y),
         data(data)
@@ -109,19 +111,17 @@ struct Data {
     }
 
 
-    std::size_t          x, y;
-    std::size_t          src_x, src_y;
-    const double        *data;
-
+    std::size_t  x, y;
+    std::size_t  src_x, src_y;
+    const T     *data;
 };
 }
 
-
-template<typename T>
+template<typename Tp, typename Td, typename T>
 class DistanceTransform {
 public:
-    inline DistanceTransform(const double resolution,
-                             const double maximum_distance,
+    inline DistanceTransform(const Tp resolution,
+                             const Td maximum_distance,
                              const T occupancy_threshold) :
         resolution_(resolution),
         maximum_distance_(maximum_distance),
@@ -132,7 +132,7 @@ public:
 
     inline void apply(const std::vector<T> &src,
                       const std::size_t step,
-                      std::vector<double> &dst)
+                      std::vector<Td> &dst)
     {
         src_size_   = src.size();
         src_width_  = step;
@@ -182,11 +182,11 @@ public:
     }
 
 private:
-    using cell_data_t = distance_transform::Data;
+    using cell_data_t = distance_transform::Data<Td>;
 
-    const double            resolution_;
-    const double            maximum_distance_;
-    const T                 occupancy_threshold_;
+    const Tp                            resolution_;
+    const Td                            maximum_distance_;
+    const T                             occupancy_threshold_;
 
     std::size_t                         src_size_;
     std::size_t                         src_width_;
@@ -195,16 +195,16 @@ private:
     distance_transform::DistanceCache   cache_;
     std::vector<uint8_t>                marked_;
 
-    std::priority_queue<cell_data_t, std::deque<cell_data_t>, cell_data_t::Greater> queue_;
+    std::priority_queue<cell_data_t, typename std::deque<cell_data_t>, typename cell_data_t::Greater> queue_;
 
-    inline void enqueue(std::vector<double> &dst,
-                        cell_data_t         &cell)
+    inline void enqueue(std::vector<Td> &dst,
+                        cell_data_t     &cell)
     {
         if(marked_[cell.y * src_width_ + cell.x])
             return;
         const std::size_t dx = cell.dx();
         const std::size_t dy = cell.dy();
-        const double d = cache_(dx, dy);
+        const Td d = cache_(dx, dy);
 
         if(d > maximum_distance_)
             return;
@@ -213,7 +213,6 @@ private:
         marked_[cell.x + cell.y * src_width_] = 1;
         queue_.emplace(cell);
     }
-
 };
 }
 }

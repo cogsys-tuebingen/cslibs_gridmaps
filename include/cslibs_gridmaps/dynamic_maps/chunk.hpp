@@ -119,5 +119,4 @@ private:
 }
 }
 
-
 #endif // CSLIBS_GRIDMAPS_DYNAMIC_CHUNK_HPP
