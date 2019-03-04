@@ -25,7 +25,7 @@ inline T from(const int8_t p)
 
 template <typename Tp, typename T>
 inline void from(const nav_msgs::OccupancyGrid &src,
-                 ProbabilityGridmap<Tp, T>::Ptr &dst)
+                 typename ProbabilityGridmap<Tp, T>::Ptr &dst)
 {
     cslibs_math_2d::Pose2d<Tp> origin(src.info.origin.position.x,
                                       src.info.origin.position.y,
@@ -42,13 +42,13 @@ inline void from(const nav_msgs::OccupancyGrid &src,
 
 template <typename Tp, typename T>
 inline void from(const nav_msgs::OccupancyGrid::ConstPtr &src,
-                 ProbabilityGridmap<Tp, T>::Ptr &dst)
+                 typename ProbabilityGridmap<Tp, T>::Ptr &dst)
 {
    from(*src, dst);
 }
 
 template <typename Tp, typename T>
-inline void from(const ProbabilityGridmap<Tp, T>::Ptr &src,
+inline void from(const typename ProbabilityGridmap<Tp, T>::Ptr &src,
                  nav_msgs::OccupancyGrid::Ptr &dst)
 {
     dst.reset(new nav_msgs::OccupancyGrid);
@@ -67,8 +67,8 @@ inline void from(const ProbabilityGridmap<Tp, T>::Ptr &src,
 
 struct LogOdds {
     template <typename Tp, typename T>
-    static inline void to(ProbabilityGridmap<Tp, T>::Ptr &src,
-                          ProbabilityGridmap<Tp, T>::Ptr &dst)
+    static inline void to(typename ProbabilityGridmap<Tp, T>::Ptr &src,
+                          typename ProbabilityGridmap<Tp, T>::Ptr &dst)
     {
         if(src != dst) {
             dst.reset(new ProbabilityGridmap<Tp, T>(*src));
@@ -79,8 +79,8 @@ struct LogOdds {
 
     }
     template <typename Tp, typename T>
-    static inline void from(ProbabilityGridmap<Tp, T>::Ptr &src,
-                            ProbabilityGridmap<Tp, T>::Ptr &dst)
+    static inline void from(typename ProbabilityGridmap<Tp, T>::Ptr &src,
+                            typename ProbabilityGridmap<Tp, T>::Ptr &dst)
     {
         if(src != dst) {
             dst.reset(new ProbabilityGridmap<Tp, T>(*src));

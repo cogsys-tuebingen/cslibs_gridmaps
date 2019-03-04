@@ -12,7 +12,7 @@ namespace static_maps {
 namespace conversion {
 template <typename Tp, typename T>
 inline void from(const nav_msgs::OccupancyGrid &src,
-                 LikelihoodFieldGridmap<Tp, T>::Ptr &dst,
+                 typename LikelihoodFieldGridmap<Tp, T>::Ptr &dst,
                  const T maximum_distance = 2.0,
                  const T sigma_hit        = 0.5,
                  const double threshold   = 1.0)
@@ -55,7 +55,7 @@ inline void from(const nav_msgs::OccupancyGrid &src,
 
 template <typename Tp, typename T>
 inline void from(const nav_msgs::OccupancyGrid::Ptr &src,
-                 LikelihoodFieldGridmap<Tp, T>::Ptr &dst,
+                 typename LikelihoodFieldGridmap<Tp, T>::Ptr &dst,
                  const T maximum_distance = 2.0,
                  const T sigma_hit        = 0.5,
                  const double threshold   = 1.0)
@@ -64,7 +64,7 @@ inline void from(const nav_msgs::OccupancyGrid::Ptr &src,
 }
 
 template <typename Tp, typename T>
-inline void from(const LikelihoodFieldGridmap<Tp, T>::Ptr &src,
+inline void from(const typename LikelihoodFieldGridmap<Tp, T>::Ptr &src,
                  nav_msgs::OccupancyGrid::Ptr &dst)
 {
     if (!src)

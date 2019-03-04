@@ -11,7 +11,7 @@ namespace static_maps {
 namespace conversion {
 template <typename Tp>
 inline void from(const nav_msgs::OccupancyGrid &src,
-                 BinaryGridmap<Tp>::Ptr        &dst,
+                 typename BinaryGridmap<Tp>::Ptr &dst,
                  const double threshold = 1.0)
 {
     assert(threshold <= 1.0);
@@ -34,14 +34,14 @@ inline void from(const nav_msgs::OccupancyGrid &src,
 
 template <typename Tp>
 inline void from(const nav_msgs::OccupancyGrid::ConstPtr &src,
-                 BinaryGridmap<Tp>::Ptr                  &dst,
+                 typename BinaryGridmap<Tp>::Ptr &dst,
                  const double threshold = 1.0)
 {
     from(*src, dst, threshold);
 }
 
 template <typename Tp>
-inline void from(const BinaryGridmap<Tp>::Ptr &src,
+inline void from(const typename BinaryGridmap<Tp>::Ptr &src,
                  nav_msgs::OccupancyGrid::Ptr &dst)
 {
     if (!src)

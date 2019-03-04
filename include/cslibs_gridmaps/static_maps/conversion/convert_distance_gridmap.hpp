@@ -12,7 +12,7 @@ namespace static_maps {
 namespace conversion {
 template <typename Tp, typename T>
 inline void from(const nav_msgs::OccupancyGrid &src,
-                 DistanceGridmap<Tp, T>::Ptr &dst,
+                 typename DistanceGridmap<Tp, T>::Ptr &dst,
                  const double threshold = 1.0,
                  const T maximum_distance = 2.0)
 {
@@ -45,7 +45,7 @@ inline void from(const nav_msgs::OccupancyGrid &src,
 }
 
 template <typename Tp, typename T>
-inline void from(const DistanceGridmap<Tp, T>::Ptr &src,
+inline void from(const typename DistanceGridmap<Tp, T>::Ptr &src,
                  nav_msgs::OccupancyGrid::Ptr &dst)
 {
     if (!src)
