@@ -41,22 +41,19 @@ inline void from(const nav_msgs::OccupancyGrid::ConstPtr &src,
 }
 
 template <typename Tp>
-inline void from(const typename BinaryGridmap<Tp>::Ptr &src,
+inline void from(BinaryGridmap<Tp> &src,
                  nav_msgs::OccupancyGrid::Ptr &dst)
 {
-    if (!src)
-        return;
-
     dst.reset(new nav_msgs::OccupancyGrid);
-    dst->info.resolution         = static_cast<float>(src->getResolution());
-    dst->info.height             = static_cast<unsigned int>(src->getHeight());
-    dst->info.width              = static_cast<unsigned int>(src->getWidth());
-    dst->info.origin.position.x  = src->getOrigin().tx();
-    dst->info.origin.position.y  = src->getOrigin().ty();
-    dst->info.origin.orientation = tf::createQuaternionMsgFromYaw(src->getOrigin().yaw());
+    dst->info.resolution         = static_cast<float>(src.getResolution());
+    dst->info.height             = static_cast<unsigned int>(src.getHeight());
+    dst->info.width              = static_cast<unsigned int>(src.getWidth());
+    dst->info.origin.position.x  = src.getOrigin().tx();
+    dst->info.origin.position.y  = src.getOrigin().ty();
+    dst->info.origin.orientation = tf::createQuaternionMsgFromYaw(src.getOrigin().yaw());
     dst->info.map_load_time = dst->header.stamp;
-    dst->data.resize(src->getData().size());
-    std::transform(src->getData().begin(), src->getData().end(),
+    dst->data.resize(src.getData().size());
+    std::transform(src.getData().begin(), src.getData().end(),
                    dst->data.begin(),
                    [](const int p){return 100.0 * p;});
 }

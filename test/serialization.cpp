@@ -14,12 +14,12 @@
 const std::size_t MIN_NUM_SAMPLES = 100;
 const std::size_t MAX_NUM_SAMPLES = 1000;
 
-template <std::size_t Dim>
-using rng_t = typename cslibs_math::random::Uniform<Dim>;
+template <typename Tp, std::size_t Dim>
+using rng_t = typename cslibs_math::random::Uniform<Tp,Dim>;
 
-template <typename T>
-void testDynamicMap(const typename cslibs_gridmaps::dynamic_maps::Gridmap<T>::Ptr & map,
-                    const typename cslibs_gridmaps::dynamic_maps::Gridmap<T>::Ptr & map_converted)
+template <typename Tp, typename T>
+void testDynamicMap(const typename cslibs_gridmaps::dynamic_maps::Gridmap<Tp,T>::Ptr & map,
+                    const typename cslibs_gridmaps::dynamic_maps::Gridmap<Tp,T>::Ptr & map_converted)
 {
     EXPECT_NE(map,           nullptr);
     EXPECT_NE(map_converted, nullptr);
@@ -63,9 +63,9 @@ void testDynamicMap(const typename cslibs_gridmaps::dynamic_maps::Gridmap<T>::Pt
     }
 }
 
-template <typename T>
-void testStaticMap(const typename cslibs_gridmaps::static_maps::Gridmap<T>::Ptr & map,
-                   const typename cslibs_gridmaps::static_maps::Gridmap<T>::Ptr & map_converted,
+template <typename Tp, typename T>
+void testStaticMap(const typename cslibs_gridmaps::static_maps::Gridmap<Tp,T>::Ptr & map,
+                   const typename cslibs_gridmaps::static_maps::Gridmap<Tp,T>::Ptr & map_converted,
                    const std::size_t & height, const std::size_t & width)
 {
     // tests
@@ -90,18 +90,18 @@ void testStaticMap(const typename cslibs_gridmaps::static_maps::Gridmap<T>::Ptr 
 
 TEST(Test_cslibs_gridmaps, testDynamicGridmapSerialization)
 {
-    using map_t = cslibs_gridmaps::dynamic_maps::Gridmap<float>;
-    rng_t<1> rng_prob(0.0, 1.0);
-    rng_t<1> rng_coord(-10.0, 10.0);
+    using map_t = cslibs_gridmaps::dynamic_maps::Gridmap<double,float>;
+    rng_t<float,1> rng_prob(0.0, 1.0);
+    rng_t<double,1> rng_coord(-10.0, 10.0);
 
     // fill map
-    cslibs_math_2d::Transform2d origin(rng_coord.get(), rng_coord.get(), rng_t<1>(-M_PI, M_PI).get());
-    const double resolution       = rng_t<1>(0.05, 1.0).get();
-    const double chunk_resolution = rng_t<1>(5.0, 10.0).get();
-    typename map_t::Ptr map(new map_t(origin, resolution, chunk_resolution, rng_t<1>(0.2, 0.8).get()));
+    cslibs_math_2d::Transform2d<double> origin(rng_coord.get(), rng_coord.get(), rng_t<double,1>(-M_PI, M_PI).get());
+    const double resolution       = rng_t<double,1>(0.05, 1.0).get();
+    const double chunk_resolution = rng_t<double,1>(5.0, 10.0).get();
+    typename map_t::Ptr map(new map_t(origin, resolution, chunk_resolution, rng_t<float,1>(0.2, 0.8).get()));
     const int num_samples = static_cast<int>(rng_t<1>(MIN_NUM_SAMPLES, MAX_NUM_SAMPLES).get());
     for (int i = 0 ; i < num_samples ; ++ i) {
-        const cslibs_math_2d::Point2d p(rng_coord.get(), rng_coord.get());
+        const cslibs_math_2d::Point2d<double> p(rng_coord.get(), rng_coord.get());
         map->set(p, rng_prob.get());
     }
 
@@ -112,21 +112,21 @@ TEST(Test_cslibs_gridmaps, testDynamicGridmapSerialization)
     const typename map_t::Ptr & map_converted = n.as<typename map_t::Ptr>();
 
     // tests
-    testDynamicMap<float>(map, map_converted);
+    testDynamicMap<double,float>(map, map_converted);
 }
 
 TEST(Test_cslibs_gridmaps, testDynamicProbabilityGridmapSerialization)
 {
-    using map_t = cslibs_gridmaps::dynamic_maps::ProbabilityGridmap;
-    rng_t<1> rng_prob(0.0, 1.0);
-    rng_t<1> rng_coord(-10.0, 10.0);
+    using map_t = cslibs_gridmaps::dynamic_maps::ProbabilityGridmap<double,double>;
+    rng_t<double,1> rng_prob(0.0, 1.0);
+    rng_t<double,1> rng_coord(-10.0, 10.0);
 
     // fill map
-    cslibs_math_2d::Transform2d origin(rng_coord.get(), rng_coord.get(), rng_t<1>(-M_PI, M_PI).get());
-    typename map_t::Ptr map(new map_t(origin, rng_t<1>(0.05, 1.0).get(), rng_t<1>(5.0, 10.0).get()));
-    const int num_samples = static_cast<int>(rng_t<1>(MIN_NUM_SAMPLES, MAX_NUM_SAMPLES).get());
+    cslibs_math_2d::Transform2d<double> origin(rng_coord.get(), rng_coord.get(), rng_t<double,1>(-M_PI, M_PI).get());
+    typename map_t::Ptr map(new map_t(origin, rng_t<double,1>(0.05, 1.0).get(), rng_t<double,1>(5.0, 10.0).get()));
+    const int num_samples = static_cast<int>(rng_t<double,1>(MIN_NUM_SAMPLES, MAX_NUM_SAMPLES).get());
     for (int i = 0 ; i < num_samples ; ++ i) {
-        cslibs_math_2d::Point2d p(rng_coord.get(), rng_coord.get());
+        cslibs_math_2d::Point2d<double> p(rng_coord.get(), rng_coord.get());
         map->set(p, rng_prob.get());
     }
 
@@ -137,21 +137,21 @@ TEST(Test_cslibs_gridmaps, testDynamicProbabilityGridmapSerialization)
     const typename map_t::Ptr & map_converted = n.as<typename map_t::Ptr>();
 
     // tests
-    testDynamicMap<double>(map, map_converted);
+    testDynamicMap<double,double>(map, map_converted);
 }
 
 TEST(Test_cslibs_gridmaps, testStaticGridmapSerialization)
 {
     using map_t = cslibs_gridmaps::static_maps::Gridmap<float>;
-    rng_t<1> rng_prob(0.0, 1.0);
-    rng_t<1> rng_coord(-10.0, 10.0);
-    rng_t<1> rng_size(200, 500);
+    rng_t<float,1> rng_prob(0.0, 1.0);
+    rng_t<double,1> rng_coord(-10.0, 10.0);
+    rng_t<std::size_t,1> rng_size(200, 500);
 
     // fill map
-    cslibs_math_2d::Transform2d origin(rng_coord.get(), rng_coord.get(), rng_t<1>(-M_PI, M_PI).get());
+    cslibs_math_2d::Transform2d<double> origin(rng_coord.get(), rng_coord.get(), rng_t<double,1>(-M_PI, M_PI).get());
     const std::size_t height = static_cast<std::size_t>(rng_size.get());
     const std::size_t width  = static_cast<std::size_t>(rng_size.get());
-    typename map_t::Ptr map(new map_t(origin, rng_t<1>(0.05, 1.0).get(), height, width, -1.0));
+    typename map_t::Ptr map(new map_t(origin, rng_t<double,1>(0.05, 1.0).get(), height, width, -1.0));
     for (std::size_t i = 0 ; i < width ; ++ i)
         for (std::size_t j = 0 ; j < height ; ++ j)
             map->at(i, j) = rng_prob.get();
@@ -163,21 +163,21 @@ TEST(Test_cslibs_gridmaps, testStaticGridmapSerialization)
     const typename map_t::Ptr & map_converted = n.as<typename map_t::Ptr>();
 
     // tests
-    testStaticMap<float>(map, map_converted, height, width);
+    testStaticMap<double,float>(map, map_converted, height, width);
 }
 
 TEST(Test_cslibs_gridmaps, testStaticBinaryGridmapSerialization)
 {
-    using map_t = cslibs_gridmaps::static_maps::BinaryGridmap;
-    rng_t<1> rng_prob(0.0, 1.0);
-    rng_t<1> rng_coord(-10.0, 10.0);
-    rng_t<1> rng_size(200, 500);
+    using map_t = cslibs_gridmaps::static_maps::BinaryGridmap<double>;
+    rng_t<float,1> rng_prob(0.0, 1.0);
+    rng_t<double,1> rng_coord(-10.0, 10.0);
+    rng_t<std::size_t,1> rng_size(200, 500);
 
     // fill map
-    cslibs_math_2d::Transform2d origin(rng_coord.get(), rng_coord.get(), rng_t<1>(-M_PI, M_PI).get());
+    cslibs_math_2d::Transform2d<double> origin(rng_coord.get(), rng_coord.get(), rng_t<double,1>(-M_PI, M_PI).get());
     const std::size_t height = static_cast<std::size_t>(rng_size.get());
     const std::size_t width  = static_cast<std::size_t>(rng_size.get());
-    typename map_t::Ptr map(new map_t(origin, rng_t<1>(0.05, 1.0).get(), height, width));
+    typename map_t::Ptr map(new map_t(origin, rng_t<double,1>(0.05, 1.0).get(), height, width));
     for (std::size_t i = 0 ; i < width ; ++ i)
         for (std::size_t j = 0 ; j < height ; ++ j)
             map->at(i, j) = static_cast<int>(std::round(rng_prob.get()));
@@ -189,7 +189,7 @@ TEST(Test_cslibs_gridmaps, testStaticBinaryGridmapSerialization)
     const typename map_t::Ptr & map_converted = n.as<typename map_t::Ptr>();
 
     // tests
-    testStaticMap<int>(map, map_converted, height, width);
+    testStaticMap<double,int>(map, map_converted, height, width);
 
     for (std::size_t i = 0 ; i < width ; ++ i)
         for (std::size_t j = 0 ; j < height ; ++ j)
@@ -198,17 +198,17 @@ TEST(Test_cslibs_gridmaps, testStaticBinaryGridmapSerialization)
 
 TEST(Test_cslibs_gridmaps, testStaticDistanceGridmapSerialization)
 {    
-    using map_t = cslibs_gridmaps::static_maps::DistanceGridmap;
-    rng_t<1> rng_dist(0.0, 100.0);
-    rng_t<1> rng_coord(-10.0, 10.0);
-    rng_t<1> rng_size(200, 500);
+    using map_t = cslibs_gridmaps::static_maps::DistanceGridmap<double,float>;
+    rng_t<float,1> rng_dist(0.0, 100.0);
+    rng_t<double,1> rng_coord(-10.0, 10.0);
+    rng_t<std::size_t,1> rng_size(200, 500);
 
     // fill map
-    cslibs_math_2d::Transform2d origin(rng_coord.get(), rng_coord.get(), rng_t<1>(-M_PI, M_PI).get());
+    cslibs_math_2d::Transform2d<double> origin(rng_coord.get(), rng_coord.get(), rng_t<double,1>(-M_PI, M_PI).get());
     const std::size_t height  = static_cast<std::size_t>(rng_size.get());
     const std::size_t width   = static_cast<std::size_t>(rng_size.get());
-    const double max_distance = rng_t<1>(10.0, 30.0).get();
-    typename map_t::Ptr map(new map_t(origin, rng_t<1>(0.05, 1.0).get(), max_distance, height, width));
+    const double max_distance = rng_t<double,1>(10.0, 30.0).get();
+    typename map_t::Ptr map(new map_t(origin, rng_t<double,1>(0.05, 1.0).get(), max_distance, height, width));
     for (std::size_t i = 0 ; i < width ; ++ i)
         for (std::size_t j = 0 ; j < height ; ++ j)
             map->at(i, j) = rng_dist.get();
@@ -220,22 +220,22 @@ TEST(Test_cslibs_gridmaps, testStaticDistanceGridmapSerialization)
     const typename map_t::Ptr & map_converted = n.as<typename map_t::Ptr>();
 
     // tests
-    testStaticMap<double>(map, map_converted, height, width);
+    testStaticMap<double,float>(map, map_converted, height, width);
 }
 
 TEST(Test_cslibs_gridmaps, testStaticLikelihoodFieldGridmapSerialization)
 {    
-    using map_t = cslibs_gridmaps::static_maps::LikelihoodFieldGridmap;
-    rng_t<1> rng_prob(0.0, 1.0);
-    rng_t<1> rng_coord(-10.0, 10.0);
-    rng_t<1> rng_size(200, 500);
+    using map_t = cslibs_gridmaps::static_maps::LikelihoodFieldGridmap<double,double>;
+    rng_t<double,1> rng_prob(0.0, 1.0);
+    rng_t<double,1> rng_coord(-10.0, 10.0);
+    rng_t<std::size_t,1> rng_size(200, 500);
 
     // fill map
-    cslibs_math_2d::Transform2d origin(rng_coord.get(), rng_coord.get(), rng_t<1>(-M_PI, M_PI).get());
+    cslibs_math_2d::Transform2d<double> origin(rng_coord.get(), rng_coord.get(), rng_t<double,1>(-M_PI, M_PI).get());
     const std::size_t height  = static_cast<std::size_t>(rng_size.get());
     const std::size_t width   = static_cast<std::size_t>(rng_size.get());
-    const double max_distance = rng_t<1>(10.0, 30.0).get();
-    typename map_t::Ptr map(new map_t(origin, rng_t<1>(0.05, 1.0).get(), height, width, max_distance, rng_prob.get()));
+    const double max_distance = rng_t<double,1>(10.0, 30.0).get();
+    typename map_t::Ptr map(new map_t(origin, rng_t<double,1>(0.05, 1.0).get(), height, width, max_distance, rng_prob.get()));
     for (std::size_t i = 0 ; i < width ; ++ i)
         for (std::size_t j = 0 ; j < height ; ++ j)
             map->at(i, j) = rng_prob.get();
@@ -247,21 +247,21 @@ TEST(Test_cslibs_gridmaps, testStaticLikelihoodFieldGridmapSerialization)
     const typename map_t::Ptr & map_converted = n.as<typename map_t::Ptr>();
 
     // tests
-    testStaticMap<double>(map, map_converted, height, width);
+    testStaticMap<double,double>(map, map_converted, height, width);
 }
 
 TEST(Test_cslibs_gridmaps, testStaticProbabilityGridmapSerialization)
 {
-    using map_t = cslibs_gridmaps::static_maps::ProbabilityGridmap;
-    rng_t<1> rng_prob(0.0, 1.0);
-    rng_t<1> rng_coord(-10.0, 10.0);
-    rng_t<1> rng_size(200, 500);
+    using map_t = cslibs_gridmaps::static_maps::ProbabilityGridmap<double,float>;
+    rng_t<float,1> rng_prob(0.0, 1.0);
+    rng_t<double,1> rng_coord(-10.0, 10.0);
+    rng_t<std::size_t,1> rng_size(200, 500);
 
     // fill map
-    cslibs_math_2d::Transform2d origin(rng_coord.get(), rng_coord.get(), rng_t<1>(-M_PI, M_PI).get());
+    cslibs_math_2d::Transform2d<double> origin(rng_coord.get(), rng_coord.get(), rng_t<double,1>(-M_PI, M_PI).get());
     const std::size_t height  = static_cast<std::size_t>(rng_size.get());
     const std::size_t width   = static_cast<std::size_t>(rng_size.get());
-    typename map_t::Ptr map(new map_t(origin, rng_t<1>(0.05, 1.0).get(), height, width));
+    typename map_t::Ptr map(new map_t(origin, rng_t<double,1>(0.05, 1.0).get(), height, width));
     for (std::size_t i = 0 ; i < width ; ++ i)
         for (std::size_t j = 0 ; j < height ; ++ j)
             map->at(i, j) = rng_prob.get();
@@ -273,7 +273,7 @@ TEST(Test_cslibs_gridmaps, testStaticProbabilityGridmapSerialization)
     const typename map_t::Ptr & map_converted = n.as<typename map_t::Ptr>();
 
     // tests
-    testStaticMap<double>(map, map_converted, height, width);
+    testStaticMap<double,float>(map, map_converted, height, width);
 }
 
 int main(int argc, char *argv[])
