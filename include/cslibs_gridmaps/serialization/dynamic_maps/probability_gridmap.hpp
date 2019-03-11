@@ -11,7 +11,7 @@ struct convert<std::shared_ptr<cslibs_gridmaps::dynamic_maps::ProbabilityGridmap
 {
     static Node encode(const typename cslibs_gridmaps::dynamic_maps::ProbabilityGridmap<Tp, T>::Ptr &rhs)
     {
-        return convert<cslibs_gridmaps::dynamic_maps::Gridmap<Tp, T>::Ptr>::encode(rhs);
+        return convert<typename cslibs_gridmaps::dynamic_maps::Gridmap<Tp, T>::Ptr>::encode(rhs);
     }
 
     static bool decode(const Node& n, typename cslibs_gridmaps::dynamic_maps::ProbabilityGridmap<Tp, T>::Ptr &rhs)
@@ -21,8 +21,8 @@ struct convert<std::shared_ptr<cslibs_gridmaps::dynamic_maps::ProbabilityGridmap
 
         const Tp resolution       = n[1].as<Tp>();
         const Tp chunk_resolution = resolution * (static_cast<Tp>(n[2].as<std::size_t>()) + 0.5);
-        rhs.reset(new cslibs_gridmaps::dynamic_maps::ProbabilityGridmap(
-                    n[0].as<cslibs_math_2d::Pose2d>(), resolution, chunk_resolution, n[3].as<T>()));
+        rhs.reset(new cslibs_gridmaps::dynamic_maps::ProbabilityGridmap<Tp, T>(
+                    n[0].as<cslibs_math_2d::Pose2d<Tp>>(), resolution, chunk_resolution, n[3].as<T>()));
 
         for (std::size_t p = 4 ; p < n.size() ; ++ p) {
             cslibs_gridmaps::dynamic_maps::IndexedChunk<T, 2> ci =

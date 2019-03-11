@@ -14,7 +14,7 @@
 
 namespace cslibs_gridmaps {
 namespace static_maps {
-template<typename Tp = double, typename T> // Tp for accuracy of transforms etc., T for content
+template<typename Tp, typename T> // Tp for accuracy of transforms etc., T for content
 class EIGEN_ALIGN16 Gridmap
 {
 public:

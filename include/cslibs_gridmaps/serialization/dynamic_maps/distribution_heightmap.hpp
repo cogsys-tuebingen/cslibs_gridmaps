@@ -10,7 +10,7 @@ namespace YAML {
 template <typename Tp, typename T>
 struct convert<std::shared_ptr<cslibs_gridmaps::dynamic_maps::DistributionHeightmap<Tp, T>>>
 {
-    using distribution_t = cslibs_math::statistics::Distribution<1, T>;
+    using distribution_t = cslibs_math::statistics::Distribution<T, 1>;
     static Node encode(const typename cslibs_gridmaps::dynamic_maps::DistributionHeightmap<Tp, T>::Ptr &rhs)
     {
         Node n;
