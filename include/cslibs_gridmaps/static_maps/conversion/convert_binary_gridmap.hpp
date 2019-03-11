@@ -29,7 +29,7 @@ inline void from(const nav_msgs::OccupancyGrid &src,
     const int8_t t = threshold * 100;
     std::transform(src.data.begin(), src.data.end(),
                    dst->getData().begin(),
-                   [t](const int8_t p){return p >= t || p == -1 ? BinaryGridmap::OCCUPIED : BinaryGridmap::FREE;});
+                   [t](const int8_t p){return p >= t || p == -1 ? BinaryGridmap<Tp>::OCCUPIED : BinaryGridmap<Tp>::FREE;});
 }
 
 template <typename Tp>
