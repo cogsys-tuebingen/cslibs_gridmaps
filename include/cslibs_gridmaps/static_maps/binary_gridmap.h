@@ -15,6 +15,8 @@ public:
     using Ptr = std::shared_ptr<BinaryGridmap<Tp>>;
     using pose_t = typename Gridmap<Tp, int>::pose_t;
     using point_t = typename Gridmap<Tp, int>::point_t;
+    using index_t = typename Gridmap<Tp, int>::index_t;
+    using const_line_iterator_t = typename Gridmap<Tp, int>::const_line_iterator_t;
 
     enum state_t {FREE = 0, OCCUPIED = 1};
 
@@ -81,7 +83,7 @@ public:
     {
         index_t index;
         if (toIndex(p.translation(), index))
-            return at(static_cast<std::size_t>(index[0]), static_cast<std::size_t>(index[1])) == 0;
+            return this->at(static_cast<std::size_t>(index[0]), static_cast<std::size_t>(index[1])) == 0;
         return false;
     }
 };

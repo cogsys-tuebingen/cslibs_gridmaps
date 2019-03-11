@@ -7,16 +7,18 @@
 namespace cslibs_gridmaps {
 namespace dynamic_maps {
 template <typename Tp = double, typename T = double>
-class EIGEN_ALIGN16 DistributionHeightmap : public Gridmap<Tp, cslibs_math::statistics::Distribution<1,T>>
+class EIGEN_ALIGN16 DistributionHeightmap : public Gridmap<Tp, cslibs_math::statistics::Distribution<T,1>>
 {
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     using allocator_t = Eigen::aligned_allocator<DistributionHeightmap<Tp, T>>;
 
     using Ptr = std::shared_ptr<DistributionHeightmap<Tp, T>>;
-    using distribution_t = cslibs_math::statistics::Distribution<1,T>;
-    using pose_t = typename Gridmap<Tp,cslibs_math::statistics::Distribution<1,T>>::pose_t;
-    using point_t = typename Gridmap<Tp,cslibs_math::statistics::Distribution<1,T>>::point_t;
+    using distribution_t = cslibs_math::statistics::Distribution<T,1>;
+    using pose_t = typename Gridmap<Tp,cslibs_math::statistics::Distribution<T,1>>::pose_t;
+    using point_t = typename Gridmap<Tp,cslibs_math::statistics::Distribution<T,1>>::point_t;
+    using index_t = typename Gridmap<Tp,cslibs_math::statistics::Distribution<T,1>>::index_t;
+    using chunk_t = typename Gridmap<Tp,cslibs_math::statistics::Distribution<T,1>>::chunk_t;
 
     DistributionHeightmap(const pose_t &origin,
                           const T resolution,
@@ -51,11 +53,11 @@ public:
         if (point_z > max_height_)
             return;
 
-        const index_t index              = toIndex(point_xy);
-        const index_t chunk_index        = toChunkIndex(index);
-        const index_t local_chunk_index  = toLocalChunkIndex(index);
+        const index_t index              = this->toIndex(point_xy);
+        const index_t chunk_index        = this->toChunkIndex(index);
+        const index_t local_chunk_index  = this->toLocalChunkIndex(index);
 
-        typename chunk_t::handle_t chunk = getAllocateChunk(chunk_index);
+        typename chunk_t::handle_t chunk = this->getAllocateChunk(chunk_index);
         chunk->at(local_chunk_index) += point_z;
     }
 
