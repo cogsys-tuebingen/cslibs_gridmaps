@@ -46,16 +46,16 @@ public:
     Tp getRange(const point_t &from,
                 point_t &to) const
     {
-        const_line_iterator_t it = getConstLineIterator(from, to);
+        const_line_iterator_t it = this->getConstLineIterator(from, to);
         while (it.iterate()) {
             if (*it) {
-                fromIndex({{it.x(), it.y()}}, to);
+                this->fromIndex({{it.x(), it.y()}}, to);
                 return distance(from, to);
             }
         }
 
         if (it.invalid() || *it) {
-            fromIndex({{it.x(), it.y()}}, to);
+            this->fromIndex({{it.x(), it.y()}}, to);
             return distance(from, to);
         }
         return std::numeric_limits<Tp>::max();
