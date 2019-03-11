@@ -52,7 +52,7 @@ public:
         auto update_occupied = [this](const T &map_height, const T &measured_height) {
             return std::isnormal(map_height) ? std::min(std::min(map_height, measured_height), max_height_) : std::min(measured_height, max_height_);
         };
-        set(point_xy, update_occupied(get(point_xy), point_z));
+        this->set(point_xy, update_occupied(this->get(point_xy), point_z));
     }
 
     T getMaxHeight() const
