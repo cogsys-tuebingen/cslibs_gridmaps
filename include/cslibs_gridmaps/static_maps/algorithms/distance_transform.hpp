@@ -138,7 +138,7 @@ public:
         src_width_  = step;
         src_height_ = src.size() / step;
 
-        queue_ = std::priority_queue<cell_data_t, std::deque<cell_data_t>, cell_data_t::Greater>();
+        queue_ = std::priority_queue<cell_data_t, std::deque<cell_data_t>, typename cell_data_t::Greater>();
         marked_.resize(src.size(), 0);
         dst.resize(src.size());
         std::fill(dst.begin(), dst.end(), maximum_distance_);
