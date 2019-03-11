@@ -184,16 +184,16 @@ public:
 private:
     using cell_data_t = distance_transform::Data<Td>;
 
-    const Tp                            resolution_;
-    const Td                            maximum_distance_;
-    const T                             occupancy_threshold_;
+    const Tp                                 resolution_;
+    const Td                                 maximum_distance_;
+    const T                                  occupancy_threshold_;
 
-    std::size_t                         src_size_;
-    std::size_t                         src_width_;
-    std::size_t                         src_height_;
+    std::size_t                              src_size_;
+    std::size_t                              src_width_;
+    std::size_t                              src_height_;
 
-    distance_transform::DistanceCache   cache_;
-    std::vector<uint8_t>                marked_;
+    distance_transform::DistanceCache<Tp,Td> cache_;
+    std::vector<uint8_t>                     marked_;
 
     std::priority_queue<cell_data_t, typename std::deque<cell_data_t>, typename cell_data_t::Greater> queue_;
 
