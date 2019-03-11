@@ -82,7 +82,7 @@ public:
     virtual bool validate(const pose_t &p) const
     {
         index_t index;
-        if (toIndex(p.translation(), index))
+        if (this->toIndex(p.translation(), index))
             return this->at(static_cast<std::size_t>(index[0]), static_cast<std::size_t>(index[1])) == 0;
         return false;
     }

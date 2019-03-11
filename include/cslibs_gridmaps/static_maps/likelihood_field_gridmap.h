@@ -15,6 +15,7 @@ public:
     using Ptr = std::shared_ptr<LikelihoodFieldGridmap<Tp, T>>;
     using pose_t = typename Gridmap<Tp, T>::pose_t;
     using point_t = typename Gridmap<Tp, T>::point_t;
+    using index_t = typename Gridmap<Tp, T>::index_t;
 
     explicit LikelihoodFieldGridmap(const pose_t &origin,
                                     const Tp resolution,
@@ -50,8 +51,8 @@ public:
     T at(const point_t &point) const override
     {
         index_t i;
-        toIndex(point, i);
-        if(invalid(i))
+        this->toIndex(point, i);
+        if(this->invalid(i))
             return 0.0;
         return Gridmap<Tp,T>::at(i[0], i[1]);
     }

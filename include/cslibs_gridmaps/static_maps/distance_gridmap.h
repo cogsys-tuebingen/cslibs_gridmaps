@@ -15,6 +15,7 @@ public:
     using Ptr = std::shared_ptr<DistanceGridmap<Tp, T>>;
     using pose_t = typename Gridmap<Tp, T>::pose_t;
     using point_t = typename Gridmap<Tp, T>::point_t;
+    using index_t = typename Gridmap<Tp, T>::index_t;
 
     explicit DistanceGridmap(const pose_t &origin,
                              const Tp resolution,
@@ -36,22 +37,23 @@ public:
         maximum_distance_(other.maximum_distance_)
     {
     }
+
     DistanceGridmap(DistanceGridmap &&other) :
         Gridmap<Tp,T>(static_cast<Gridmap<Tp,T>&&>(other)),
         maximum_distance_(other.maximum_distance_)
     {
     }
 
-
     using Gridmap<Tp, T>::at;
     T at(const point_t &point) const override
     {
         index_t i;
-        toIndex(point, i);
-        if(invalid(i))
+        this->toIndex(point, i);
+        if(this->invalid(i))
             return maximum_distance_;
         return Gridmap<Tp,T>::at(i[0], i[1]);
     }
+
     T getMaximumDistance() const
     {
         return maximum_distance_;
