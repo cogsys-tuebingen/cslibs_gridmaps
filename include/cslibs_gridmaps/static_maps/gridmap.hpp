@@ -24,8 +24,8 @@ public:
     using Ptr                    = std::shared_ptr<Gridmap<Tp, T>>;
     using const_line_iterator_t  = algorithms::Bresenham<T const>;
     using index_t                = std::array<int, 2>;
-    using pose_t                 = cslibs_math_2d::Pose2d<Tp>;
-    using point_t                = cslibs_math_2d::Point2d<Tp>;
+    using pose_t                 = cslibs_math_2d::Pose2<Tp>;
+    using point_t                = cslibs_math_2d::Point2<Tp>;
 
     inline Gridmap(const pose_t &origin,
                    const Tp resolution,

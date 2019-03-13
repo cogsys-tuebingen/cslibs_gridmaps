@@ -95,13 +95,13 @@ TEST(Test_cslibs_gridmaps, testDynamicGridmapSerialization)
     rng_t<double,1> rng_coord(-10.0, 10.0);
 
     // fill map
-    cslibs_math_2d::Transform2d<double> origin(rng_coord.get(), rng_coord.get(), rng_t<double,1>(-M_PI, M_PI).get());
+    cslibs_math_2d::Transform2d origin(rng_coord.get(), rng_coord.get(), rng_t<double,1>(-M_PI, M_PI).get());
     const double resolution       = rng_t<double,1>(0.05, 1.0).get();
     const double chunk_resolution = rng_t<double,1>(5.0, 10.0).get();
     typename map_t::Ptr map(new map_t(origin, resolution, chunk_resolution, rng_t<float,1>(0.2, 0.8).get()));
-    const int num_samples = static_cast<int>(rng_t<1>(MIN_NUM_SAMPLES, MAX_NUM_SAMPLES).get());
+    const int num_samples = static_cast<int>(rng_t<double,1>(MIN_NUM_SAMPLES, MAX_NUM_SAMPLES).get());
     for (int i = 0 ; i < num_samples ; ++ i) {
-        const cslibs_math_2d::Point2d<double> p(rng_coord.get(), rng_coord.get());
+        const cslibs_math_2d::Point2d p(rng_coord.get(), rng_coord.get());
         map->set(p, rng_prob.get());
     }
 
@@ -122,11 +122,11 @@ TEST(Test_cslibs_gridmaps, testDynamicProbabilityGridmapSerialization)
     rng_t<double,1> rng_coord(-10.0, 10.0);
 
     // fill map
-    cslibs_math_2d::Transform2d<double> origin(rng_coord.get(), rng_coord.get(), rng_t<double,1>(-M_PI, M_PI).get());
+    cslibs_math_2d::Transform2d origin(rng_coord.get(), rng_coord.get(), rng_t<double,1>(-M_PI, M_PI).get());
     typename map_t::Ptr map(new map_t(origin, rng_t<double,1>(0.05, 1.0).get(), rng_t<double,1>(5.0, 10.0).get()));
     const int num_samples = static_cast<int>(rng_t<double,1>(MIN_NUM_SAMPLES, MAX_NUM_SAMPLES).get());
     for (int i = 0 ; i < num_samples ; ++ i) {
-        cslibs_math_2d::Point2d<double> p(rng_coord.get(), rng_coord.get());
+        cslibs_math_2d::Point2d p(rng_coord.get(), rng_coord.get());
         map->set(p, rng_prob.get());
     }
 
@@ -142,13 +142,13 @@ TEST(Test_cslibs_gridmaps, testDynamicProbabilityGridmapSerialization)
 
 TEST(Test_cslibs_gridmaps, testStaticGridmapSerialization)
 {
-    using map_t = cslibs_gridmaps::static_maps::Gridmap<float>;
+    using map_t = cslibs_gridmaps::static_maps::Gridmap<double,float>;
     rng_t<float,1> rng_prob(0.0, 1.0);
     rng_t<double,1> rng_coord(-10.0, 10.0);
-    rng_t<std::size_t,1> rng_size(200, 500);
+    rng_t<float,1> rng_size(200, 500);
 
     // fill map
-    cslibs_math_2d::Transform2d<double> origin(rng_coord.get(), rng_coord.get(), rng_t<double,1>(-M_PI, M_PI).get());
+    cslibs_math_2d::Transform2d origin(rng_coord.get(), rng_coord.get(), rng_t<double,1>(-M_PI, M_PI).get());
     const std::size_t height = static_cast<std::size_t>(rng_size.get());
     const std::size_t width  = static_cast<std::size_t>(rng_size.get());
     typename map_t::Ptr map(new map_t(origin, rng_t<double,1>(0.05, 1.0).get(), height, width, -1.0));
@@ -171,10 +171,10 @@ TEST(Test_cslibs_gridmaps, testStaticBinaryGridmapSerialization)
     using map_t = cslibs_gridmaps::static_maps::BinaryGridmap<double>;
     rng_t<float,1> rng_prob(0.0, 1.0);
     rng_t<double,1> rng_coord(-10.0, 10.0);
-    rng_t<std::size_t,1> rng_size(200, 500);
+    rng_t<float,1> rng_size(200, 500);
 
     // fill map
-    cslibs_math_2d::Transform2d<double> origin(rng_coord.get(), rng_coord.get(), rng_t<double,1>(-M_PI, M_PI).get());
+    cslibs_math_2d::Transform2d origin(rng_coord.get(), rng_coord.get(), rng_t<double,1>(-M_PI, M_PI).get());
     const std::size_t height = static_cast<std::size_t>(rng_size.get());
     const std::size_t width  = static_cast<std::size_t>(rng_size.get());
     typename map_t::Ptr map(new map_t(origin, rng_t<double,1>(0.05, 1.0).get(), height, width));
@@ -201,10 +201,10 @@ TEST(Test_cslibs_gridmaps, testStaticDistanceGridmapSerialization)
     using map_t = cslibs_gridmaps::static_maps::DistanceGridmap<double,float>;
     rng_t<float,1> rng_dist(0.0, 100.0);
     rng_t<double,1> rng_coord(-10.0, 10.0);
-    rng_t<std::size_t,1> rng_size(200, 500);
+    rng_t<float,1> rng_size(200, 500);
 
     // fill map
-    cslibs_math_2d::Transform2d<double> origin(rng_coord.get(), rng_coord.get(), rng_t<double,1>(-M_PI, M_PI).get());
+    cslibs_math_2d::Transform2d origin(rng_coord.get(), rng_coord.get(), rng_t<double,1>(-M_PI, M_PI).get());
     const std::size_t height  = static_cast<std::size_t>(rng_size.get());
     const std::size_t width   = static_cast<std::size_t>(rng_size.get());
     const double max_distance = rng_t<double,1>(10.0, 30.0).get();
@@ -228,10 +228,10 @@ TEST(Test_cslibs_gridmaps, testStaticLikelihoodFieldGridmapSerialization)
     using map_t = cslibs_gridmaps::static_maps::LikelihoodFieldGridmap<double,double>;
     rng_t<double,1> rng_prob(0.0, 1.0);
     rng_t<double,1> rng_coord(-10.0, 10.0);
-    rng_t<std::size_t,1> rng_size(200, 500);
+    rng_t<float,1> rng_size(200, 500);
 
     // fill map
-    cslibs_math_2d::Transform2d<double> origin(rng_coord.get(), rng_coord.get(), rng_t<double,1>(-M_PI, M_PI).get());
+    cslibs_math_2d::Transform2d origin(rng_coord.get(), rng_coord.get(), rng_t<double,1>(-M_PI, M_PI).get());
     const std::size_t height  = static_cast<std::size_t>(rng_size.get());
     const std::size_t width   = static_cast<std::size_t>(rng_size.get());
     const double max_distance = rng_t<double,1>(10.0, 30.0).get();
@@ -255,10 +255,10 @@ TEST(Test_cslibs_gridmaps, testStaticProbabilityGridmapSerialization)
     using map_t = cslibs_gridmaps::static_maps::ProbabilityGridmap<double,float>;
     rng_t<float,1> rng_prob(0.0, 1.0);
     rng_t<double,1> rng_coord(-10.0, 10.0);
-    rng_t<std::size_t,1> rng_size(200, 500);
+    rng_t<float,1> rng_size(200, 500);
 
     // fill map
-    cslibs_math_2d::Transform2d<double> origin(rng_coord.get(), rng_coord.get(), rng_t<double,1>(-M_PI, M_PI).get());
+    cslibs_math_2d::Transform2d origin(rng_coord.get(), rng_coord.get(), rng_t<double,1>(-M_PI, M_PI).get());
     const std::size_t height  = static_cast<std::size_t>(rng_size.get());
     const std::size_t width   = static_cast<std::size_t>(rng_size.get());
     typename map_t::Ptr map(new map_t(origin, rng_t<double,1>(0.05, 1.0).get(), height, width));

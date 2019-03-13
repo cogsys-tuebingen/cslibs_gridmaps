@@ -24,7 +24,7 @@ inline void from(const nav_msgs::OccupancyGrid &src,
 //        i = i == -1 ? 100 : i;
 //    }
 
-    cslibs_math_2d::Pose2d<Tp> origin(src.info.origin.position.x,
+    cslibs_math_2d::Pose2<Tp> origin(src.info.origin.position.x,
                                       src.info.origin.position.y,
                                       tf::getYaw(src.info.origin.orientation));
 

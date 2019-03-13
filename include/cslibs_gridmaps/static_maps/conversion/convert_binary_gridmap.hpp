@@ -17,7 +17,7 @@ inline void from(const nav_msgs::OccupancyGrid &src,
     assert(threshold <= 1.0);
     assert(threshold >= 0.0);
 
-    cslibs_math_2d::Pose2d<Tp> origin(src.info.origin.position.x,
+    cslibs_math_2d::Pose2<Tp> origin(src.info.origin.position.x,
                                       src.info.origin.position.y,
                                       tf::getYaw(src.info.origin.orientation));
 

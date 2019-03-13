@@ -21,7 +21,7 @@ inline void from(const nav_msgs::OccupancyGrid &src,
     assert(threshold >= 0.0);
     const T exp_factor_hit = (0.5 * 1.0 / (sigma_hit * sigma_hit));
 
-    cslibs_math_2d::Pose2d<Tp> origin(src.info.origin.position.x,
+    cslibs_math_2d::Pose2<Tp> origin(src.info.origin.position.x,
                                       src.info.origin.position.y,
                                       tf::getYaw(src.info.origin.orientation));
 

@@ -34,8 +34,8 @@ public:
 
     using Ptr                   = std::shared_ptr<Gridmap<Tp, T>>;
     using gridmap_t             = Gridmap<Tp, T>;
-    using point_t               = cslibs_math_2d::Point2d<Tp>;
-    using pose_t                = cslibs_math_2d::Pose2d<Tp>;
+    using point_t               = cslibs_math_2d::Point2<Tp>;
+    using pose_t                = cslibs_math_2d::Pose2<Tp>;
     using index_t               = std::array<int, 2>;
     using mutex_t               = std::mutex;
     using lock_t                = std::unique_lock<mutex_t>;

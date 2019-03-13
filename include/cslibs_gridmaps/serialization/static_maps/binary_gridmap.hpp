@@ -6,23 +6,23 @@
 #include <yaml-cpp/yaml.h>
 
 namespace YAML {
-template <>
-struct convert<std::shared_ptr<cslibs_gridmaps::static_maps::BinaryGridmap>>
+template <typename Tp>
+struct convert<std::shared_ptr<cslibs_gridmaps::static_maps::BinaryGridmap<Tp>>>
 {
-    static Node encode(const typename cslibs_gridmaps::static_maps::BinaryGridmap::Ptr &rhs)
+    static Node encode(const typename cslibs_gridmaps::static_maps::BinaryGridmap<Tp>::Ptr &rhs)
     {
-        return convert<cslibs_gridmaps::static_maps::Gridmap<int>::Ptr>::encode(rhs);
+        return convert<typename cslibs_gridmaps::static_maps::Gridmap<Tp,int>::Ptr>::encode(rhs);
     }
 
-    static bool decode(const Node& n, typename cslibs_gridmaps::static_maps::BinaryGridmap::Ptr &rhs)
+    static bool decode(const Node& n, typename cslibs_gridmaps::static_maps::BinaryGridmap<Tp>::Ptr &rhs)
     {
         if (!n.IsSequence() || n.size() != 5)
             return false;
 
         const std::size_t height = n[2].as<std::size_t>();
         const std::size_t width  = n[3].as<std::size_t>();
-        rhs.reset(new cslibs_gridmaps::static_maps::BinaryGridmap(
-                    n[0].as<cslibs_math_2d::Pose2d>(), n[1].as<double>(), height, width));
+        rhs.reset(new cslibs_gridmaps::static_maps::BinaryGridmap<Tp>(
+                    n[0].as<cslibs_math_2d::Pose2<Tp>>(), n[1].as<Tp>(), height, width));
 
         std::vector<int> data = n[4].as<std::vector<int>>();
         if (data.size() != height * width)
