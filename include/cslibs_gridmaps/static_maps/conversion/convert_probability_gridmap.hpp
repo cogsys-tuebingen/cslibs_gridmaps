@@ -32,7 +32,7 @@ inline void from(const nav_msgs::OccupancyGrid &src,
                                       tf::getYaw(src.info.origin.orientation));
 
     dst.reset(new ProbabilityGridmap<Tp, T>(origin,
-                                            static_cast<double>(src.info.resolution),
+                                            static_cast<Tp>(src.info.resolution),
                                             src.info.height,
                                             src.info.width));
     std::transform(src.data.begin(), src.data.end(),
