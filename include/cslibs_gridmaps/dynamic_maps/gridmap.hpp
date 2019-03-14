@@ -237,7 +237,6 @@ public:
     inline line_iterator_t getLineIterator(const point_t &start,
                                            const point_t &end) const
     {
-
         const index_t start_index = toIndex(start);
         const index_t end_index   = toIndex(end);
         return line_iterator_t(start_index,
