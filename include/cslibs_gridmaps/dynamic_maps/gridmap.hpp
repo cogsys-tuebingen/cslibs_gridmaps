@@ -207,7 +207,6 @@ public:
         return line_iterator_t(start_index,
                                end_index,
                                chunk_size_,
-                               default_value_,
                                get_chunk_t::template from<gridmap_t, &gridmap_t::getAllocateChunk>(this));
     }
 
@@ -220,7 +219,6 @@ public:
         return line_iterator_t(start_index,
                                end_index,
                                chunk_size_,
-                               default_value_,
                                get_chunk_t::template from<gridmap_t, &gridmap_t::getAllocateChunk>(this));
     }
 
@@ -230,7 +228,6 @@ public:
         return line_iterator_t(start_index,
                                end_index,
                                chunk_size_,
-                               default_value_,
                                get_chunk_t::template from<gridmap_t, &gridmap_t::getAllocateChunk>(this));
     }
 
@@ -242,7 +239,6 @@ public:
         return line_iterator_t(start_index,
                                end_index,
                                chunk_size_,
-                               default_value_,
                                get_chunk_t::template from<gridmap_t, &gridmap_t::getAllocateChunk>(this));
     }
 

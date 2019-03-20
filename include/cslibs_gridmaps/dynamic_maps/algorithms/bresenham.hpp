@@ -27,13 +27,11 @@ public:
     inline explicit Bresenham(const index_t     &start,
                               const index_t     &end,
                               const int          chunk_size,
-                              const T           &default_value,
                               const get_chunk_t &get_chunk) :
         get_chunk_(get_chunk),
         chunk_size_(chunk_size),
         diff_{{(end[0] - start[0]), (end[1] - start[1])}},
-        global_bresenham_(start, end),
-        default_value_(default_value)
+        global_bresenham_(start, end)
     {
         update();
     }
@@ -109,7 +107,6 @@ private:
     index_t      local_index_end_;
 
     index_t      chunk_index_;
-    T            default_value_;
 
     inline void update()
     {
