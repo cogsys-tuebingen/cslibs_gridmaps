@@ -115,7 +115,6 @@ private:
     cslibs_math_2d::algorithms::Bresenham global_bresenham_;
     cslibs_math_2d::algorithms::Bresenham local_bresenham_;
 
-    index_t      index_;
     index_t      local_index_start_;
     index_t      local_index_end_;
 

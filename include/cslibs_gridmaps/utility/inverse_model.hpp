@@ -62,6 +62,17 @@ public:
         return l_occupied_ + l_rec - l_prior_;
     }
 
+    // for weighted stuff
+    inline T updateFree(const T l_rec, const int num, const T weight) const
+    {
+        return weight * l_free_ + l_rec - num * l_prior_;
+    }
+
+    inline T updateOccupied(const T l_rec, const int num, const T weight) const
+    {
+        return weight * l_occupied_ + l_rec - num * l_prior_;
+    }
+
 private:
     const T l_prior_;
     const T l_free_;
