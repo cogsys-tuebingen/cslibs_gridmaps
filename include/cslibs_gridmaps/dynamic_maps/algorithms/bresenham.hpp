@@ -84,16 +84,6 @@ public:
         return global_bresenham_.done();
     }
 
-    inline int distance2() const
-    {
-        return global_bresenham_.distance2();
-    }
-
-    inline int traversed2() const
-    {
-        return global_bresenham_.traversed2();
-    }
-
     inline T & operator *()
     {
         assert(!active_chunk_.empty());

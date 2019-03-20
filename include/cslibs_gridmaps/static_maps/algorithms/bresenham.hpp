@@ -58,16 +58,6 @@ public:
                 bresenham_.y() >= size_[1];
     }
 
-    inline int distance2() const
-    {
-        return bresenham_.distance2();
-    }
-
-    inline int traversed2() const
-    {
-        return bresenham_.traversed2();
-    }
-
     inline T operator *() const
     {
         return data_[bresenham_.y() * size_[0] + bresenham_.x()];
