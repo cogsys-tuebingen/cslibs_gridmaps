@@ -19,9 +19,9 @@ class EIGEN_ALIGN16 Gridmap
 {
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-    using allocator_t = Eigen::aligned_allocator<Gridmap<Tp, T>>;
+    using allocator_t = Eigen::aligned_allocator<Gridmap<Tp, T, AllocatorT>>;
 
-    using Ptr                    = std::shared_ptr<Gridmap<Tp, T>>;
+    using Ptr                    = std::shared_ptr<Gridmap<Tp, T, AllocatorT>>;
     using const_line_iterator_t  = algorithms::Bresenham<T const>;
     using index_t                = std::array<int, 2>;
     using pose_t                 = cslibs_math_2d::Pose2<Tp>;
@@ -204,12 +204,12 @@ public:
         return max_index_;
     }
 
-    std::vector<T> & getData()
+    std::vector<T, AllocatorT> & getData()
     {
         return data_;
     }
 
-    std::vector<T> const & getData() const
+    std::vector<T, AllocatorT> const & getData() const
     {
         return data_;
     }
