@@ -14,7 +14,7 @@
 
 namespace cslibs_gridmaps {
 namespace static_maps {
-template<typename Tp, typename T> // Tp for accuracy of transforms etc., T for content
+template<typename Tp, typename T, typename AllocatorT = std::allocator<T>> // Tp for accuracy of transforms etc., T for content
 class EIGEN_ALIGN16 Gridmap
 {
 public:
@@ -245,8 +245,8 @@ protected:
     const pose_t        w_T_m_;
     const pose_t        m_T_w_;
 
-    std::vector<T>      data_;
-    T*                  data_ptr_;
+    std::vector<T, AllocatorT>  data_;
+    T*                  	data_ptr_;
 
     inline bool invalid(const index_t &_i) const
     {
