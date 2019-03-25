@@ -9,10 +9,10 @@ namespace cslibs_gridmaps {
 namespace static_maps {
 namespace algorithms {
 namespace distance_transform {
-template <typename Tp, typename Td>
+template <typename Tp, typename Td, typename AllocatorTd>
 struct DistanceCache {
-    std::vector<Td>   distances;
-    const std::size_t size;
+    std::vector<Td,AllocatorTd> distances;
+    const std::size_t           size;
 
     DistanceCache(const Tp resolution,
                   const Td max_distance) :
@@ -117,7 +117,7 @@ struct Data {
 };
 }
 
-template<typename Tp, typename Td, typename T>
+template<typename Tp, typename Td, typename T, typename AllocatorTd, typename AllocatorT = std::allocator<T>>
 class DistanceTransform {
 public:
     inline DistanceTransform(const Tp resolution,
@@ -130,9 +130,9 @@ public:
     {
     }
 
-    inline void apply(const std::vector<T> &src,
-                      const std::size_t step,
-                      std::vector<Td> &dst)
+    inline void apply(const std::vector<T,AllocatorT> &src,
+                      const std::size_t                step,
+                      std::vector<Td,AllocatorTd>     &dst)
     {
         src_size_   = src.size();
         src_width_  = step;
@@ -163,8 +163,8 @@ public:
                 enqueue(dst, c);
             }
             if(cell.y > 0) {
-                auto c =cell_data_t(cell.x, cell.y - 1ul, cell.src_x, cell.src_y,
-                                    dst.data() + cell.x + (cell.y - 1ul) * src_width_);
+                auto c = cell_data_t(cell.x, cell.y - 1ul, cell.src_x, cell.src_y,
+                                     dst.data() + cell.x + (cell.y - 1ul) * src_width_);
                 enqueue(dst, c);
             }
             if(cell.x < src_width_ - 1ul) {
@@ -183,22 +183,23 @@ public:
 
 private:
     using cell_data_t = distance_transform::Data<Td>;
+    using cache_t     = distance_transform::DistanceCache<Tp,Td,AllocatorTd>;
 
-    const Tp                                 resolution_;
-    const Td                                 maximum_distance_;
-    const T                                  occupancy_threshold_;
+    const Tp                resolution_;
+    const Td                maximum_distance_;
+    const T                 occupancy_threshold_;
 
-    std::size_t                              src_size_;
-    std::size_t                              src_width_;
-    std::size_t                              src_height_;
+    std::size_t             src_size_;
+    std::size_t             src_width_;
+    std::size_t             src_height_;
 
-    distance_transform::DistanceCache<Tp,Td> cache_;
-    std::vector<uint8_t>                     marked_;
+    cache_t                 cache_;
+    std::vector<uint8_t>    marked_;
 
     std::priority_queue<cell_data_t, typename std::deque<cell_data_t>, typename cell_data_t::Greater> queue_;
 
-    inline void enqueue(std::vector<Td> &dst,
-                        cell_data_t     &cell)
+    inline void enqueue(std::vector<Td,AllocatorTd> &dst,
+                        cell_data_t                 &cell)
     {
         if(marked_[cell.y * src_width_ + cell.x])
             return;

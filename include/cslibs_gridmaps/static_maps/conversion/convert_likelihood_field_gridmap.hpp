@@ -10,9 +10,9 @@
 namespace cslibs_gridmaps {
 namespace static_maps {
 namespace conversion {
-template <typename Tp, typename T>
+template <typename Tp, typename T, typename AllocatorT = std::allocator<T>>
 inline void from(const nav_msgs::OccupancyGrid &src,
-                 typename LikelihoodFieldGridmap<Tp, T>::Ptr &dst,
+                 typename LikelihoodFieldGridmap<Tp, T, AllocatorT>::Ptr &dst,
                  const T maximum_distance = 2.0,
                  const T sigma_hit        = 0.5,
                  const double threshold   = 1.0)
@@ -22,15 +22,15 @@ inline void from(const nav_msgs::OccupancyGrid &src,
     const T exp_factor_hit = (0.5 * 1.0 / (sigma_hit * sigma_hit));
 
     cslibs_math_2d::Pose2<Tp> origin(src.info.origin.position.x,
-                                      src.info.origin.position.y,
-                                      tf::getYaw(src.info.origin.orientation));
+                                     src.info.origin.position.y,
+                                     tf::getYaw(src.info.origin.orientation));
 
-    dst.reset(new LikelihoodFieldGridmap<Tp, T>(origin,
-                                                src.info.resolution,
-                                                src.info.height,
-                                                src.info.width,
-                                                maximum_distance,
-                                                sigma_hit));
+    dst.reset(new LikelihoodFieldGridmap<Tp, T, AllocatorT>(origin,
+                                                            src.info.resolution,
+                                                            src.info.height,
+                                                            src.info.width,
+                                                            maximum_distance,
+                                                            sigma_hit));
 
     std::vector<int8_t> occ(src.data.size());
     std::transform(src.data.begin(),
@@ -39,7 +39,7 @@ inline void from(const nav_msgs::OccupancyGrid &src,
                    [](const int8_t p){return p != -1 ? p : 50;});
 
     /// 1.) calculate the distances
-    algorithms::DistanceTransform<Tp,T,int8_t> distance_transform(
+    algorithms::DistanceTransform<Tp,T,int8_t,AllocatorT> distance_transform(
                 src.info.resolution,
                 maximum_distance,
                 static_cast<int8_t>(threshold * 100));
@@ -53,9 +53,9 @@ inline void from(const nav_msgs::OccupancyGrid &src,
                   [exp_factor_hit] (T &z) {z = std::exp(-z * z * exp_factor_hit);});
 }
 
-template <typename Tp, typename T>
+template <typename Tp, typename T, typename AllocatorT = std::allocator<T>>
 inline void from(const nav_msgs::OccupancyGrid::Ptr &src,
-                 typename LikelihoodFieldGridmap<Tp, T>::Ptr &dst,
+                 typename LikelihoodFieldGridmap<Tp, T, AllocatorT>::Ptr &dst,
                  const T maximum_distance = 2.0,
                  const T sigma_hit        = 0.5,
                  const double threshold   = 1.0)
@@ -63,8 +63,8 @@ inline void from(const nav_msgs::OccupancyGrid::Ptr &src,
     from(*src, dst, maximum_distance, sigma_hit, threshold);
 }
 
-template <typename Tp, typename T>
-inline void from(LikelihoodFieldGridmap<Tp, T> &src,
+template <typename Tp, typename T, typename AllocatorT = std::allocator<T>>
+inline void from(LikelihoodFieldGridmap<Tp, T, AllocatorT> &src,
                  nav_msgs::OccupancyGrid::Ptr &dst)
 {
     dst.reset(new nav_msgs::OccupancyGrid);

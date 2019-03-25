@@ -9,39 +9,40 @@
 namespace cslibs_gridmaps {
 namespace static_maps {
 namespace conversion {
-template <typename Tp>
+template <typename Tp, typename AllocatorT = std::allocator<T>>
 inline void from(const nav_msgs::OccupancyGrid &src,
-                 typename BinaryGridmap<Tp>::Ptr &dst,
+                 typename BinaryGridmap<Tp,AllocatorT>::Ptr &dst,
                  const double threshold = 1.0)
 {
     assert(threshold <= 1.0);
     assert(threshold >= 0.0);
 
     cslibs_math_2d::Pose2<Tp> origin(src.info.origin.position.x,
-                                      src.info.origin.position.y,
-                                      tf::getYaw(src.info.origin.orientation));
+                                     src.info.origin.position.y,
+                                     tf::getYaw(src.info.origin.orientation));
 
-    dst.reset(new BinaryGridmap<Tp>(origin,
-                                    src.info.resolution,
-                                    src.info.height,
-                                    src.info.width));
+    dst.reset(new BinaryGridmap<Tp,AllocatorT>(origin,
+                                               src.info.resolution,
+                                               src.info.height,
+                                               src.info.width));
 
     const int8_t t = threshold * 100;
     std::transform(src.data.begin(), src.data.end(),
                    dst->getData().begin(),
-                   [t](const int8_t p){return p >= t || p == -1 ? BinaryGridmap<Tp>::OCCUPIED : BinaryGridmap<Tp>::FREE;});
+                   [t](const int8_t p){return p >= t || p == -1 ?
+                    BinaryGridmap<Tp,AllocatorT>::OCCUPIED : BinaryGridmap<Tp>::FREE;});
 }
 
-template <typename Tp>
+template <typename Tp, typename AllocatorT = std::allocator<T>>
 inline void from(const nav_msgs::OccupancyGrid::ConstPtr &src,
-                 typename BinaryGridmap<Tp>::Ptr &dst,
+                 typename BinaryGridmap<Tp,AllocatorT>::Ptr &dst,
                  const double threshold = 1.0)
 {
     from(*src, dst, threshold);
 }
 
-template <typename Tp>
-inline void from(BinaryGridmap<Tp> &src,
+template <typename Tp, typename AllocatorT = std::allocator<T>>
+inline void from(BinaryGridmap<Tp,AllocatorT> &src,
                  nav_msgs::OccupancyGrid::Ptr &dst)
 {
     dst.reset(new nav_msgs::OccupancyGrid);

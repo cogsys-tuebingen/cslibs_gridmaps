@@ -10,9 +10,9 @@
 namespace cslibs_gridmaps {
 namespace static_maps {
 namespace conversion {
-template <typename Tp, typename T>
+template <typename Tp, typename T, typename AllocatorT = std::allocator<T>>
 inline void from(const nav_msgs::OccupancyGrid &src,
-                 typename DistanceGridmap<Tp, T>::Ptr &dst,
+                 typename DistanceGridmap<Tp, T, AllocatorT>::Ptr &dst,
                  const double threshold = 1.0,
                  const T maximum_distance = 2.0)
 {
@@ -28,14 +28,14 @@ inline void from(const nav_msgs::OccupancyGrid &src,
                                       src.info.origin.position.y,
                                       tf::getYaw(src.info.origin.orientation));
 
-    dst.reset(new DistanceGridmap<Tp, T>(origin,
-                                         src.info.resolution,
-                                         maximum_distance,
-                                         src.info.height,
-                                         src.info.width,
-                                         maximum_distance));
+    dst.reset(new DistanceGridmap<Tp, T, AllocatorT>(origin,
+                                                     src.info.resolution,
+                                                     maximum_distance,
+                                                     src.info.height,
+                                                     src.info.width,
+                                                     maximum_distance));
 
-    algorithms::DistanceTransform<Tp,T,int8_t> distance_transform(
+    algorithms::DistanceTransform<Tp,T,int8_t,AllocatorT> distance_transform(
                 src.info.resolution,
                 maximum_distance,
                 static_cast<int8_t>(threshold * 100));
@@ -44,8 +44,8 @@ inline void from(const nav_msgs::OccupancyGrid &src,
                              dst->getData());
 }
 
-template <typename Tp, typename T>
-inline void from(DistanceGridmap<Tp, T> &src,
+template <typename Tp, typename T, typename AllocatorT = std::allocator<T>>
+inline void from(DistanceGridmap<Tp, T, AllocatorT> &src,
                  nav_msgs::OccupancyGrid::Ptr &dst)
 {
     dst.reset(new nav_msgs::OccupancyGrid);

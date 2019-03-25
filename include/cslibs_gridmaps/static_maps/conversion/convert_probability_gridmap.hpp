@@ -23,32 +23,32 @@ inline T from(const int8_t p)
     return p != -1 ? static_cast<T>(p) * 0.01 : 0.5;
 }
 
-template <typename Tp, typename T>
+template <typename Tp, typename T, typename AllocatorT = std::allocator<T>>
 inline void from(const nav_msgs::OccupancyGrid &src,
-                 typename ProbabilityGridmap<Tp, T>::Ptr &dst)
+                 typename ProbabilityGridmap<Tp, T, AllocatorT>::Ptr &dst)
 {
     cslibs_math_2d::Pose2<Tp> origin(src.info.origin.position.x,
                                      src.info.origin.position.y,
                                      tf::getYaw(src.info.origin.orientation));
 
-    dst.reset(new ProbabilityGridmap<Tp, T>(origin,
-                                            static_cast<Tp>(src.info.resolution),
-                                            src.info.height,
-                                            src.info.width));
+    dst.reset(new ProbabilityGridmap<Tp, T, AllocatorT>(origin,
+                                                        static_cast<Tp>(src.info.resolution),
+                                                        src.info.height,
+                                                        src.info.width));
     std::transform(src.data.begin(), src.data.end(),
                    dst->getData().begin(),
                    [](const int8_t p){return from<T>(p);});
 }
 
-template <typename Tp, typename T>
+template <typename Tp, typename T, typename AllocatorT = std::allocator<T>>
 inline void from(const nav_msgs::OccupancyGrid::ConstPtr &src,
-                 typename ProbabilityGridmap<Tp, T>::Ptr &dst)
+                 typename ProbabilityGridmap<Tp, T, AllocatorT>::Ptr &dst)
 {
    from(*src, dst);
 }
 
-template <typename Tp, typename T>
-inline void from(ProbabilityGridmap<Tp, T> &src,
+template <typename Tp, typename T, typename AllocatorT = std::allocator<T>>
+inline void from(ProbabilityGridmap<Tp, T, AllocatorT> &src,
                  nav_msgs::OccupancyGrid::Ptr &dst)
 {
     dst.reset(new nav_msgs::OccupancyGrid);
@@ -66,24 +66,24 @@ inline void from(ProbabilityGridmap<Tp, T> &src,
 }
 
 struct LogOdds {
-    template <typename Tp, typename T>
-    static inline void to(typename ProbabilityGridmap<Tp, T>::Ptr &src,
-                          typename ProbabilityGridmap<Tp, T>::Ptr &dst)
+    template <typename Tp, typename T, typename AllocatorT = std::allocator<T>>
+    static inline void to(typename ProbabilityGridmap<Tp, T, AllocatorT>::Ptr &src,
+                          typename ProbabilityGridmap<Tp, T, AllocatorT>::Ptr &dst)
     {
         if(src != dst) {
-            dst.reset(new ProbabilityGridmap<Tp, T>(*src));
+            dst.reset(new ProbabilityGridmap<Tp, T, AllocatorT>(*src));
         }
         std::for_each(dst->getData().begin(),
                       dst->getData().end(),
                       [](T &p){p = cslibs_math::common::LogOdds<T>::to(p);});
 
     }
-    template <typename Tp, typename T>
-    static inline void from(typename ProbabilityGridmap<Tp, T>::Ptr &src,
-                            typename ProbabilityGridmap<Tp, T>::Ptr &dst)
+    template <typename Tp, typename T, typename AllocatorT = std::allocator<T>>
+    static inline void from(typename ProbabilityGridmap<Tp, T, AllocatorT>::Ptr &src,
+                            typename ProbabilityGridmap<Tp, T, AllocatorT>::Ptr &dst)
     {
         if(src != dst) {
-            dst.reset(new ProbabilityGridmap<Tp, T>(*src));
+            dst.reset(new ProbabilityGridmap<Tp, T, AllocatorT>(*src));
         }
         std::for_each(dst->getData().begin(),
                       dst->getData().end(),
