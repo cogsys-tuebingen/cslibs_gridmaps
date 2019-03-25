@@ -1,15 +1,16 @@
 #ifndef CSLIBS_GRIDMAPS_SERIALIZATION_STATIC_MAPS_LIKELIHOOD_FIELD_GRIDMAP_HPP
 #define CSLIBS_GRIDMAPS_SERIALIZATION_STATIC_MAPS_LIKELIHOOD_FIELD_GRIDMAP_HPP
 
+#include <cslibs_gridmaps/serialization/aligned_vector.hpp>
 #include <cslibs_gridmaps/serialization/static_maps/gridmap.hpp>
 #include <cslibs_gridmaps/static_maps/likelihood_field_gridmap.h>
 #include <yaml-cpp/yaml.h>
 
 namespace YAML {
-template<typename Tp, typename T>
-struct convert<std::shared_ptr<cslibs_gridmaps::static_maps::LikelihoodFieldGridmap<Tp,T>>>
+template<typename Tp, typename T, typename AllocatorT>
+struct convert<std::shared_ptr<cslibs_gridmaps::static_maps::LikelihoodFieldGridmap<Tp,T,AllocatorT>>>
 {
-    static Node encode(const typename cslibs_gridmaps::static_maps::LikelihoodFieldGridmap<Tp,T>::Ptr &rhs)
+    static Node encode(const typename cslibs_gridmaps::static_maps::LikelihoodFieldGridmap<Tp,T,AllocatorT>::Ptr &rhs)
     {
         Node n;
         if (!rhs)
@@ -26,18 +27,18 @@ struct convert<std::shared_ptr<cslibs_gridmaps::static_maps::LikelihoodFieldGrid
         return n;
     }
 
-    static bool decode(const Node& n, typename cslibs_gridmaps::static_maps::LikelihoodFieldGridmap<Tp,T>::Ptr &rhs)
+    static bool decode(const Node& n, typename cslibs_gridmaps::static_maps::LikelihoodFieldGridmap<Tp,T,AllocatorT>::Ptr &rhs)
     {
         if (!n.IsSequence() || n.size() != 7)
             return false;
 
         const std::size_t height = n[2].as<std::size_t>();
         const std::size_t width  = n[3].as<std::size_t>();
-        rhs.reset(new cslibs_gridmaps::static_maps::LikelihoodFieldGridmap<Tp,T>(
+        rhs.reset(new cslibs_gridmaps::static_maps::LikelihoodFieldGridmap<Tp,T,AllocatorT>(
                     n[0].as<cslibs_math_2d::Pose2<Tp>>(), n[1].as<Tp>(), height, width,
                     n[4].as<T>(), n[5].as<T>()));
 
-        std::vector<T> data = n[6].as<std::vector<T>>();
+        std::vector<T,AllocatorT> data = n[6].as<std::vector<T,AllocatorT>>();
         if (data.size() != height * width)
             return false;
 
