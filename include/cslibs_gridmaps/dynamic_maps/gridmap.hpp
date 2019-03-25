@@ -25,24 +25,24 @@ namespace cis = cslibs_indexed_storage;
 
 namespace cslibs_gridmaps {
 namespace dynamic_maps {
-template<typename Tp, typename T> // Tp for accuracy of transforms etc., T for content
+template<typename Tp, typename T, typename AllocatorT = std::allocator<T>> // Tp for accuracy of transforms etc., T for content
 class EIGEN_ALIGN16 Gridmap
 {
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-    using allocator_t = Eigen::aligned_allocator<Gridmap<Tp, T>>;
+    using allocator_t = Eigen::aligned_allocator<Gridmap<Tp, T, AllocatorT>>;
 
-    using Ptr                   = std::shared_ptr<Gridmap<Tp, T>>;
-    using gridmap_t             = Gridmap<Tp, T>;
+    using Ptr                   = std::shared_ptr<Gridmap<Tp, T, AllocatorT>>;
+    using gridmap_t             = Gridmap<Tp, T, AllocatorT>;
     using point_t               = cslibs_math_2d::Point2<Tp>;
     using pose_t                = cslibs_math_2d::Pose2<Tp>;
     using index_t               = std::array<int, 2>;
     using mutex_t               = std::mutex;
     using lock_t                = std::unique_lock<mutex_t>;
-    using chunk_t               = Chunk<T>;
+    using chunk_t               = Chunk<T, AllocatorT>;
     using storage_t             = cis::Storage<chunk_t, index_t, cis::backend::kdtree::KDTree>;
-    using line_iterator_t       = algorithms::Bresenham<T>;
-    using const_line_iterator_t = algorithms::Bresenham<T const>;
+    using line_iterator_t       = algorithms::Bresenham<T, AllocatorT>;
+    using const_line_iterator_t = algorithms::Bresenham<T const, AllocatorT>;
     using get_chunk_t           = cslibs_utility::common::delegate<typename chunk_t::handle_t(const index_t &)>;
 
     inline Gridmap(const pose_t &origin,

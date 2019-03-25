@@ -5,39 +5,40 @@
 
 namespace cslibs_gridmaps {
 namespace dynamic_maps {
-template <typename Tp = double, typename T = double>
-class EIGEN_ALIGN16 MinHeightmap : public Gridmap<Tp, T>
+template <typename Tp = double, typename T = double, typename AllocatorT = std::allocator<T>>
+class EIGEN_ALIGN16 MinHeightmap : public Gridmap<Tp, T, AllocatorT>
 {
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-    using allocator_t = Eigen::aligned_allocator<MinHeightmap<Tp, T>>;
+    using allocator_t = Eigen::aligned_allocator<MinHeightmap<Tp, T, AllocatorT>>;
 
     using Ptr = std::shared_ptr<MinHeightmap<Tp, T>>;
-    using pose_t = typename Gridmap<Tp, T>::pose_t;
-    using point_t = typename Gridmap<Tp, T>::point_t;
+    using base_t = Gridmap<Tp, T, AllocatorT>;
+    using pose_t = typename base_t::pose_t;
+    using point_t = typename base_t::point_t;
 
     MinHeightmap(const pose_t &origin,
                  const Tp resolution,
                  const Tp chunk_resolution,
                  const T max_height,
                  const T default_value = std::numeric_limits<T>::infinity()) :
-        Gridmap<Tp, T>(origin,
-                       resolution,
-                       chunk_resolution,
-                       default_value),
+        base_t(origin,
+               resolution,
+               chunk_resolution,
+               default_value),
         resolution_2_(resolution * resolution),
         max_height_(max_height)
     {
     }
 
     MinHeightmap(const MinHeightmap &other) :
-        Gridmap<Tp, T>(static_cast<const Gridmap<Tp, T>&>(other)),
+        base_t(static_cast<const base_t&>(other)),
         resolution_2_(other.resolution_2_),
         max_height_(other.max_height_)
     {
     }
     MinHeightmap(MinHeightmap &&other) :
-        Gridmap<Tp, T>(static_cast<Gridmap<Tp, T>&&>(other)),
+        base_t(static_cast<base_t&&>(other)),
         resolution_2_(other.resolution_2_),
         max_height_(other.max_height_)
     {

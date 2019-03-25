@@ -7,7 +7,9 @@
 namespace cslibs_gridmaps {
 namespace dynamic_maps {
 template <typename Tp = double, typename T = double>
-class EIGEN_ALIGN16 DistributionHeightmap : public Gridmap<Tp, cslibs_math::statistics::Distribution<T,1>>
+class EIGEN_ALIGN16 DistributionHeightmap :
+        public Gridmap<Tp, cslibs_math::statistics::Distribution<T,1>,
+                       typename cslibs_math::statistics::Distribution<T,1>::allocator_t>
 {
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -15,33 +17,34 @@ public:
 
     using Ptr = std::shared_ptr<DistributionHeightmap<Tp, T>>;
     using distribution_t = cslibs_math::statistics::Distribution<T,1>;
-    using pose_t = typename Gridmap<Tp,cslibs_math::statistics::Distribution<T,1>>::pose_t;
-    using point_t = typename Gridmap<Tp,cslibs_math::statistics::Distribution<T,1>>::point_t;
-    using index_t = typename Gridmap<Tp,cslibs_math::statistics::Distribution<T,1>>::index_t;
-    using chunk_t = typename Gridmap<Tp,cslibs_math::statistics::Distribution<T,1>>::chunk_t;
+    using base_t = Gridmap<Tp, distribution_t, typename distribution_t::allocator_t>;
+    using pose_t = typename base_t::pose_t;
+    using point_t = typename base_t::point_t;
+    using index_t = typename base_t::index_t;
+    using chunk_t = typename base_t::chunk_t;
 
     DistributionHeightmap(const pose_t &origin,
                           const T resolution,
                           const T chunk_resolution,
                           const T max_height,
                           const distribution_t default_value = distribution_t()) :
-        Gridmap<Tp, distribution_t>(origin,
-                                    resolution,
-                                    chunk_resolution,
-                                    default_value),
+        base_t(origin,
+               resolution,
+               chunk_resolution,
+               default_value),
         resolution_2_(resolution * resolution),
         max_height_(max_height)
     {
     }
 
     DistributionHeightmap(const DistributionHeightmap &other) :
-        Gridmap<Tp, distribution_t>(static_cast<const Gridmap<Tp, distribution_t>&>(other)),
+        base_t(static_cast<const base_t&>(other)),
         resolution_2_(other.resolution_2_),
         max_height_(other.max_height_)
     {
     }
     DistributionHeightmap(DistributionHeightmap &&other) :
-        Gridmap<Tp, distribution_t>(static_cast<Gridmap<Tp, distribution_t>&&>(other)),
+        base_t(static_cast<base_t&&>(other)),
         resolution_2_(other.resolution_2_),
         max_height_(other.max_height_)
     {

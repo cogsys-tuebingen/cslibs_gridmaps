@@ -15,13 +15,13 @@
 namespace cslibs_gridmaps {
 namespace dynamic_maps {
 namespace algorithms {
-template<typename T>
+template<typename T, typename AllocatorT = std::allocator<T>>
 class Bresenham
 {
 public:
     using Ptr           = std::shared_ptr<Bresenham>;
     using index_t       = std::array<int, 2>;
-    using chunk_t       = dynamic_maps::Chunk<T>;
+    using chunk_t       = dynamic_maps::Chunk<T,AllocatorT>;
     using get_chunk_t   = cslibs_utility::common::delegate<typename chunk_t::handle_t(const index_t&)>;
 
     inline explicit Bresenham(const index_t     &start,

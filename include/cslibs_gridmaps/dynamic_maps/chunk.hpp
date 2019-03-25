@@ -10,13 +10,13 @@
 
 namespace cslibs_gridmaps {
 namespace dynamic_maps {
-template<typename T>
+template<typename T, typename AllocatorT>
 class Chunk {
 public:
     using index_t   = std::array<int, 2>;
     using mutex_t   = std::mutex;
     using lock_t    = std::unique_lock<mutex_t>;
-    using chunk_t   = Chunk<T>;
+    using chunk_t   = Chunk<T,AllocatorT>;
 
     using handle_t       = cslibs_utility::synchronized::WrapAround<chunk_t>;
     using const_handle_t = cslibs_utility::synchronized::WrapAround<const chunk_t>;
@@ -104,16 +104,16 @@ public:
         return size_;
     }
 
-    std::vector<T> const & getData() const
+    std::vector<T,AllocatorT> const & getData() const
     {
         return data_;
     }
 
 private:
-    int                 size_;
-    std::vector<T>      data_;
-    T                  *data_ptr_;
-    mutable mutex_t     data_mutex_;
+    int                         size_;
+    std::vector<T,AllocatorT>   data_;
+    T                          *data_ptr_;
+    mutable mutex_t             data_mutex_;
 
 };
 }
