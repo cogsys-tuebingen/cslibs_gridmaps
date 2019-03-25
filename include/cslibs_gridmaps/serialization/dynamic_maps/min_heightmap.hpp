@@ -1,6 +1,7 @@
 #ifndef CSLIBS_GRIDMAPS_SERIALIZATION_DYNAMIC_MAPS_MIN_HEIGHTMAP_HPP
 #define CSLIBS_GRIDMAPS_SERIALIZATION_DYNAMIC_MAPS_MIN_HEIGHTMAP_HPP
 
+#include <cslibs_gridmaps/serialization/aligned_vector.hpp>
 #include <cslibs_gridmaps/serialization/dynamic_maps/gridmap.hpp>
 #include <cslibs_gridmaps/dynamic_maps/min_heightmap.h>
 #include <yaml-cpp/yaml.h>

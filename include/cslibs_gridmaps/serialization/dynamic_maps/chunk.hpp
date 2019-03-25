@@ -1,6 +1,7 @@
 #ifndef CSLIBS_GRIDMAPS_SERIALIZATION_DYNAMIC_MAPS_CHUNK_HPP
 #define CSLIBS_GRIDMAPS_SERIALIZATION_DYNAMIC_MAPS_CHUNK_HPP
 
+#include <cslibs_gridmaps/serialization/aligned_vector.hpp>
 #include <cslibs_gridmaps/dynamic_maps/chunk.hpp>
 #include <cslibs_math/serialization/array.hpp>
 #include <yaml-cpp/yaml.h>

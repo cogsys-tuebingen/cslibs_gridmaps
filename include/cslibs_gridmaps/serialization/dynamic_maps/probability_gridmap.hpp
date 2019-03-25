@@ -1,6 +1,7 @@
 #ifndef CSLIBS_GRIDMAPS_SERIALIZATION_DYNAMIC_MAPS_PROBABILITY_GRIDMAP_HPP
 #define CSLIBS_GRIDMAPS_SERIALIZATION_DYNAMIC_MAPS_PROBABILITY_GRIDMAP_HPP
 
+#include <cslibs_gridmaps/serialization/aligned_vector.hpp>
 #include <cslibs_gridmaps/serialization/dynamic_maps/gridmap.hpp>
 #include <cslibs_gridmaps/dynamic_maps/probability_gridmap.h>
 #include <yaml-cpp/yaml.h>
