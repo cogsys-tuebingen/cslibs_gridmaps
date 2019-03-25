@@ -9,9 +9,9 @@
 namespace cslibs_gridmaps {
 namespace static_maps {
 namespace conversion {
-template <typename Tp, typename AllocatorT = std::allocator<T>>
+template <typename Tp>
 inline void from(const nav_msgs::OccupancyGrid &src,
-                 typename BinaryGridmap<Tp,AllocatorT>::Ptr &dst,
+                 typename BinaryGridmap<Tp>::Ptr &dst,
                  const double threshold = 1.0)
 {
     assert(threshold <= 1.0);
@@ -21,28 +21,28 @@ inline void from(const nav_msgs::OccupancyGrid &src,
                                      src.info.origin.position.y,
                                      tf::getYaw(src.info.origin.orientation));
 
-    dst.reset(new BinaryGridmap<Tp,AllocatorT>(origin,
-                                               src.info.resolution,
-                                               src.info.height,
-                                               src.info.width));
+    dst.reset(new BinaryGridmap<Tp>(origin,
+                                    src.info.resolution,
+                                    src.info.height,
+                                    src.info.width));
 
     const int8_t t = threshold * 100;
     std::transform(src.data.begin(), src.data.end(),
                    dst->getData().begin(),
                    [t](const int8_t p){return p >= t || p == -1 ?
-                    BinaryGridmap<Tp,AllocatorT>::OCCUPIED : BinaryGridmap<Tp>::FREE;});
+                    BinaryGridmap<Tp>::OCCUPIED : BinaryGridmap<Tp>::FREE;});
 }
 
-template <typename Tp, typename AllocatorT = std::allocator<T>>
+template <typename Tp>
 inline void from(const nav_msgs::OccupancyGrid::ConstPtr &src,
-                 typename BinaryGridmap<Tp,AllocatorT>::Ptr &dst,
+                 typename BinaryGridmap<Tp>::Ptr &dst,
                  const double threshold = 1.0)
 {
     from(*src, dst, threshold);
 }
 
-template <typename Tp, typename AllocatorT = std::allocator<T>>
-inline void from(BinaryGridmap<Tp,AllocatorT> &src,
+template <typename Tp>
+inline void from(BinaryGridmap<Tp> &src,
                  nav_msgs::OccupancyGrid::Ptr &dst)
 {
     dst.reset(new nav_msgs::OccupancyGrid);

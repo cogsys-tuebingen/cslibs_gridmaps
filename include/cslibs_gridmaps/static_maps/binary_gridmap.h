@@ -5,18 +5,19 @@
 
 namespace cslibs_gridmaps {
 namespace static_maps {
-template <typename Tp = double, typename AllocatorT = std::allocator<T>>
-class EIGEN_ALIGN16 BinaryGridmap : public Gridmap<Tp, int, AllocatorT>
+template <typename Tp = double>
+class EIGEN_ALIGN16 BinaryGridmap : public Gridmap<Tp, int, std::allocator<int>>
 {
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-    using allocator_t = Eigen::aligned_allocator<BinaryGridmap<Tp, AllocatorT>>;
+    using allocator_t = Eigen::aligned_allocator<BinaryGridmap<Tp>>;
 
-    using Ptr = std::shared_ptr<BinaryGridmap<Tp, AllocatorT>>;
-    using pose_t = typename Gridmap<Tp, int, AllocatorT>::pose_t;
-    using point_t = typename Gridmap<Tp, int, AllocatorT>::point_t;
-    using index_t = typename Gridmap<Tp, int, AllocatorT>::index_t;
-    using const_line_iterator_t = typename Gridmap<Tp, int, AllocatorT>::const_line_iterator_t;
+    using Ptr = std::shared_ptr<BinaryGridmap<Tp>>;
+    using base_t = Gridmap<Tp, int, std::allocator<int>>;
+    using pose_t = typename base_t::pose_t;
+    using point_t = typename base_t::point_t;
+    using index_t = typename base_t::index_t;
+    using const_line_iterator_t = typename base_t::const_line_iterator_t;
 
     enum state_t {FREE = 0, OCCUPIED = 1};
 
@@ -26,20 +27,20 @@ public:
                            const std::size_t height,
                            const std::size_t width,
                            const state_t default_value = FREE) :
-        Gridmap<Tp,int,AllocatorT>(origin,
-                                   resolution,
-                                   height,
-                                   width,
-                                   default_value)
+        base_t(origin,
+               resolution,
+               height,
+               width,
+               default_value)
     {
     }
 
     BinaryGridmap(const BinaryGridmap &other) :
-        Gridmap<Tp,int,AllocatorT>(static_cast<const Gridmap<Tp,int,AllocatorT>&>(other))
+        base_t(static_cast<const base_t&>(other))
     {
     }
     BinaryGridmap(BinaryGridmap &&other) :
-        Gridmap<Tp,int,AllocatorT>(static_cast<Gridmap<Tp,int,AllocatorT>&&>(other))
+        base_t(static_cast<base_t&&>(other))
     {
     }
 

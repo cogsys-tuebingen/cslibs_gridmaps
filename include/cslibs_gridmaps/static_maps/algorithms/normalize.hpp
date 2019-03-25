@@ -6,8 +6,8 @@
 namespace cslibs_gridmaps {
 namespace static_maps {
 namespace algorithms {
-template<typename Tp, typename T>
-void normalize(Gridmap<Tp, T> &map)
+template<typename Tp, typename T, typename AllocatorT = std::allocator<T>>
+void normalize(Gridmap<Tp, T, AllocatorT> &map)
 {
     T max = std::numeric_limits<T>::lowest();
     T min = std::numeric_limits<T>::max();
