@@ -7,16 +7,16 @@
 
 namespace cslibs_gridmaps {
 namespace dynamic_maps {
-template <typename T, std::size_t Dim>
+template <typename T, typename AllocatorT, std::size_t Dim>
 struct IndexedChunk {
     std::array<int, Dim> index_;
-    Chunk<T>             chunk_;
+    Chunk<T,AllocatorT>  chunk_;
 
     IndexedChunk() = default;
 
     IndexedChunk(
             const std::array<int, Dim> & index,
-            const Chunk<T>             & chunk) :
+            const Chunk<T,AllocatorT>  & chunk) :
         index_(index),
         chunk_(chunk)
     {
@@ -26,10 +26,10 @@ struct IndexedChunk {
 }
 
 namespace YAML {
-template <typename T>
-struct convert<cslibs_gridmaps::dynamic_maps::Chunk<T>>
+template <typename T, typename AllocatorT>
+struct convert<cslibs_gridmaps::dynamic_maps::Chunk<T,AllocatorT>>
 {
-    static Node encode(const cslibs_gridmaps::dynamic_maps::Chunk<T> &rhs)
+    static Node encode(const cslibs_gridmaps::dynamic_maps::Chunk<T,AllocatorT> &rhs)
     {
         Node n;
 
@@ -39,15 +39,15 @@ struct convert<cslibs_gridmaps::dynamic_maps::Chunk<T>>
         return n;
     }
 
-    static bool decode(const Node& n, cslibs_gridmaps::dynamic_maps::Chunk<T> &rhs)
+    static bool decode(const Node& n, cslibs_gridmaps::dynamic_maps::Chunk<T,AllocatorT> &rhs)
     {
         if (!n.IsSequence() || n.size() != 2)
             return false;
 
         const int size = n[0].as<int>();
-        rhs = cslibs_gridmaps::dynamic_maps::Chunk<T>(size, T());
+        rhs = cslibs_gridmaps::dynamic_maps::Chunk<T,AllocatorT>(size, T());
 
-        std::vector<T> data = n[1].as<std::vector<T>>();
+        std::vector<T,AllocatorT> data = n[1].as<std::vector<T,AllocatorT>>();
         if (data.size() != static_cast<std::size_t>(size * size))
             return false;
 
@@ -59,10 +59,10 @@ struct convert<cslibs_gridmaps::dynamic_maps::Chunk<T>>
     }
 };
 
-template <typename T, std::size_t Dim>
-struct convert<cslibs_gridmaps::dynamic_maps::IndexedChunk<T, Dim>>
+template <typename T, typename AllocatorT, std::size_t Dim>
+struct convert<cslibs_gridmaps::dynamic_maps::IndexedChunk<T, AllocatorT, Dim>>
 {
-    static Node encode(const cslibs_gridmaps::dynamic_maps::IndexedChunk<T, Dim> &rhs)
+    static Node encode(const cslibs_gridmaps::dynamic_maps::IndexedChunk<T, AllocatorT, Dim> &rhs)
     {
         Node n;
 
@@ -72,13 +72,13 @@ struct convert<cslibs_gridmaps::dynamic_maps::IndexedChunk<T, Dim>>
         return n;
     }
 
-    static bool decode(const Node& n, cslibs_gridmaps::dynamic_maps::IndexedChunk<T, Dim> &rhs)
+    static bool decode(const Node& n, cslibs_gridmaps::dynamic_maps::IndexedChunk<T, AllocatorT, Dim> &rhs)
     {
         if (!n.IsSequence() || n.size() != 2)
             return false;
 
         rhs.index_ = n[0].as<std::array<int, Dim>>();
-        rhs.chunk_ = n[1].as<cslibs_gridmaps::dynamic_maps::Chunk<T>>();
+        rhs.chunk_ = n[1].as<cslibs_gridmaps::dynamic_maps::Chunk<T,AllocatorT>>();
 
         return true;
     }

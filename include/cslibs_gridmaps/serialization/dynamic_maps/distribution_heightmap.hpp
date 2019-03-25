@@ -29,8 +29,8 @@ struct convert<std::shared_ptr<cslibs_gridmaps::dynamic_maps::DistributionHeight
         for (int idx = min_chunk_index[0] ; idx <= max_chunk_index[0] ; ++ idx) {
             for (int idy = min_chunk_index[1] ; idy <= max_chunk_index[1] ; ++ idy) {
                 std::array<int, 2> index({idx, idy});
-                if (const typename cslibs_gridmaps::dynamic_maps::Chunk<distribution_t>::handle_t c = rhs->getChunk(index)) {
-                    cslibs_gridmaps::dynamic_maps::IndexedChunk<distribution_t, 2> ci(index, *c);
+                if (const typename cslibs_gridmaps::dynamic_maps::Chunk<distribution_t,distribution_t::allocator_t>::handle_t c = rhs->getChunk(index)) {
+                    cslibs_gridmaps::dynamic_maps::IndexedChunk<distribution_t, distribution_t::allocator_t, 2> ci(index, *c);
                     n.push_back(ci);
                 }
             }
@@ -50,8 +50,8 @@ struct convert<std::shared_ptr<cslibs_gridmaps::dynamic_maps::DistributionHeight
                     n[0].as<cslibs_math_2d::Pose2<Tp>>(), resolution, chunk_resolution, n[3].as<T>(), n[4].as<distribution_t>()));
 
         for (std::size_t p = 5 ; p < n.size() ; ++ p) {
-            cslibs_gridmaps::dynamic_maps::IndexedChunk<distribution_t, 2> ci =
-                    n[p].as<cslibs_gridmaps::dynamic_maps::IndexedChunk<distribution_t, 2>>();
+            cslibs_gridmaps::dynamic_maps::IndexedChunk<distribution_t, distribution_t::allocator_t, 2> ci =
+                    n[p].as<cslibs_gridmaps::dynamic_maps::IndexedChunk<distribution_t, distribution_t::allocator_t, 2>>();
             rhs->getAllocateChunk(ci.index_).data() = ci.chunk_;
         }
 
