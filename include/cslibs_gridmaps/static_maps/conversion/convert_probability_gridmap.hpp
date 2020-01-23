@@ -11,6 +11,7 @@
 namespace cslibs_gridmaps {
 namespace static_maps {
 namespace conversion {
+
 template <typename T>
 inline int8_t from(const T p)
 {
@@ -73,11 +74,13 @@ struct LogOdds {
         if(src != dst) {
             dst.reset(new ProbabilityGridmap<Tp, T, AllocatorT>(*src));
         }
-        std::for_each(dst->getData().begin(),
+        /*std::for_each(dst->getData().begin(),
                       dst->getData().end(),
-                      [](T &p){p = cslibs_math::common::LogOdds<T>::to(p);});
-
+                      [](T &p){p = cslibs_math::common::LogOdds<T>::to(p);});*/
+        for (auto it = dst->getData().begin(); it != dst->getData().end(); ++it)
+            *it = cslibs_math::common::LogOdds<T>::to(*it);
     }
+
     template <typename Tp, typename T, typename AllocatorT = std::allocator<T>>
     static inline void from(typename ProbabilityGridmap<Tp, T, AllocatorT>::Ptr &src,
                             typename ProbabilityGridmap<Tp, T, AllocatorT>::Ptr &dst)
@@ -85,12 +88,14 @@ struct LogOdds {
         if(src != dst) {
             dst.reset(new ProbabilityGridmap<Tp, T, AllocatorT>(*src));
         }
-        std::for_each(dst->getData().begin(),
+        /*std::for_each(dst->getData().begin(),
                       dst->getData().end(),
-                      [](T &l){l = cslibs_math::common::LogOdds<T>::from(l);});
-
+                      [](T &l){l = cslibs_math::common::LogOdds<T>::from(l);});*/
+        for (auto it = dst->getData().begin(); it != dst->getData().end(); ++it)
+            *it = cslibs_math::common::LogOdds<T>::from(*it);
     }
 };
+
 }
 }
 }

@@ -6,11 +6,11 @@
 namespace cslibs_gridmaps {
 namespace static_maps {
 template <typename Tp = double>
-class EIGEN_ALIGN16 BinaryGridmap : public Gridmap<Tp, int, std::allocator<int>>
+class /*EIGEN_ALIGN16*/ BinaryGridmap : public Gridmap<Tp, int, std::allocator<int>>
 {
 public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-    using allocator_t = Eigen::aligned_allocator<BinaryGridmap<Tp>>;
+//    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+//    using allocator_t = Eigen::aligned_allocator<BinaryGridmap<Tp>>;
 
     using Ptr = std::shared_ptr<BinaryGridmap<Tp>>;
     using base_t = Gridmap<Tp, int, std::allocator<int>>;

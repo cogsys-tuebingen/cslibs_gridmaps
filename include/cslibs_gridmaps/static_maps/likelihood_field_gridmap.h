@@ -6,11 +6,11 @@
 namespace cslibs_gridmaps {
 namespace static_maps {
 template <typename Tp = double, typename T = double, typename AllocatorT = std::allocator<T>>
-class EIGEN_ALIGN16 LikelihoodFieldGridmap : public Gridmap<Tp, T, AllocatorT>
+class /*EIGEN_ALIGN16*/ LikelihoodFieldGridmap : public Gridmap<Tp, T, AllocatorT>
 {
 public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-    using allocator_t = Eigen::aligned_allocator<LikelihoodFieldGridmap<Tp, T, AllocatorT>>;
+//    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+//    using allocator_t = Eigen::aligned_allocator<LikelihoodFieldGridmap<Tp, T, AllocatorT>>;
 
     using Ptr = std::shared_ptr<LikelihoodFieldGridmap<Tp, T>>;
     using base_t = Gridmap<Tp, T, AllocatorT>;

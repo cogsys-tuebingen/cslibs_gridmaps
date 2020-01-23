@@ -21,14 +21,11 @@ public:
     using handle_t       = cslibs_utility::synchronized::WrapAround<chunk_t>;
     using const_handle_t = cslibs_utility::synchronized::WrapAround<const chunk_t>;
 
-    inline Chunk()
-    {
-    }
-
+    inline Chunk() = default;
     virtual ~Chunk() = default;
 
     inline Chunk(const int size,
-          const T default_value) :
+                 const T default_value) :
         size_(size),
         data_(size * size, default_value),
         data_ptr_(data_.data())
