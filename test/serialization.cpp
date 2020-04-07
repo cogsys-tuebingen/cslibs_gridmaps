@@ -51,8 +51,8 @@ void testDynamicMap(const typename cslibs_gridmaps::dynamic_maps::Gridmap<Tp,T>:
     for (int idx = min_chunk_index[0] ; idx <= max_chunk_index[0] ; ++ idx) {
         for (int idy = min_chunk_index[1] ; idy <= max_chunk_index[1] ; ++ idy) {
             std::array<int, 2> index({idx, idy});
-            if (typename cslibs_gridmaps::dynamic_maps::Chunk<T>::handle_t c = map->getChunk(index)) {
-                const typename cslibs_gridmaps::dynamic_maps::Chunk<T>::handle_t cc = map_converted->getChunk(index);
+            if (typename cslibs_gridmaps::dynamic_maps::Chunk<T,std::allocator<T>>::handle_t c = map->getChunk(index)) {
+                const typename cslibs_gridmaps::dynamic_maps::Chunk<T,std::allocator<T>>::handle_t cc = map_converted->getChunk(index);
                 EXPECT_NE(cc, nullptr);
                 EXPECT_EQ(c->getData().size(), cc->getData().size());
                 for (std::size_t i = 0 ; i < c->getData().size() ; ++ i)
