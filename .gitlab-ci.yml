@@ -47,7 +47,7 @@ kinetic:
   script:
     - source /opt/ros/$(ls /opt/ros/ | sort -r | head -n 1)/setup.bash
     - rosdep install -y -r -i --from-paths src
-    - catkin build
+    - catkin build -Dcslibs_gridmaps_BUILD_EXAMPLES=True
     - catkin run_tests
 
 melodic:
@@ -56,6 +56,6 @@ melodic:
   script:
     - source /opt/ros/$(ls /opt/ros/ | sort -r | head -n 1)/setup.bash
     - rosdep install -y -r -i --from-paths src
-    - catkin build
+    - catkin build -Dcslibs_gridmaps_BUILD_EXAMPLES=True
     - catkin run_tests
 

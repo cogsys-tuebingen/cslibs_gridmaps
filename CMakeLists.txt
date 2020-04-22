@@ -3,8 +3,7 @@ project(cslibs_gridmaps)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-include(cmake/cslibs_gridmaps_enable_c++11.cmake)
-include(cmake/cslibs_gridmaps_extras.cmake)
+include(cmake/cslibs_gridmaps_enable_c++17.cmake)
 
 if(NOT ${PROJECT_NAME}_BUILD_EXAMPLES)
     set(${PROJECT_NAME}_BUILD_EXAMPLES False)
@@ -16,19 +15,36 @@ find_package(catkin REQUIRED COMPONENTS
   cslibs_utility
 )
 
+find_package(yaml-cpp REQUIRED)
+
 catkin_package(
-    INCLUDE_DIRS    include
-    CATKIN_DEPENDS  cslibs_math_2d cslibs_indexed_storage cslibs_utility
-    CFG_EXTRAS      cslibs_gridmaps_enable_c++11.cmake
-                    cslibs_gridmaps_extras.cmake
+    INCLUDE_DIRS
+        include
+    CATKIN_DEPENDS
+        cslibs_math_2d
+        cslibs_indexed_storage
+        cslibs_utility
+    CFG_EXTRAS
+        cslibs_gridmaps_enable_c++17.cmake
     LIBRARIES
 )
 
-include_directories(
-  include
-  ${catkin_INCLUDE_DIRS}
+add_library(${PROJECT_NAME} INTERFACE)
+target_include_directories(${PROJECT_NAME}
+    INTERFACE
+        include/
+        ${catkin_INCLUDE_DIRS}
 )
 
+if(NOT ${CMAKE_BUILD_TYPE} STREQUAL Debug)
+    set(TARGET_COMPILE_DEFINITIONS
+        -Wall -WError -Ofast -ffastmath
+    )
+    # enabling -march=native my result in problems on some machines,
+    # my try -mtune=native
+
+    message(STATUS "[${PROJECT_NAME}]: Compiling with optimization!")
+endif()
 
 if(${PROJECT_NAME}_BUILD_EXAMPLES)
     find_package(OpenCV      REQUIRED)
@@ -36,50 +52,98 @@ if(${PROJECT_NAME}_BUILD_EXAMPLES)
     find_package(tf          REQUIRED)
     find_package(nav_msgs    REQUIRED)
 
-    include_directories(
+
+
+
+    set(TARGET_INCLUDE_DIRS
+        ${catkin_INCLUDE_DIRS}
         ${OpenCV_INCLUDE_DIRS}
         ${cslibs_time_INCLUDE_DIRS}
         ${tf_INCLUDE_DIRS}
         ${nav_msgs_INCLUDE_DIRS}
-    )
 
-    add_executable(${PROJECT_NAME}_example_get_range
-        test/example_get_range.cpp
     )
-
-    target_link_libraries(${PROJECT_NAME}_example_get_range
+    set(TARGET_LINK_LIBRARIES
         ${catkin_LIBRARIES}
         ${tf_LIBRARIES}
         ${nav_msgs_LIBRARIES}
         ${OpenCV_LIBRARIES}
     )
+
+    ### Range Example ###
+    add_executable(${PROJECT_NAME}_example_get_range
+        test/example_get_range.cpp
+    )
+
+    target_include_directories(${PROJECT_NAME}_example_get_range
+        PRIVATE
+            ${TARGET_INCLUDE_DIRS}
+    )
+
+    target_link_libraries(${PROJECT_NAME}_example_get_range
+        PRIVATE
+            ${TARGET_LINK_LIBRARIES}
+    )
+
+    target_compile_definitions(${PROJECT_NAME}_example_get_range
+        PRIVATE
+            ${unit_test_COMPILE_DEFINITIONS}
+    )
+
+    ### Iterator Example ###
     add_executable(${PROJECT_NAME}_example_line_iterator
         test/example_line_iterator.cpp
     )
 
     target_link_libraries(${PROJECT_NAME}_example_line_iterator
-        ${catkin_LIBRARIES}
-        ${tf_LIBRARIES}
-        ${nav_msgs_LIBRARIES}
-        ${OpenCV_LIBRARIES}
+        PRIVATE
+            ${TARGET_LINK_LIBRARIES}
     )
+
+    target_include_directories(${PROJECT_NAME}_example_line_iterator
+        PRIVATE
+            ${TARGET_INCLUDE_DIRS}
+    )
+
+    target_compile_definitions(${PROJECT_NAME}_example_line_iterator
+        PRIVATE
+            ${unit_test_COMPILE_DEFINITIONS}
+    )
+
+    ### Distance Transform Example
     add_executable(${PROJECT_NAME}_example_distance_transform
         test/example_distance_transform.cpp
     )
 
-    target_link_libraries(${PROJECT_NAME}_example_distance_transform
-        ${catkin_LIBRARIES}
-        ${OpenCV_LIBRARIES}
+    target_include_directories(${PROJECT_NAME}_example_distance_transform
+        PRIVATE
+            ${TARGET_INCLUDE_DIRS}
     )
+
+    target_link_libraries(${PROJECT_NAME}_example_distance_transform
+        PRIVATE
+            ${catkin_LIBRARIES}
+            ${OpenCV_LIBRARIES}
+    )
+
+    target_compile_definitions(${PROJECT_NAME}_example_distance_transform
+        PRIVATE
+            ${unit_test_COMPILE_DEFINITIONS}
+    )
+
 endif()
 
 cslibs_gridmaps_add_unit_test_gtest(serialization
+    INCLUDE_DIRS
+        include/
+        ${catkin_INCLUDE_DIRS}
+        ${YAML_CPP_INCLUDE_DIR}
     SOURCE_FILES
         test/serialization.cpp
+    LINK_LIBRARIES
+        ${YAML_CPP_LIBRARIES}
+    COMPILE_DEFINITIONS
+        ${TARGET_COMPILE_DEFINITIONS}
 )
-target_link_libraries(serialization
-    yaml-cpp
-)
-
 install(DIRECTORY include/${PROJECT_NAME}/
         DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
