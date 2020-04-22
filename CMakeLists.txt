@@ -5,7 +5,6 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 include(cmake/cslibs_gridmaps_enable_c++11.cmake)
 include(cmake/cslibs_gridmaps_extras.cmake)
-include(cmake/cslibs_gridmaps_show_headers.cmake)
 
 if(NOT ${PROJECT_NAME}_BUILD_EXAMPLES)
     set(${PROJECT_NAME}_BUILD_EXAMPLES False)
@@ -22,7 +21,6 @@ catkin_package(
     CATKIN_DEPENDS  cslibs_math_2d cslibs_indexed_storage cslibs_utility
     CFG_EXTRAS      cslibs_gridmaps_enable_c++11.cmake
                     cslibs_gridmaps_extras.cmake
-                    cslibs_gridmaps_show_headers.cmake
     LIBRARIES
 )
 
@@ -31,7 +29,6 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-cslibs_gridmaps_show_headers()
 
 if(${PROJECT_NAME}_BUILD_EXAMPLES)
     find_package(OpenCV      REQUIRED)
