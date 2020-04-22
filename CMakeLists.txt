@@ -23,7 +23,6 @@ catkin_package(
     CFG_EXTRAS      cslibs_gridmaps_enable_c++11.cmake
                     cslibs_gridmaps_extras.cmake
                     cslibs_gridmaps_show_headers.cmake
-                    cslibs_gridmaps_add_unit_test_gtest.cmake
     LIBRARIES
 )
 
@@ -78,8 +77,8 @@ if(${PROJECT_NAME}_BUILD_EXAMPLES)
 endif()
 
 cslibs_gridmaps_add_unit_test_gtest(serialization
-    SRCS
-    test/serialization.cpp
+    SOURCE_FILES
+        test/serialization.cpp
 )
 target_link_libraries(serialization
     yaml-cpp
