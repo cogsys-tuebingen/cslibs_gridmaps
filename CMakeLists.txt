@@ -56,6 +56,7 @@ if(${PROJECT_NAME}_BUILD_EXAMPLES)
 
 
     set(TARGET_INCLUDE_DIRS
+        include/
         ${catkin_INCLUDE_DIRS}
         ${OpenCV_INCLUDE_DIRS}
         ${cslibs_time_INCLUDE_DIRS}
