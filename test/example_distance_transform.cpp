@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
 
     cslibs_time::Time start = cslibs_time::Time::now();
     std::vector<double> distances;
-    cslibs_gridmaps::static_maps::algorithms::DistanceTransform<uint8_t> d(0.05, 2.0, 127);
+    cslibs_gridmaps::static_maps::algorithms::DistanceTransform<double, double, uint8_t, std::allocator<double>> d(0.05, 2.0, 127);
     d.apply(data, 200, distances);
 
     std::cout << "took: " << (cslibs_time::Time::now() - start).milliseconds() << "ms." << std::endl;

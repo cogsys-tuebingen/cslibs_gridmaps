@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   cslibs_indexed_storage
   cslibs_math_2d
   cslibs_utility
+  cslibs_time
 )
 
 find_package(yaml-cpp REQUIRED)

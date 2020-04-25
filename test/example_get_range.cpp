@@ -20,8 +20,8 @@ void mapOnly()
     grid.data.resize(2500 * 2500, 0);
     grid.info.origin.orientation = tf::createQuaternionMsgFromYaw(0.0);
 
-    cslibs_gridmaps::static_maps::BinaryGridmap::Ptr binary;
-    cslibs_gridmaps::static_maps::conversion::from(grid, binary);
+    cslibs_gridmaps::static_maps::BinaryGridmap<double>::Ptr binary;
+    cslibs_gridmaps::static_maps::conversion::from<double>(grid, binary);
 
     cslibs_math_2d::Point2d start(62.5, 62.5);
 
@@ -39,7 +39,7 @@ void mapOnly()
     }
     std::cout << "took : " << (cslibs_time::Time::now() - now).milliseconds() / iterations << "\n";
 
-    cslibs_math::random::Uniform<1>uniform(-10.0, 10.0);
+    cslibs_math::random::Uniform<double, 1>uniform(-10.0, 10.0);
     now = cslibs_time::Time::now();
     double val = 0.0;
     for(std::size_t i = 9 ; i < iterations ; ++i) {
@@ -73,7 +73,7 @@ void mapOnly()
     now = cslibs_time::Time::now();
     l = 0.0;
     for(std::size_t i = 0 ; i < iterations * iterations * iterations ; ++i) {
-        l = v1.distance(v2);
+        l = (v1 - v2).length();
     }
     std::cout << "v1.distance(v2) took :                " << (cslibs_time::Time::now() - now).milliseconds() << "\n";
 
