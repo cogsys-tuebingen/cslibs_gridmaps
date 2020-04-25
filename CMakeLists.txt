@@ -37,8 +37,8 @@ target_include_directories(${PROJECT_NAME}
 )
 
 if(NOT ${CMAKE_BUILD_TYPE} STREQUAL Debug)
-    set(TARGET_COMPILE_DEFINITIONS
-        -Wall -WError -Ofast -ffastmath
+    set(TARGET_COMPILE_OPTIONS
+        -Wall -Werror -Ofast -ffast-math
     )
     # enabling -march=native my result in problems on some machines,
     # my try -mtune=native
@@ -85,9 +85,9 @@ if(${PROJECT_NAME}_BUILD_EXAMPLES)
             ${TARGET_LINK_LIBRARIES}
     )
 
-    target_compile_definitions(${PROJECT_NAME}_example_get_range
+    target_compile_options(${PROJECT_NAME}_example_get_range
         PRIVATE
-            ${unit_test_COMPILE_DEFINITIONS}
+            ${TARGET_COMPILE_OPTIONS}
     )
 
     ### Iterator Example ###
@@ -105,9 +105,9 @@ if(${PROJECT_NAME}_BUILD_EXAMPLES)
             ${TARGET_INCLUDE_DIRS}
     )
 
-    target_compile_definitions(${PROJECT_NAME}_example_line_iterator
+    target_compile_options(${PROJECT_NAME}_example_line_iterator
         PRIVATE
-            ${unit_test_COMPILE_DEFINITIONS}
+            ${TARGET_COMPILE_OPTIONS}
     )
 
     ### Distance Transform Example
@@ -126,9 +126,9 @@ if(${PROJECT_NAME}_BUILD_EXAMPLES)
             ${OpenCV_LIBRARIES}
     )
 
-    target_compile_definitions(${PROJECT_NAME}_example_distance_transform
+    target_compile_options(${PROJECT_NAME}_example_distance_transform
         PRIVATE
-            ${unit_test_COMPILE_DEFINITIONS}
+            ${TARGET_COMPILE_OPTIONS}
     )
 
 endif()
@@ -142,8 +142,8 @@ cslibs_gridmaps_add_unit_test_gtest(serialization
         test/serialization.cpp
     LINK_LIBRARIES
         ${YAML_CPP_LIBRARIES}
-    COMPILE_DEFINITIONS
-        ${TARGET_COMPILE_DEFINITIONS}
+    COMPILE_OPTIONS
+        ${TARGET_COMPILE_OPTIONS}
 )
 install(DIRECTORY include/${PROJECT_NAME}/
         DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
