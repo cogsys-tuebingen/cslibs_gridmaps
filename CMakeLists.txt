@@ -3,8 +3,6 @@ project(cslibs_gridmaps)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-include(cmake/cslibs_gridmaps_enable_c++17.cmake)
-
 if(NOT ${PROJECT_NAME}_BUILD_EXAMPLES)
     set(${PROJECT_NAME}_BUILD_EXAMPLES False)
 endif()
@@ -25,9 +23,8 @@ catkin_package(
         cslibs_math_2d
         cslibs_indexed_storage
         cslibs_utility
-    CFG_EXTRAS
-        cslibs_gridmaps_enable_c++17.cmake
     LIBRARIES
+      ${PROJECT_NAME}
 )
 
 add_library(${PROJECT_NAME} INTERFACE)
