@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(cslibs_gridmaps)
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-
 if(NOT ${PROJECT_NAME}_BUILD_EXAMPLES)
     set(${PROJECT_NAME}_BUILD_EXAMPLES False)
 endif()
@@ -47,9 +45,6 @@ if(${PROJECT_NAME}_BUILD_EXAMPLES)
     find_package(cslibs_time REQUIRED)
     find_package(tf          REQUIRED)
     find_package(nav_msgs    REQUIRED)
-
-
-
 
     set(TARGET_INCLUDE_DIRS
         include/
