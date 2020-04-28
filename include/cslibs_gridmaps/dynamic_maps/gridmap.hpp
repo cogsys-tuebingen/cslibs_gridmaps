@@ -118,6 +118,8 @@ public:
     {
     }
 
+    virtual ~Gridmap() = default;
+
     /**
      * @brief Get minimum in map coordinates.
      * @return the minimum
@@ -332,7 +334,7 @@ protected:
     mutable index_t                    max_chunk_index_;
     mutable index_t                    min_index_;
     mutable mutex_t                    storage_mutex_;
-    mutable std::shared_ptr<storage_t> storage_;
+    mutable std::unique_ptr<storage_t> storage_;
     mutable std::size_t                height_;
     mutable std::size_t                width_;
 

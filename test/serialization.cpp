@@ -109,7 +109,7 @@ TEST(Test_cslibs_gridmaps, testDynamicGridmapSerialization)
     YAML::Node n(map);
 
     // de-serialization
-    const typename map_t::Ptr & map_converted = n.as<typename map_t::Ptr>();
+    const typename map_t::Ptr map_converted = n.as<typename map_t::Ptr>();
 
     // tests
     testDynamicMap<double,float>(map, map_converted);
