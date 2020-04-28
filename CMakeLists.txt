@@ -23,8 +23,6 @@ catkin_package(
         cslibs_math_2d
         cslibs_indexed_storage
         cslibs_utility
-    LIBRARIES
-      ${PROJECT_NAME}
 )
 
 add_library(${PROJECT_NAME} INTERFACE)
